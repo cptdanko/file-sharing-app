@@ -17,8 +17,41 @@ for anyone looking to create a system like this. Once fully developed a user wil
 > **_NOTE:_** at this stage, it will either be a full REST API or depending on time, may have simple UI
 
 
-# Hosting
-This app will be hosted on an powered by AWS infrastructure.
+# Tech stack
+The app is built using 
+- Java 17
+- Spring Boot 3
+- Spring Security (_to be added_)
+- Lombok
+- AWS DynamoDB
+- S3 (_to be added_)
+
+# Setup and run
+To run this spring boot project, 
+1. Clone the repository and navigate to the repo directory
+```shell
+git clone git@github.com:cptdanko/document-sharing.git
+cd document-sharing
+```
+2. Open application.yml file in either VSCode or IntelliJ
+3. Update the following with your AWS credentials
+```shell
+aws:
+  region: <your AWS region e.g. 'ap-southeast-2'> 
+  key: <your-key>
+  secret: <your-secret>
+  dynamo-db:
+    amazonDBEndpoint: <get yours from here https://docs.aws.amazon.com/general/latest/gr/ddb.html>
+```
+4. Once you have setup everything, when running for the first time, execute the following, 
+ ```
+mvn clean install package 
+```
+5. Then to run the app as you make changes, from the terminal, git bash or command line, run
+```shell
+mvn spring-boot:run
+```
+> **_NOTE:_** : if you don't add your AWS credentials, the app will fail at startup when trying to create the DynamoDB beans
 
 ## Any help?
 If you have difficulty understanding anything about this repo, feel free to reach out to me through this Github account or at bhuman at mydaytodoDOTcom or bhuman.soni@gmail.com.
