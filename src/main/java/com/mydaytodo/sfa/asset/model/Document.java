@@ -22,7 +22,7 @@ public class Document {
     @DynamoDBAttribute(attributeName = "key_store_path")
     private String keyStorePath;
 
-    @DynamoDBAttribute(attributeName = "type")
+    @DynamoDBAttribute(attributeName = "asset_type")
     private String assetType;
 
     @DynamoDBAttribute(attributeName = "user_id")
@@ -30,7 +30,7 @@ public class Document {
 
     public void transformForUpdate(DocumentUploadRequest documentUploadRequest) {
         setName(documentUploadRequest.getName());
-        setAssetType(documentUploadRequest.getType());
+        setAssetType(documentUploadRequest.getAssetType());
         setUserId(documentUploadRequest.getUserId());
         setKeyStorePath(documentUploadRequest.getPath());
     }

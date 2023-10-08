@@ -2,13 +2,16 @@ package com.mydaytodo.sfa.asset.service;
 
 import com.mydaytodo.sfa.asset.constants.KeyStart;
 import com.mydaytodo.sfa.asset.model.Document;
+import com.mydaytodo.sfa.asset.model.DocumentType;
 import com.mydaytodo.sfa.asset.model.DocumentUploadRequest;
+import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.DocumentRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -16,28 +19,53 @@ public class DocumentServiceImpl {
     @Autowired
     private DocumentRepositoryImpl documentRepository;
 
-    public HttpStatus saveDocumentMetadata(DocumentUploadRequest uploadRequest) {
+    public ServiceResponse saveDocumentMetadata(DocumentUploadRequest uploadRequest) {
+
         String key = KeyStart.DOCUMENT_KEY + System.currentTimeMillis();
         uploadRequest.setId(key);
-        return HttpStatus.valueOf(documentRepository.saveAsset(uploadRequest));
+
+        return ServiceResponse.builder()
+                .data(null)
+                .status(documentRepository.saveAsset(uploadRequest))
+                .build();
     }
-    public ResponseEntity<HttpStatus> getDocument(String id) {
+    public ServiceResponse getDocument(String id) {
         Document document = null;
+        ServiceResponse response = new ServiceResponse();
         try {
             document = documentRepository.getDocument(id);
             if(document == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                response.setData(null);
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return response;
             }
-            return new ResponseEntity(document, HttpStatus.OK);
+            return ServiceResponse.builder()
+                    .data(document)
+                    .status(HttpStatus.OK.value())
+                    .build();
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.valueOf(e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+            return ServiceResponse.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
         }
     }
-    public HttpStatus deleteAsset(String id) {
-        return HttpStatus.valueOf(documentRepository.deleteDocument(id));
+    public ServiceResponse deleteAsset(String id) {
+        return ServiceResponse.builder()
+                .status(documentRepository.deleteDocument(id))
+                .build();
     }
-    public HttpStatus updateDocumentMetadata(String id, DocumentUploadRequest uploadRequest) {
-        return HttpStatus.valueOf(documentRepository.updateDocument(id, uploadRequest));
+    public ServiceResponse updateDocumentMetadata(String id, DocumentUploadRequest uploadRequest) {
+        return ServiceResponse
+                .builder()
+                .status(documentRepository.updateDocument(id, uploadRequest))
+                .build();
+    }
+    public List<Document> getUserDouments(String userId) {
+        return documentRepository.getUserDocuments(userId);
     }
 
+    public List<Document> getDocumentsOfType(String type) {
+        DocumentType documentType = DocumentType.fromTypeStr(type);
+        return documentRepository.getDocumentsOfType(documentType);
+    }
 }

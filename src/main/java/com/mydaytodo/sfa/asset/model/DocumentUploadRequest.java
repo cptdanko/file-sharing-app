@@ -16,14 +16,14 @@ public class DocumentUploadRequest {
 
     private String name;
     private String path;
-    private String type;
+    private String assetType;
     private String id;
     private String userId;
 
     public static Document convertRequest(DocumentUploadRequest uploadRequest) {
         return Document.builder()
                 .keyStorePath(uploadRequest.getPath())
-                .assetType(uploadRequest.getType())
+                .assetType(uploadRequest.getAssetType())
                 .name(uploadRequest.getName())
                 .id(StringUtils.isNullOrEmpty(uploadRequest.getId())? null: uploadRequest.getId())
                 .userId(uploadRequest.getUserId())
