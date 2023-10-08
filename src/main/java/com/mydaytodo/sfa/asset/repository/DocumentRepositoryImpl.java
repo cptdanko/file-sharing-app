@@ -2,18 +2,24 @@ package com.mydaytodo.sfa.asset.repository;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.mydaytodo.sfa.asset.config.DynamoDBConfig;
 import com.mydaytodo.sfa.asset.model.Document;
+import com.mydaytodo.sfa.asset.model.DocumentType;
 import com.mydaytodo.sfa.asset.model.DocumentUploadRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -78,5 +84,39 @@ public class DocumentRepositoryImpl {
         mapper.save(documentToUpdate, saveOp);
         return org.apache.http.HttpStatus.SC_NO_CONTENT;
     }
+    public List<Document> getUserDocuments(String userId) {
+        Map<String, AttributeValue> eav = new HashMap<>();
+        Document document = Document
+                            .builder()
+                            .userId(userId)
+                            .build();
+        eav.put(":userId", new AttributeValue().withS(userId));
 
+        DynamoDBQueryExpression<Document> queryExp = new DynamoDBQueryExpression<Document>()
+                .withIndexName("user_id-index")
+                .withKeyConditionExpression("user_id= :userId")
+                .withExpressionAttributeValues(eav)
+                .withConsistentRead(false);
+
+        return mapper.query(Document.class, queryExp);
+    }
+
+    /**
+     * Note: there is a cost associated with dynamoDB indexes
+     * Perhaps for mvp change this to scan the table to get
+     * all values in the table, and filter in code, here
+     * @param documentType
+     * @return
+     */
+    public List<Document> getDocumentsOfType(DocumentType documentType) {
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":type", new AttributeValue().withS(documentType.getType()));
+        DynamoDBQueryExpression<Document> queryExp = new DynamoDBQueryExpression<Document>()
+                .withIndexName("asset_type-index")
+                .withKeyConditionExpression("asset_type = :type")
+                .withExpressionAttributeValues(eav)
+                .withConsistentRead(false);
+        return mapper.query(Document.class, queryExp);
+
+    }
 }

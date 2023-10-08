@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "0af124e8-8be4-457e-8e59-086cd3acc733",
+		"name": "AssetSharing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "595931"
+	},
+	"item": [
+		{
+			"name": "Healthcheck",
+			"item": [
+				{
+					"name": "Healthcheck",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/healthcheck",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"healthcheck"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/ping",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Asset",
+			"item": [
+				{
+					"name": "Get Asset",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/api/asset/detail/DOC_1696744099466",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"asset",
+								"detail",
+								"DOC_1696744099466"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Assets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/api/asset/by/USR_1234",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"asset",
+								"by",
+								"USR_1234"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assets By Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/api/asset/type/document",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"asset",
+								"type",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SaveAssetMetadata",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"tax return notice\",\n    \"path\": \"/user/fileshare\",\n    \"asset_type\": \"document\",\n    \"userId\": \"USR_1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/asset/upload",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"asset",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update doc metadata",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New name\",\n    \"path\": \"/user/fileshare\",\n    \"assetType\": \"pdf\",\n    \"userId\": \"USR_1357\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/asset/DOC_1696801240496",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"asset",
+								"DOC_1696801240496"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Asset",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/api/asset/DOC_1696743919707",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"asset",
+								"DOC_1696743919707"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
