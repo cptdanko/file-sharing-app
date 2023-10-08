@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    user:
+      name:
+      password:
+
+aws:
+  region:
+  key:
+  secret:
+  dynamo-db:
+    amazonDBEndpoint:
+
