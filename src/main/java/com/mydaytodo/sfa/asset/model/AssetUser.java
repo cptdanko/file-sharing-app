@@ -1,12 +1,14 @@
 package com.mydaytodo.sfa.asset.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBFlattened;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,10 +17,16 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @DynamoDBTable(tableName = "AssetUser")
-public class User {
-    public enum ROLE {
-        ADMIN,
-        OWNER,
+public class AssetUser {
+    @Getter
+    enum ROLE {
+        ADMIN("admin"),
+        USER("user");
+
+        private String role;
+        ROLE(String role) {
+            this.role = role;
+        }
     }
     @DynamoDBAttribute(attributeName = "name")
     private String name;
@@ -38,11 +46,10 @@ public class User {
     private Date dateJoined;
     @DynamoDBAttribute(attributeName = "last_login")
     private Date lastLogin;
+    // @DynamoDBFlattened
     // maybe in the start, leave it to a "," separated string?
+    //Use Lists and not a String[] array. Array types not supported by DynamoDB
     @DynamoDBAttribute(attributeName = "assets_uploaded")
-    private String[] assetsUploaded;
+    private List<String> assetsUploaded;
 
-    public void setRole(ROLE role) {
-        this.role = role.toString();
-    }
 }

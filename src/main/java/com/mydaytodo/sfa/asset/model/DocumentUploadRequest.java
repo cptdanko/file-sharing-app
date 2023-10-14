@@ -20,6 +20,10 @@ public class DocumentUploadRequest {
     private String id;
     private String userId;
 
+    /**
+     * @param uploadRequest
+     * @return
+     */
     public static Document convertRequest(DocumentUploadRequest uploadRequest) {
         return Document.builder()
                 .keyStorePath(uploadRequest.getPath())
