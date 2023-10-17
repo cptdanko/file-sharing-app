@@ -1,7 +1,8 @@
 package com.mydaytodo.sfa.asset.controller;
 
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
-import com.mydaytodo.sfa.asset.model.User;
+import com.mydaytodo.sfa.asset.model.ServiceResponse;
+import com.mydaytodo.sfa.asset.model.AssetUser;
 import com.mydaytodo.sfa.asset.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +21,25 @@ public class UserController {
     private UserServiceImpl userService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUser(@RequestParam("userId") String userId) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ServiceResponse> getUser(@PathVariable("userId") String userId) {
+        log.info("About to query user with id "+ userId);
+        ServiceResponse response = userService.getUser(userId);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
     @PostMapping("/")
-    public ResponseEntity<HttpStatus> createUser(@RequestBody CreateUserRequest createUserRequest) {
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<ServiceResponse> createUser(@RequestBody CreateUserRequest createUserRequest) {
+        ServiceResponse response = userService.saveUser(createUserRequest);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
     @DeleteMapping("/{userId}")
-    public ResponseEntity<HttpStatus> deleteUser(@RequestParam("userId") String userId) {
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ServiceResponse> deleteUser(@PathVariable("userId") String userId) {
+        ServiceResponse deleteState = userService.deleteUser(userId);
+        return new ResponseEntity<>(deleteState, HttpStatus.valueOf(deleteState.getStatus()));
     }
     @PutMapping("/{userId}")
-    public ResponseEntity<HttpStatus> updateUserDetails(@RequestParam("userId") String userId, @RequestBody CreateUserRequest createUserRequest) {
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ServiceResponse> updateUserDetails(@PathVariable("userId") String userId, @RequestBody CreateUserRequest createUserRequest) {
+        ServiceResponse response = userService.updateUser(userId, createUserRequest);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
     /**
@@ -42,8 +48,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/all/{department}")
-    public ResponseEntity<List<User>> getAllUserBy(@RequestParam("department") String department) {
-        List<User> users = new ArrayList<>();
+    public ResponseEntity<List<AssetUser>> getAllUserBy(@RequestParam("department") String department) {
+        List<AssetUser> users = new ArrayList<>();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
