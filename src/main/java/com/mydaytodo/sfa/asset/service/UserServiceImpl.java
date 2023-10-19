@@ -24,8 +24,6 @@ public class UserServiceImpl {
             user = userRepository.getUser(id);
             if(user == null) {
                 log.info("Got response");
-                log.info(user.getName());
-                log.info(user.getUserid());
                 return ServiceResponse.builder()
                         .status(HttpStatus.NOT_FOUND.value())
                         .data(null)
