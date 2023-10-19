@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -46,10 +47,22 @@ public class AssetUser {
     private Date dateJoined;
     @DynamoDBAttribute(attributeName = "last_login")
     private Date lastLogin;
+
+    @DynamoDBAttribute(attributeName = "email")
+    private String email;
     // @DynamoDBFlattened
     // maybe in the start, leave it to a "," separated string?
     //Use Lists and not a String[] array. Array types not supported by DynamoDB
     @DynamoDBAttribute(attributeName = "assets_uploaded")
     private List<String> assetsUploaded;
 
+    public List<String> roles;
+
+    public List<Role> getRoleList() {
+        List<Role> list = new ArrayList<>();
+        for(String role: roles){
+            list.add(Role.builder().name(role).build());
+        }
+        return list;
+    }
 }

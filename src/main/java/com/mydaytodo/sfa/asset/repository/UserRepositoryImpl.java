@@ -2,20 +2,25 @@ package com.mydaytodo.sfa.asset.repository;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.mydaytodo.sfa.asset.config.DynamoDBConfig;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import com.mydaytodo.sfa.asset.model.AssetUser;
+import com.mydaytodo.sfa.asset.model.Document;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.swing.text.html.Option;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -31,6 +36,24 @@ public class UserRepositoryImpl {
         dynamoDB = dynamoDBConfig.amazonDynamoDB();
         mapper = new DynamoDBMapper(dynamoDB);
     }
+    public Optional<AssetUser> getUserByUsername(String username) throws Exception {
+        HashMap<String, AttributeValue> map = new HashMap<>();
+        map.put("username", new AttributeValue().withS(username));
+
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":userId", new AttributeValue().withS(username));
+
+        DynamoDBQueryExpression<AssetUser> queryExp = new DynamoDBQueryExpression<AssetUser>()
+                .withIndexName("username-index")
+                .withKeyConditionExpression("username= :username")
+                .withExpressionAttributeValues(eav)
+                .withConsistentRead(false);
+
+        return mapper.query(AssetUser.class, queryExp)
+                .stream()
+                .findFirst();
+    }
 
     public AssetUser getUser(String id) throws Exception {
         return mapper.load(AssetUser.class, id);
@@ -45,6 +68,8 @@ public class UserRepositoryImpl {
         AssetUser user = CreateUserRequest.convertRequest(createUserRequest);
         user.setDateJoined(new Date());
         user.setLastLogin(new Date());
+        String encodedPass = new BCryptPasswordEncoder().encode(createUserRequest.getPassword());
+        user.setPassword(encodedPass);
         log.info(user.getUsername());
         log.info(user.getUserid());
         mapper.save(user);
@@ -65,33 +90,6 @@ public class UserRepositoryImpl {
     }
 
     /**
-     *         HashMap<String,AttributeValue> itemKey = new HashMap<>();
-     *         itemKey.put(key, AttributeValue.builder()
-     *             .s(keyVal)
-     *             .build());
-     *
-     *          HashMap<String,AttributeValueUpdate> updatedValues = new HashMap<>();
-     *         updatedValues.put(name, AttributeValueUpdate.builder()
-     *             .value(AttributeValue.builder().s(updateVal).build())
-     *             .action(AttributeAction.PUT)
-     *             .build());
-     *
-     *         UpdateItemRequest request = UpdateItemRequest.builder()
-     *             .tableName(tableName)
-     *             .key(itemKey)
-     *             .attributeUpdates(updatedValues)
-     *             .build();
-     *
-     *         try {
-     *             ddb.updateItem(request);
-     *         } catch (ResourceNotFoundException e) {
-     *             System.err.println(e.getMessage());
-     *             System.exit(1);
-     *         } catch (DynamoDbException e) {
-     *             System.err.println(e.getMessage());
-     *             System.exit(1);
-     *         }
-     *         System.out.println("The Amazon DynamoDB table was updated!");
      * @param userId
      * @param user
      * @return
@@ -133,4 +131,5 @@ public class UserRepositoryImpl {
         log.info("Saved the ddb obj");
         return assetUser;
     }
+
 }
