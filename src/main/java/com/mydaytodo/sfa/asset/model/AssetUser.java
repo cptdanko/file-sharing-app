@@ -50,19 +50,13 @@ public class AssetUser {
 
     @DynamoDBAttribute(attributeName = "email")
     private String email;
+
+    @DynamoDBAttribute(attributeName = "active")
+    private boolean active;
     // @DynamoDBFlattened
     // maybe in the start, leave it to a "," separated string?
     //Use Lists and not a String[] array. Array types not supported by DynamoDB
     @DynamoDBAttribute(attributeName = "assets_uploaded")
     private List<String> assetsUploaded;
 
-    public List<String> roles;
-
-    public List<Role> getRoleList() {
-        List<Role> list = new ArrayList<>();
-        for(String role: roles){
-            list.add(Role.builder().name(role).build());
-        }
-        return list;
-    }
 }

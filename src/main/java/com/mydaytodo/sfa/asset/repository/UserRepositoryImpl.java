@@ -1,9 +1,7 @@
 package com.mydaytodo.sfa.asset.repository;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.mydaytodo.sfa.asset.config.DynamoDBConfig;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
@@ -17,10 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.swing.text.html.Option;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -35,6 +30,14 @@ public class UserRepositoryImpl {
     private void initializeDB() {
         dynamoDB = dynamoDBConfig.amazonDynamoDB();
         mapper = new DynamoDBMapper(dynamoDB);
+    }
+    public List<AssetUser> getAllUsers() {
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+// Change to your model class
+        List < AssetUser > scanResult = mapper.scan(AssetUser.class, scanExpression);
+        log.info("-" + scanResult.size());
+        return mapper.scan(AssetUser.class, scanExpression);
+
     }
     public Optional<AssetUser> getUserByUsername(String username) throws Exception {
         HashMap<String, AttributeValue> map = new HashMap<>();
