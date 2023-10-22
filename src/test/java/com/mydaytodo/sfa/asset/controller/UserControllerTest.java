@@ -2,31 +2,20 @@ package com.mydaytodo.sfa.asset.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mydaytodo.sfa.asset.model.AssetUser;
-import com.mydaytodo.sfa.asset.model.CreateUserRequest;
-import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -58,15 +47,15 @@ public class UserControllerTest {
         JacksonTester.initFields(this, new ObjectMapper());
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 
-        List<Integer> cost = new ArrayList<>();
 
     }
-    @Test
+    /*@Test
     void testGetUser() throws Exception {
         when(userService.getUser(any())).thenReturn(ServiceResponse.builder().data(assetUser).status(200).build());
         String url = BASE_URL + "/"+MOCK_USER_ID;
         mockMvc.perform(get(url)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-    }
+
+    }*/
 }

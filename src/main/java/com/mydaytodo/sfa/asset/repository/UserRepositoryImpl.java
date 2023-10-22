@@ -3,24 +3,20 @@ package com.mydaytodo.sfa.asset.repository;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
-import com.amazonaws.services.dynamodbv2.model.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.mydaytodo.sfa.asset.config.DynamoDBConfig;
-import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import com.mydaytodo.sfa.asset.model.AssetUser;
-import com.mydaytodo.sfa.asset.model.Document;
+import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.html.Option;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -68,8 +64,8 @@ public class UserRepositoryImpl {
         AssetUser user = CreateUserRequest.convertRequest(createUserRequest);
         user.setDateJoined(new Date());
         user.setLastLogin(new Date());
-        String encodedPass = new BCryptPasswordEncoder().encode(createUserRequest.getPassword());
-        user.setPassword(encodedPass);
+        // String encodedPass = new BCryptPasswordEncoder().encode(createUserRequest.getPassword());
+        user.setPassword(createUserRequest.getPassword());
         log.info(user.getUsername());
         log.info(user.getUserid());
         mapper.save(user);
@@ -118,8 +114,11 @@ public class UserRepositoryImpl {
             updatedValues.put("date_joined", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getDateJoined().toString())));
         if(user.getLastLogin() != null)
             updatedValues.put("last_login", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getLastLogin().toString())));
-
-        updatedValues.put("assets_uploaded", new AttributeValueUpdate().withValue(new AttributeValue().withSS(user.getAssetsUploaded())));
+        List<AttributeValue> attributeValues = new ArrayList<>();
+        for(String doc: user.getAssetsUploaded()) {
+            attributeValues.add(new AttributeValue().withS(doc));
+        }
+        updatedValues.put("assets_uploaded", new AttributeValueUpdate().withValue(new AttributeValue().withL(attributeValues)));
         request.setAttributeUpdates(updatedValues);
         try {
             dynamoDB.updateItem(request);

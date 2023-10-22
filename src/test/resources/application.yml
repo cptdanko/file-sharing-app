@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    user:
+      name: admin
+      password: passw@rd
+
+aws:
+  region: ap-southeast-2
+  key: some-string-key
+  secret: some-string-pass
+  dynamo-db:
+    amazonDBEndpoint: dynamodb.ap-southeast-2.amazonaws.com
