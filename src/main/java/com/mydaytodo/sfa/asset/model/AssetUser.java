@@ -55,14 +55,4 @@ public class AssetUser {
     //Use Lists and not a String[] array. Array types not supported by DynamoDB
     @DynamoDBAttribute(attributeName = "assets_uploaded")
     private List<String> assetsUploaded;
-
-    public List<String> roles;
-
-    public List<Role> getRoleList() {
-        List<Role> list = new ArrayList<>();
-        for(String role: roles){
-            list.add(Role.builder().name(role).build());
-        }
-        return list;
-    }
 }
