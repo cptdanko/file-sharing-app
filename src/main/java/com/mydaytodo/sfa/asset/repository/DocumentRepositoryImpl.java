@@ -7,10 +7,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
-import com.mydaytodo.sfa.asset.config.DynamoDBConfig;
+import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.Document;
 import com.mydaytodo.sfa.asset.model.DocumentType;
-import com.mydaytodo.sfa.asset.model.DocumentUploadRequest;
+import com.mydaytodo.sfa.asset.model.DocumentMetadataUploadRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +27,13 @@ public class DocumentRepositoryImpl {
     private AmazonDynamoDB dynamoDB = null;
 
     @Autowired
-    private DynamoDBConfig dynamoDBConfig;
+    private AWSConfig AWSConfig;
     private DynamoDBMapper mapper = null;
 
 
     @PostConstruct
     private void initialiseDB() {
-        dynamoDB = dynamoDBConfig.amazonDynamoDB();
+        dynamoDB = AWSConfig.amazonDynamoDB();
         mapper = new DynamoDBMapper(dynamoDB);
     }
     public Document getDocument(String id) {
@@ -45,10 +45,10 @@ public class DocumentRepositoryImpl {
         return null;
     }
 
-    public Integer saveAsset(DocumentUploadRequest request) {
+    public Integer saveAsset(DocumentMetadataUploadRequest request) {
         Integer retVal = HttpStatus.CREATED.value();
         log.info("In saveAsset method");
-        Document asset = DocumentUploadRequest.convertRequest(request);
+        Document asset = DocumentMetadataUploadRequest.convertRequest(request);
         log.info("Saving document metadata with name "+ asset.getName());
         mapper.save(asset);
         log.info("Saved asset metadata");
@@ -72,13 +72,13 @@ public class DocumentRepositoryImpl {
         }
     }
 
-    public Integer updateDocument(String id, DocumentUploadRequest documentUploadRequest) {
+    public Integer updateDocument(String id, DocumentMetadataUploadRequest documentMetadataUploadRequest) {
         Document documentToUpdate = getDocument(id);
         if(documentToUpdate == null) {
             return HttpStatus.NOT_FOUND.value();
         }
-        log.info("About to update document with id "+ documentUploadRequest.getId());
-        documentToUpdate.transformForUpdate(documentUploadRequest);
+        log.info("About to update document with id "+ documentMetadataUploadRequest.getId());
+        documentToUpdate.transformForUpdate(documentMetadataUploadRequest);
         DynamoDBSaveExpression saveOp = new DynamoDBSaveExpression()
                 .withExpectedEntry("id", new ExpectedAttributeValue().withValue(new AttributeValue(id)));
         mapper.save(documentToUpdate, saveOp);

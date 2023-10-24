@@ -7,7 +7,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
-import com.mydaytodo.sfa.asset.config.DynamoDBConfig;
+import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.AssetUser;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import jakarta.annotation.PostConstruct;
@@ -24,12 +24,12 @@ public class UserRepositoryImpl {
     private AmazonDynamoDB dynamoDB = null;
 
     @Autowired
-    private DynamoDBConfig dynamoDBConfig;
+    private AWSConfig AWSConfig;
     private DynamoDBMapper mapper = null;
 
     @PostConstruct
     private void initializeDB() {
-        dynamoDB = dynamoDBConfig.amazonDynamoDB();
+        dynamoDB = AWSConfig.amazonDynamoDB();
         mapper = new DynamoDBMapper(dynamoDB);
     }
     public Optional<AssetUser> getUserByUsername(String username) throws Exception {

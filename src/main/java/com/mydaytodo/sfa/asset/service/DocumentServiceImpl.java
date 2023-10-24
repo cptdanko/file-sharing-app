@@ -3,7 +3,7 @@ package com.mydaytodo.sfa.asset.service;
 import com.mydaytodo.sfa.asset.constants.KeyStart;
 import com.mydaytodo.sfa.asset.model.Document;
 import com.mydaytodo.sfa.asset.model.DocumentType;
-import com.mydaytodo.sfa.asset.model.DocumentUploadRequest;
+import com.mydaytodo.sfa.asset.model.DocumentMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.DocumentRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class DocumentServiceImpl {
     @Autowired
     private DocumentRepositoryImpl documentRepository;
 
-    public ServiceResponse saveDocumentMetadata(DocumentUploadRequest uploadRequest) {
+    public ServiceResponse saveDocumentMetadata(DocumentMetadataUploadRequest uploadRequest) {
 
         String key = KeyStart.DOCUMENT_KEY + System.currentTimeMillis();
         uploadRequest.setId(key);
@@ -54,7 +54,7 @@ public class DocumentServiceImpl {
                 .status(documentRepository.deleteDocument(id))
                 .build();
     }
-    public ServiceResponse updateDocumentMetadata(String id, DocumentUploadRequest uploadRequest) {
+    public ServiceResponse updateDocumentMetadata(String id, DocumentMetadataUploadRequest uploadRequest) {
         return ServiceResponse
                 .builder()
                 .status(documentRepository.updateDocument(id, uploadRequest))

@@ -49,13 +49,29 @@ public class UserControllerTest {
 
 
     }
-    /*@Test
-    void testGetUser() throws Exception {
-        when(userService.getUser(any())).thenReturn(ServiceResponse.builder().data(assetUser).status(200).build());
-        String url = BASE_URL + "/"+MOCK_USER_ID;
-        mockMvc.perform(get(url)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
 
+    /*
+    @Test
+    void testGetUser() throws Exception {
+        when(userService.getUser(any())).thenReturn(user);
+        mockMvc.perform(get(BASE_URL + "/")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+    }
+    @Test
+    void testCreateUser() throws Exception  {
+        // when(userService.createUser(any())).thenReturn(HttpStatus.CREATED.value());
+        mockMvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJacksonTester.write(user).getJson())
+        ).andExpect(status().isOk());
+    }
+    @Test
+    void testUpdateUser() throws Exception {
+        // when(userService.updateUser(any(), any()).thenReturn(HttpStatus.NO_CONTENT.value()));
+        mockMvc.perform(put(BASE_URL + "/" + MOCK_USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJacksonTester.write(user).getJson())
+        ).andExpect(status().isNoContent());
     }*/
 }

@@ -1,17 +1,15 @@
 package com.mydaytodo.sfa.asset.controller;
 
 import com.mydaytodo.sfa.asset.model.Document;
-import com.mydaytodo.sfa.asset.model.DocumentUploadRequest;
+import com.mydaytodo.sfa.asset.model.DocumentMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.DocumentServiceImpl;
-import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +31,7 @@ public class AssetController {
         return new ResponseEntity<>(doc, HttpStatus.valueOf(response.getStatus()));
     }
     @PostMapping("/upload")
-    public ResponseEntity<HttpStatus> uploadAsset(@RequestBody DocumentUploadRequest uploadRequest) {
+    public ResponseEntity<HttpStatus> uploadAsset(@RequestBody DocumentMetadataUploadRequest uploadRequest) {
         log.info("Got the request to upload asset (document)");
         ServiceResponse response = assetService.saveDocumentMetadata(uploadRequest);
         return new ResponseEntity<>(HttpStatus.valueOf(response.getStatus()));
@@ -45,7 +43,7 @@ public class AssetController {
         return new ResponseEntity<>(HttpStatus.valueOf(response.getStatus()));
     }
     @PutMapping("/{assetId}")
-    public ResponseEntity<HttpStatus> modifyAsset(@PathVariable("assetId")String assetId, @RequestBody DocumentUploadRequest uploadRequest) {
+    public ResponseEntity<HttpStatus> modifyAsset(@PathVariable("assetId")String assetId, @RequestBody DocumentMetadataUploadRequest uploadRequest) {
         log.info("received request to modify asset with id "+ assetId + " and modify name "+ uploadRequest.getName());
         ServiceResponse response = assetService.updateDocumentMetadata(assetId, uploadRequest);
         return new ResponseEntity<>(HttpStatus.valueOf(response.getStatus()));
@@ -53,6 +51,8 @@ public class AssetController {
     @GetMapping("/by/{userId}")
     public ResponseEntity<List<Document>> getUserAssets(@PathVariable("userId") String userId) {
         log.info("received request to get assets for user with id "+ userId);
+        log.info("");
+
         List<Document> assets = assetService.getUserDouments(userId);
         return new ResponseEntity<>(assets, HttpStatus.OK);
     }
