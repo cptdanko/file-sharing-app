@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-public class DocumentUploadRequest {
+public class DocumentMetadataUploadRequest {
 
     private String name;
     private String path;
@@ -24,7 +24,7 @@ public class DocumentUploadRequest {
      * @param uploadRequest
      * @return
      */
-    public static Document convertRequest(DocumentUploadRequest uploadRequest) {
+    public static Document convertRequest(DocumentMetadataUploadRequest uploadRequest) {
         return Document.builder()
                 .keyStorePath(uploadRequest.getPath())
                 .assetType(uploadRequest.getAssetType())

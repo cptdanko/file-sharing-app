@@ -12,5 +12,5 @@ import java.util.Optional;
 public class ServiceResponse {
     private Integer status;
     private Object data;
-    private String message;
+    private String message = "";
 }

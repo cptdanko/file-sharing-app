@@ -12,6 +12,21 @@
 				{
 					"name": "Healthcheck",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "qin",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -186,12 +201,329 @@
 			]
 		},
 		{
-			"name": "New Request",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
+			"name": "User",
+			"item": [
+				{
+					"name": "Get User",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "passw@rd",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/api/user/USR_1697285742714",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"USR_1697285742714"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add User",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "passw@rd",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"admin\",\n    \"name\": \"connie\",\n    \"username\": \"qinzhang\",\n    \"password\": \"temp\",\n    \"department\": \"CTO\",\n    \"assetsUploaded\": [\n        \"doc1\",\n        \"doc2\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/user/",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"NOT_ADMIN\",\n    \"name\": \"qin shi huang\",\n    \"username\": \"cptdanko\",\n    \"password\": \"1234\",\n    \"department\": \"CFO\",\n    \"assetsUploaded\": [\n        \"doc1\",\n        \"doc2\",\n        \"doc3\",\n        \"doc4\",\n        \"doc5\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/user/USR_1697285742714",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"USR_1697285742714"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"admin\",\n    \"name\": \"bhuman\",\n    \"username\": \"cptdanko\",\n    \"password\": \"1234\",\n    \"department\": \"CTO\",\n    \"assetsUploaded\": [\n        \"doc1\",\n        \"doc2\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/user/USR_1697285865302",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"USR_1697285865302"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Storage",
+			"item": [
+				{
+					"name": "Upload",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/Users/bhumansoni/workspace/java/learn/redis/pom.xml"
+								},
+								{
+									"key": "userId",
+									"value": "USR_1697285742714",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{hostname}}/api/file/upload",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"file",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ping",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/file/ping",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"file",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Files by user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/file/list?userId=USR_1697285742714",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"file",
+								"list"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "USR_1697285742714"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download file",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/file/pom.xml/download?userId=USR_1697285742714",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"file",
+								"pom.xml",
+								"download"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "USR_1697285742714"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete file",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/file/asdadas.xml/delete?userId=USR_1697285742714",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"file",
+								"asdadas.xml",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "USR_1697285742714"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File",
+			"item": []
 		}
 	]
 }

@@ -28,10 +28,10 @@ public class Document {
     @DynamoDBAttribute(attributeName = "user_id")
     private String userId;
 
-    public void transformForUpdate(DocumentUploadRequest documentUploadRequest) {
-        setName(documentUploadRequest.getName());
-        setAssetType(documentUploadRequest.getAssetType());
-        setUserId(documentUploadRequest.getUserId());
-        setKeyStorePath(documentUploadRequest.getPath());
+    public void transformForUpdate(DocumentMetadataUploadRequest documentMetadataUploadRequest) {
+        setName(documentMetadataUploadRequest.getName());
+        setAssetType(documentMetadataUploadRequest.getAssetType());
+        setUserId(documentMetadataUploadRequest.getUserId());
+        setKeyStorePath(documentMetadataUploadRequest.getPath());
     }
 }
