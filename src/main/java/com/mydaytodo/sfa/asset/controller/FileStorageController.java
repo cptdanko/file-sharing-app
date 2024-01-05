@@ -25,13 +25,10 @@ public class FileStorageController {
 
     @PostMapping("/bucket")
     public ResponseEntity<ServiceResponse> createNewBucket(@RequestBody CustomCreateBucketRequest createBucketRequest) {
-
-
         return null;
     }
     @GetMapping("/bucket/files/{bucketName}")
     public ResponseEntity<ServiceResponse> listFilesInBucket(@PathVariable("bucketName") String bucketName) {
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -48,12 +45,11 @@ public class FileStorageController {
     public ResponseEntity<ServiceResponse> handleFileUpload(@RequestParam("file") MultipartFile file,
                                                             @RequestParam("userId") String userId)
             throws IOException {
-        log.info(userId);
-        log.info(file.getResource().getDescription());
         InputStream is = file.getInputStream();
         String filename = file.getOriginalFilename();
-        log.info(filename);
-        return new ResponseEntity<>(storageService.uploadFile(file, userId), HttpStatus.MULTI_STATUS);
+        log.info("Request to upload file = " +filename);
+        ServiceResponse response = storageService.uploadFile(file, userId);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
     /**

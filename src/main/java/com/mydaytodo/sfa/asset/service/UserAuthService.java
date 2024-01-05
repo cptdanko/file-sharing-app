@@ -29,8 +29,7 @@ public class UserAuthService {
                         .password(assetUser.getPassword())
                                 .roles("ADMIN", "USER")
                                         .build();
-        log.info("Created the user details object to insert into InMemoryStore");
-        log.info(userDetails.toString());
+        log.info("Added user "+ assetUser.getUsername() + " to InMemoryStore");
         UserAuthService.instance.getInMemoryUserDetailsManager().createUser(userDetails);
     }
 }

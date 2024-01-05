@@ -4,7 +4,10 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.model.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.AssetUser;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
@@ -13,9 +16,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -110,10 +113,13 @@ public class UserRepositoryImpl {
         updatedValues.put("name", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getName())));
         updatedValues.put("department", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getDepartment())));
         updatedValues.put("role", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getRole())));
-        if(user.getDateJoined() != null)
+
+        // BUG: date str is not being saved in a consistent format, TO DO FIX
+        /*if(user.getDateJoined() != null)
             updatedValues.put("date_joined", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getDateJoined().toString())));
         if(user.getLastLogin() != null)
-            updatedValues.put("last_login", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getLastLogin().toString())));
+            updatedValues.put("last_login", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getLastLogin().toString())));*/
+
         List<AttributeValue> attributeValues = new ArrayList<>();
         for(String doc: user.getAssetsUploaded()) {
             attributeValues.add(new AttributeValue().withS(doc));
