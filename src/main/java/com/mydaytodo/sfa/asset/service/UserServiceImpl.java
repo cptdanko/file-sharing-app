@@ -8,8 +8,10 @@ import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import software.amazon.ion.SeekableReader;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -41,14 +43,50 @@ public class UserServiceImpl {
                     .build();
         }
     }
+    public ServiceResponse getByUsername(String username) {
+        Optional<AssetUser> user;
+        log.info("About to get user by username");
+        try {
+            user = userRepository.getUserByUsername(username);
+            if(user.isPresent()) {
+                return ServiceResponse.builder()
+                        .data(user)
+                        .status(HttpStatus.OK.value())
+                        .message("User found")
+                        .build();
+            } else {
+                return ServiceResponse.builder()
+                        .message("User with username " + username +" not found. Are you sure it's the right name?")
+                        .status(HttpStatus.NOT_FOUND.value())
+                        .build();
+            }
+        } catch (Exception e) {
+            return ServiceResponse.builder()
+                    .message(e.getMessage())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
 
     public ServiceResponse saveUser(CreateUserRequest userRequest) {
         String key = KeyStart.USER_KEY +  System.currentTimeMillis();
         userRequest.setUserId(key);
-        log.info(userRequest.getUsername());
-        log.info(userRequest.getName());
+        log.info("About to save user with name "+ userRequest.getUsername());
         try {
+            // add validation to ensure user does not exist
+            if(userRepository.getUserByUsername(userRequest.getUsername()).isPresent()) {
+                return ServiceResponse.builder()
+                        .data(null)
+                        .message(userRequest.getUsername() + " already exists in database")
+                        .status(HttpStatus.CONFLICT.value())
+                        .build();
+            }
+            userRequest.setPassword(new BCryptPasswordEncoder().encode(userRequest.getPassword()));
             AssetUser createdUser = userRepository.saveUser(userRequest);
+            log.info(createdUser.toString());
+            log.info("Now about to add user to basic auth store");
+            UserAuthService.instance.addUser(createdUser);
+            // CustomUserService.instance.getInMemoryUserDetailsManager().
             return ServiceResponse.builder()
                     .message("")
                     .status(HttpStatus.CREATED.value())

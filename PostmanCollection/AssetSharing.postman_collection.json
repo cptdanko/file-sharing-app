@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0af124e8-8be4-457e-8e59-086cd3acc733",
+		"_postman_id": "62d1c437-2489-41e2-b5ce-c73e36efb7f5",
 		"name": "AssetSharing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "595931"
@@ -66,6 +66,21 @@
 				{
 					"name": "Get Asset",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "temp",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "qinzhang@gmail.com",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -211,12 +226,12 @@
 							"basic": [
 								{
 									"key": "username",
-									"value": "admin",
+									"value": "bsoni@gmail.com",
 									"type": "string"
 								},
 								{
 									"key": "password",
-									"value": "passw@rd",
+									"value": "temp",
 									"type": "string"
 								}
 							]
@@ -224,14 +239,54 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostname}}/api/user/USR_1697285742714",
+							"raw": "{{hostname}}/api/user/USR_1704436947112",
 							"host": [
 								"{{hostname}}"
 							],
 							"path": [
 								"api",
 								"user",
-								"USR_1697285742714"
+								"USR_1704436947112"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Username",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "temp",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "bsoni@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/api/user/username?username=cdanks",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"username"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "cdanks"
+								}
 							]
 						}
 					},
@@ -244,13 +299,13 @@
 							"type": "basic",
 							"basic": [
 								{
-									"key": "username",
-									"value": "admin",
+									"key": "password",
+									"value": "password",
 									"type": "string"
 								},
 								{
-									"key": "password",
-									"value": "passw@rd",
+									"key": "username",
+									"value": "bhuman",
 									"type": "string"
 								}
 							]
@@ -259,7 +314,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"role\": \"admin\",\n    \"name\": \"connie\",\n    \"username\": \"qinzhang\",\n    \"password\": \"temp\",\n    \"department\": \"CTO\",\n    \"assetsUploaded\": [\n        \"doc1\",\n        \"doc2\"\n    ]\n}",
+							"raw": "{\n    \"role\": \"admin\",\n    \"name\": \"connie\",\n    \"username\": \"bsoni@gmail.com\",\n    \"password\": \"temp\",\n    \"department\": \"CTO\",\n    \"assetsUploaded\": [\n        \"doc1\",\n        \"doc2\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -520,10 +575,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "File",
-			"item": []
 		}
 	]
 }
