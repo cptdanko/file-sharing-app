@@ -93,7 +93,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Spring Security dependencies
+		<!-- Spring Security dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -103,7 +103,7 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<! - **************************** -->
+		<!-- **************************** -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>

@@ -3,17 +3,17 @@ package com.mydaytodo.sfa.asset.repository;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
-import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
-import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.*;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.AssetUser;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
+import com.mydaytodo.sfa.asset.service.UserAuthService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -31,21 +31,16 @@ public class UserRepositoryImpl {
     private void initializeDB() {
         dynamoDB = AWSConfig.amazonDynamoDB();
         mapper = new DynamoDBMapper(dynamoDB);
+        initLoadUsers();
     }
     public Optional<AssetUser> getUserByUsername(String username) throws Exception {
-        HashMap<String, AttributeValue> map = new HashMap<>();
-        map.put("username", new AttributeValue().withS(username));
-
-
         Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":userId", new AttributeValue().withS(username));
-
+        eav.put(":username", new AttributeValue().withS(username));
         DynamoDBQueryExpression<AssetUser> queryExp = new DynamoDBQueryExpression<AssetUser>()
                 .withIndexName("username-index")
                 .withKeyConditionExpression("username= :username")
                 .withExpressionAttributeValues(eav)
                 .withConsistentRead(false);
-
         return mapper.query(AssetUser.class, queryExp)
                 .stream()
                 .findFirst();
@@ -54,7 +49,15 @@ public class UserRepositoryImpl {
     public AssetUser getUser(String id) throws Exception {
         return mapper.load(AssetUser.class, id);
     }
+    public void initLoadUsers() {
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withConsistentRead(true);
 
+        List<AssetUser> aUsers = new ArrayList<>(mapper.scan(AssetUser.class, scanExpression));
+        for(AssetUser user: aUsers) {
+            UserAuthService.instance.addUser(user);
+        }
+    }
     /**
      * @param createUserRequest
      * @return
@@ -64,10 +67,7 @@ public class UserRepositoryImpl {
         AssetUser user = CreateUserRequest.convertRequest(createUserRequest);
         user.setDateJoined(new Date());
         user.setLastLogin(new Date());
-        // String encodedPass = new BCryptPasswordEncoder().encode(createUserRequest.getPassword());
         user.setPassword(createUserRequest.getPassword());
-        log.info(user.getUsername());
-        log.info(user.getUserid());
         mapper.save(user);
         log.info("Request with name "+ createUserRequest.getName() + " transformed");
         log.info("User saved");

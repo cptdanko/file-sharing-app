@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @DynamoDBTable(tableName = "AssetUser")
+@ToString
 public class AssetUser {
     @Getter
     enum ROLE {
@@ -39,6 +41,7 @@ public class AssetUser {
     // post mvp, make this it's own table
     @DynamoDBAttribute(attributeName = "role")
     private String role;
+    // to ensure uniqueness, the username is the email id
     @DynamoDBAttribute(attributeName = "username")
     private String username;
     @DynamoDBAttribute(attributeName = "password")
@@ -55,4 +58,5 @@ public class AssetUser {
     //Use Lists and not a String[] array. Array types not supported by DynamoDB
     @DynamoDBAttribute(attributeName = "assets_uploaded")
     private List<String> assetsUploaded;
+
 }
