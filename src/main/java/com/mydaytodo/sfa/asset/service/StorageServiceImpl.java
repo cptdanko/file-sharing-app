@@ -6,9 +6,12 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.s3.waiters.AmazonS3Waiters;
 import com.amazonaws.waiters.WaiterParameters;
+import com.mydaytodo.sfa.asset.config.AWSConfig;
+import com.mydaytodo.sfa.asset.model.AssetUser;
 import com.mydaytodo.sfa.asset.model.DocumentMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.S3Repository;
+import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A storage service to handle file uploads to
@@ -31,6 +35,11 @@ public class StorageServiceImpl {
     private S3Repository s3Repository;
     @Autowired
     private DocumentServiceImpl documentService;
+    @Autowired
+    private UserRepositoryImpl userRepository;
+
+    @Autowired
+    private AWSConfig awsConfig;
 
     /**
      * @param createBucketRequest
@@ -47,15 +56,37 @@ public class StorageServiceImpl {
      */
     public ServiceResponse uploadFile(MultipartFile file, String userId) throws IOException {
 
+        // perform some validation on how many files does the user already have
+        try {
+            Optional<AssetUser> optionalUser = userRepository.getUserByUsername(userId);
+            AssetUser user = optionalUser.orElseThrow();
+            if(user.getAssetsUploaded().size() >= awsConfig.getUploadLimit()) {
+                return ServiceResponse.builder()
+                        .status(HttpStatus.FORBIDDEN.value())
+                        .message("You have reached the limit of the no of documents you can upload")
+                        .build();
+
+            }
+            user.getAssetsUploaded().add(file.getOriginalFilename());
+
+            userRepository.updateUser(user.getUserid(), user);
+        } catch (Exception e) {
+            return ServiceResponse.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(e.getMessage())
+                    .build();
+        }
+
+
         DocumentMetadataUploadRequest request = new DocumentMetadataUploadRequest();
         request.setName(file.getOriginalFilename());
+        // hard coded asset type to DOCUMENT for now
         request.setAssetType("DOCUMENT");
         request.setUserId(userId);
         ServiceResponse metadataUploadResp = documentService.saveDocumentMetadata(request);
-        if(metadataUploadResp.getStatus()> 299) {
+        if(metadataUploadResp.getStatus() > 299) {
             return ServiceResponse.builder()
-                    .data(null)
-                    .message("Something is wrong, please try again later")
+                    .message("Something went wrong, please try again later")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .build();
         }

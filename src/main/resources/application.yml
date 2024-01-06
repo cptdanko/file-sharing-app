@@ -4,13 +4,14 @@ server:
 spring:
   security:
     user:
-      name:
-      password:
+      name: admin
+      password: passw@rd
 
 aws:
+  upload-limit:
   region:
   key:
   secret:
   dynamo-db:
-    amazonDBEndpoint:
-
+    amazonDBEndpoint: dynamodb.ap-southeast-2.amazonaws.com
+  s3UploadBucketName:

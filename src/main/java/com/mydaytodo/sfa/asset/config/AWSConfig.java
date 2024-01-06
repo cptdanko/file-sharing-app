@@ -35,6 +35,9 @@ public class AWSConfig {
     @Value("${aws.dynamo-db.amazonDBEndpoint}")
     private String amazonDBEndpoint;
 
+    @Value("${aws.upload-limit}")
+    private Integer uploadLimit;
+
     /**
      * AWS region set to AP_SOUTHEAST_2
      * It can be changed in the config.yaml file
