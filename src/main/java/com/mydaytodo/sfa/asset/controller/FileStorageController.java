@@ -58,6 +58,7 @@ public class FileStorageController {
      */
     @GetMapping("/list")
     public ResponseEntity<ServiceResponse> listFilesUploadedByUser(@RequestParam("userId") String userId) {
+        log.info(String.format("Request to list files for [ %s ]", userId));
         ServiceResponse response = storageService.listFilesInBucket(userId);
         log.info(response.getMessage());
         log.info(response.getStatus()+"");
@@ -70,9 +71,19 @@ public class FileStorageController {
      */
     @DeleteMapping("/{fileId}/delete")
     public ResponseEntity<ServiceResponse> deleteFile(@RequestParam("userId") String userId, @PathVariable("fileId") String fileId) {
+        log.info(String.format("Request to delete file [ %s ]  by user [ %s ]", fileId, userId));
         ServiceResponse response = storageService.deleteFile(userId, fileId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
+
+    /**
+     * TODO: Currently method not working rewrite it
+     *
+     * @param userId
+     * @param fileId
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/{fileId}/download")
     public ResponseEntity<ServiceResponse> getFileData(@RequestParam("userId") String userId, @PathVariable("fileId") String fileId) throws IOException {
         ServiceResponse response = storageService.downloadFile(userId, fileId);
