@@ -137,6 +137,7 @@ public class StorageServiceImpl {
     }
     public ServiceResponse downloadFile(String userId, String filename) throws IOException {
         String fullpath = userId + "/" + filename;
+        log.info(String.format("Checking if file [ %s ] exists?", fullpath));
         if(!s3Repository.fileExists(fullpath)) {
             return ServiceResponse.builder()
                     .data(null)
@@ -145,6 +146,7 @@ public class StorageServiceImpl {
                     .build();
 
         }
+        log.info("File exists and now downloading the file");
         return s3Repository.downloadData(fullpath);
     }
 

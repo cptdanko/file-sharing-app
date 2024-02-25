@@ -20,10 +20,12 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Component
 @Slf4j
 public class UserRepositoryImpl {
+
     private AmazonDynamoDB dynamoDB = null;
 
     @Autowired
@@ -34,6 +36,7 @@ public class UserRepositoryImpl {
     private void initializeDB() {
         dynamoDB = AWSConfig.amazonDynamoDB();
         mapper = new DynamoDBMapper(dynamoDB);
+        log.info("In the init DB method of UserRepositoryImpl");
         initLoadUsers();
     }
     public Optional<AssetUser> getUserByUsername(String username) throws Exception {

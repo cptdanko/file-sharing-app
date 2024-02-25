@@ -23,13 +23,14 @@ import java.util.List;
 @Component
 @Slf4j
 public class S3Repository {
-    public static String BUCKET_NAME = "mdtupload";
     @Autowired
     private AWSConfig awsConfig;
 
     public boolean fileExists(String filename){
-        boolean doesItExist = awsConfig.s3Client().doesObjectExist(BUCKET_NAME, filename);
-        return doesItExist;
+        log.info(String.format("Checking if [ %s ] file exists", filename));
+        boolean fileExists = awsConfig.s3Client().doesObjectExist(awsConfig.getS3UploadBucketName(), filename);
+        log.info(String.format("Normal exists -> [  %s ]", fileExists));
+        return fileExists;
     }
 
     public ServiceResponse putS3Object(File file,
@@ -42,6 +43,7 @@ public class S3Repository {
 
             PutObjectResult result = awsConfig.s3Client().putObject(putObjectRequest);
             log.info("Finished uploading..........");
+            log.info(awsConfig.getS3UploadBucketName());
             return ServiceResponse.builder()
                     .data(null)
                     .message(result.getMetadata().toString())
@@ -73,7 +75,6 @@ public class S3Repository {
             log.info("About to send request for name "+ createBucketRequest.getBucketName() + " and region "+ createBucketRequest.getRegion());
             Bucket bucket = client.createBucket(createBucketRequest.getBucketName(), createBucketRequest.getRegion());
             HeadBucketRequest requestWait = new HeadBucketRequest(createBucketRequest.getBucketName());
-            s3waiters.bucketExists().run(new WaiterParameters<>());
             log.info("Successfully created the bucket");
             return ServiceResponse.builder()
                     .data(bucket)
@@ -107,18 +108,22 @@ public class S3Repository {
      */
     public List<String> filesByUser(String userId) throws SdkClientException, AmazonServiceException {
         List<String> filenames = new ArrayList<>();
-        ObjectListing objects = awsConfig.s3Client().listObjects(BUCKET_NAME, userId + "/");
+        String bucketName = awsConfig.getS3UploadBucketName();
+        ObjectListing objects = awsConfig.s3Client().listObjects(awsConfig.getS3UploadBucketName(), userId + "/");
         List<S3ObjectSummary> summaries = objects.getObjectSummaries();
-        log.info("About to print out object summaries");
+        log.info(String.format("Printing files by user -> [ %s ]", userId));
+        log.info("-----------------------------------");
         for(S3ObjectSummary summary: summaries) {
-            log.info(summary.getKey());
-            filenames.add(summary.getKey().substring(summary.getKey().indexOf("/") + 1));
+            String filename = summary.getKey().substring(summary.getKey().indexOf("/") + 1);
+            log.info(String.format("file [ %s ] uploaded of size [ %d ] bytes", filename, summary.getSize()));
+            filenames.add(filename);
         }
+        log.info("-----------------------------------");
         return filenames;
     }
 
     public ServiceResponse deleteFile(String filename) throws SdkClientException, AmazonServiceException {
-        DeleteObjectRequest request = new DeleteObjectRequest(BUCKET_NAME, filename);
+        DeleteObjectRequest request = new DeleteObjectRequest(awsConfig.getS3UploadBucketName(), filename);
         try {
             awsConfig.s3Client().deleteObject(request);
             return ServiceResponse.builder()
@@ -138,23 +143,29 @@ public class S3Repository {
      * @return
      */
     public ServiceResponse downloadData(String filename) throws IOException {
-        S3Object object = awsConfig.s3Client().getObject(BUCKET_NAME, filename);
+        S3Object object = awsConfig.s3Client().getObject(awsConfig.getS3UploadBucketName(), filename);
         try (S3ObjectInputStream s3is = object.getObjectContent()) {
             log.info("Got the S3ObjectInputStream.....");
-            try (FileOutputStream fileOutputStream = new FileOutputStream(filename)) {
+            log.info(s3is.toString());
+            log.info("" + s3is.available());
+            String modFilename = filename.substring(filename.indexOf("/") + 1);
+            log.info(String.format("Mod filename [ %s ]", modFilename));
+            try (FileOutputStream fileOutputStream = new FileOutputStream(modFilename)) {
                 log.info("In the file output stream");
                 byte [] read_buf = new byte[1024];
                 int read_len = 0;
                 while ((read_len = s3is.read(read_buf)) > 0) {
                     fileOutputStream.write(read_buf, 0, read_len);
                 }
+                log.info("finished writing to fileoutputstream");
                 return ServiceResponse.builder()
                         .status(HttpStatus.OK.value())
-                        .data(fileOutputStream)
+                        .data(fileOutputStream.toString())
                         .message("")
                         .build();
             }
         } catch (IOException io) {
+            log.error(io.getMessage());
             return ServiceResponse.builder()
                     .data(null)
                     .message(io.getMessage())
