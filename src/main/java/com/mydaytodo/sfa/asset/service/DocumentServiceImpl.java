@@ -29,12 +29,13 @@ public class DocumentServiceImpl {
                 .status(documentRepository.saveAsset(uploadRequest))
                 .build();
     }
+
     public ServiceResponse getDocument(String id) {
         Document document = null;
         ServiceResponse response = new ServiceResponse();
         try {
             document = documentRepository.getDocument(id);
-            if(document == null) {
+            if (document == null) {
                 response.setData(null);
                 response.setStatus(HttpStatus.NOT_FOUND.value());
                 return response;
@@ -49,17 +50,20 @@ public class DocumentServiceImpl {
                     .build();
         }
     }
+
     public ServiceResponse deleteAsset(String id) {
         return ServiceResponse.builder()
                 .status(documentRepository.deleteDocument(id))
                 .build();
     }
+
     public ServiceResponse updateDocumentMetadata(String id, DocumentMetadataUploadRequest uploadRequest) {
         return ServiceResponse
                 .builder()
                 .status(documentRepository.updateDocument(id, uploadRequest))
                 .build();
     }
+
     public List<Document> getUserDouments(String userId) {
         return documentRepository.getUserDocuments(userId);
     }

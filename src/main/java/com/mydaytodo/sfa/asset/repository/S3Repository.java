@@ -26,7 +26,7 @@ public class S3Repository {
     @Autowired
     private AWSConfig awsConfig;
 
-    public boolean fileExists(String filename){
+    public boolean fileExists(String filename) {
         log.info(String.format("Checking if [ %s ] file exists", filename));
         boolean fileExists = awsConfig.s3Client().doesObjectExist(awsConfig.getS3UploadBucketName(), filename);
         log.info(String.format("File exists? -> [  %s ]", fileExists));
@@ -34,7 +34,7 @@ public class S3Repository {
     }
 
     public ServiceResponse putS3Object(File file,
-                            String assetKey) throws IOException {
+                                       String assetKey) throws IOException {
         log.info("About to upload a file to S3");
 
         try {
@@ -60,6 +60,7 @@ public class S3Repository {
 
     /**
      * Not actively used at the moment
+     *
      * @param createBucketRequest
      * @return
      * @throws SdkClientException
@@ -72,7 +73,7 @@ public class S3Repository {
         try {
             AmazonS3Waiters s3waiters = client.waiters();
 
-            log.info("About to send request for name "+ createBucketRequest.getBucketName() + " and region "+ createBucketRequest.getRegion());
+            log.info("About to send request for name " + createBucketRequest.getBucketName() + " and region " + createBucketRequest.getRegion());
             Bucket bucket = client.createBucket(createBucketRequest.getBucketName(), createBucketRequest.getRegion());
             HeadBucketRequest requestWait = new HeadBucketRequest(createBucketRequest.getBucketName());
             log.info("Successfully created the bucket");
@@ -95,7 +96,7 @@ public class S3Repository {
             return ServiceResponse.builder()
                     .data(null)
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .message(sdkClientException.getLocalizedMessage() +" error code \n"+ sdkClientException.getMessage())
+                    .message(sdkClientException.getLocalizedMessage() + " error code \n" + sdkClientException.getMessage())
                     .build();
         }
     }
@@ -103,6 +104,7 @@ public class S3Repository {
     /**
      * Return a list of objects stored in user's
      * s3 folder (object)
+     *
      * @param userId
      * @return
      */
@@ -113,7 +115,7 @@ public class S3Repository {
         List<S3ObjectSummary> summaries = objects.getObjectSummaries();
         log.info(String.format("Printing files by user -> [ %s ]", userId));
         log.info("-----------------------------------");
-        for(S3ObjectSummary summary: summaries) {
+        for (S3ObjectSummary summary : summaries) {
             String filename = summary.getKey().substring(summary.getKey().indexOf("/") + 1);
             log.info(String.format("file [ %s ] uploaded of size [ %d ] bytes", filename, summary.getSize()));
             filenames.add(filename);
@@ -131,10 +133,10 @@ public class S3Repository {
                     .status(HttpStatus.NO_CONTENT.value())
                     .build();
         } catch (AmazonServiceException sce) {
-               return ServiceResponse.builder()
-                       .message(sce.getMessage())
-                       .status(sce.getStatusCode())
-                       .build();
+            return ServiceResponse.builder()
+                    .message(sce.getMessage())
+                    .status(sce.getStatusCode())
+                    .build();
         }
     }
 

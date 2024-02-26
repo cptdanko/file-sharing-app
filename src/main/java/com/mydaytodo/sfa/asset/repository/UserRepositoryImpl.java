@@ -37,6 +37,7 @@ public class UserRepositoryImpl {
         log.info("In the init DB method of UserRepositoryImpl");
         initLoadUsers();
     }
+
     public Optional<AssetUser> getUserByUsername(String username) throws Exception {
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":username", new AttributeValue().withS(username));
@@ -53,15 +54,17 @@ public class UserRepositoryImpl {
     public AssetUser getUser(String id) throws Exception {
         return mapper.load(AssetUser.class, id);
     }
+
     public void initLoadUsers() {
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
                 .withConsistentRead(true);
 
         List<AssetUser> aUsers = new ArrayList<>(mapper.scan(AssetUser.class, scanExpression));
-        for(AssetUser user: aUsers) {
+        for (AssetUser user : aUsers) {
             UserAuthServiceImpl.instance.addUser(user);
         }
     }
+
     /**
      * @param createUserRequest
      * @return
@@ -73,16 +76,17 @@ public class UserRepositoryImpl {
         user.setLastLogin(new Date());
         user.setPassword(createUserRequest.getPassword());
         mapper.save(user);
-        log.info("Request with name "+ createUserRequest.getName() + " transformed");
+        log.info("Request with name " + createUserRequest.getName() + " transformed");
         log.info("User saved");
         return user;
     }
+
     public Integer deleteUser(String userId) throws Exception {
         DeleteItemRequest request = new DeleteItemRequest();
         request.setTableName("AssetUser");
         request.addKeyEntry("user_id", new AttributeValue().withS(userId));
         AssetUser assetUser = getUser(userId);
-        if(assetUser == null) {
+        if (assetUser == null) {
             return HttpStatus.NOT_FOUND.value();
         }
         dynamoDB.deleteItem(request);
@@ -96,11 +100,11 @@ public class UserRepositoryImpl {
      * @throws Exception
      */
     public AssetUser updateUser(String userId, AssetUser user) throws Exception {
-        log.info("in updateUser() - "+ userId);
+        log.info("in updateUser() - " + userId);
         Map<String, AttributeValue> itemKey = new HashMap<>();
         log.info("RAN THE UPDATE COMMAND");
         AssetUser assetUser = getUser(userId);
-        if(assetUser == null) {
+        if (assetUser == null) {
             return null;
         }
         log.info("Retrieved assetUser");
@@ -109,7 +113,7 @@ public class UserRepositoryImpl {
         request.setTableName("AssetUser");
         itemKey.put("user_id", new AttributeValue().withS(userId));
         request.setKey(itemKey);
-        HashMap<String,AttributeValueUpdate> updatedValues = new HashMap<>();
+        HashMap<String, AttributeValueUpdate> updatedValues = new HashMap<>();
         updatedValues.put("username", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getUsername())));
         updatedValues.put("name", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getName())));
         updatedValues.put("department", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getDepartment())));
@@ -122,7 +126,7 @@ public class UserRepositoryImpl {
             updatedValues.put("last_login", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getLastLogin().toString())));*/
 
         List<AttributeValue> attributeValues = new ArrayList<>();
-        for(String doc: user.getAssetsUploaded()) {
+        for (String doc : user.getAssetsUploaded()) {
             attributeValues.add(new AttributeValue().withS(doc));
         }
         updatedValues.put("assets_uploaded", new AttributeValueUpdate().withValue(new AttributeValue().withL(attributeValues)));
