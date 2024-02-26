@@ -1,12 +1,14 @@
 package com.mydaytodo.sfa.asset.controller;
 
-import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.mydaytodo.sfa.asset.model.CustomCreateBucketRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.StorageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,12 +66,11 @@ public class FileStorageController {
         log.info(response.getStatus()+"");
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
-
     /**
      * @param fileId
      * @return
      */
-    @DeleteMapping("/{fileId}/delete")
+    @DeleteMapping("/delete/{fileId}")
     public ResponseEntity<ServiceResponse> deleteFile(@RequestParam("userId") String userId, @PathVariable("fileId") String fileId) {
         log.info(String.format("Request to delete file [ %s ]  by user [ %s ]", fileId, userId));
         ServiceResponse response = storageService.deleteFile(userId, fileId);
@@ -85,9 +86,16 @@ public class FileStorageController {
      * @throws IOException
      */
     @GetMapping("/{fileId}/download")
-    public ResponseEntity<ServiceResponse> getFileData(@RequestParam("userId") String userId, @PathVariable("fileId") String fileId) throws IOException {
+    public ResponseEntity<Resource> getFileData(@RequestParam("userId") String userId, @PathVariable("fileId") String fileId) throws IOException {
         ServiceResponse response = storageService.downloadFile(userId, fileId);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        //if(response.getStatus().equals(HttpStatus.OK.toString())) {
+        ByteArrayResource byteArrayResource = new ByteArrayResource((byte[]) response.getData());
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(byteArrayResource.contentLength())
+                .body(byteArrayResource);
+        //}
+        //return new ResponseEntity<>(null, HttpStatus.valueOf(response.getStatus()));
     }
 
     /**

@@ -1,10 +1,11 @@
 package com.mydaytodo.sfa.asset.config;
 
-import com.mydaytodo.sfa.asset.service.UserAuthService;
+import com.mydaytodo.sfa.asset.service.UserAuthServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,8 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static jakarta.servlet.DispatcherType.*;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+import static jakarta.servlet.DispatcherType.ERROR;
+import static jakarta.servlet.DispatcherType.FORWARD;
 
 @Configuration
 public class SecurityConfig {
@@ -40,8 +41,7 @@ public class SecurityConfig {
                         })
                 .csrf(httpSecurityCsrfConfigurer ->
                         httpSecurityCsrfConfigurer.ignoringRequestMatchers("/api/asset/upload"
-                                ,"/api/file/upload"
-                                ,"/delete"
+                                ,"/api/file/**"
                                 ,"/api/user/"));
 
         return httpSecurity.build();
@@ -49,7 +49,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager inMemoryUserDetailsManager = UserAuthService.instance.getInMemoryUserDetailsManager();
+        InMemoryUserDetailsManager inMemoryUserDetailsManager = UserAuthServiceImpl.instance.getInMemoryUserDetailsManager();
         UserDetails userDetails = User.withUsername("bhuman")
                 .password(bCryptPasswordEncoder().encode("password"))
                 .roles("ADMIN", "USER")

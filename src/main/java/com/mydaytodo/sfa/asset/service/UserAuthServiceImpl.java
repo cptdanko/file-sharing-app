@@ -10,26 +10,26 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Data
 @Slf4j
-public class UserAuthService {
+public class UserAuthServiceImpl {
     /**
      * Temporary usage of InMemoryUserDetailsManager, to be replaced with
      * a database (DynamoDB) backed user service.
      */
     private InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
-    public static final UserAuthService instance = new UserAuthService();
+    public static final UserAuthServiceImpl instance = new UserAuthServiceImpl();
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    private UserAuthService() {
+    private UserAuthServiceImpl() {
 
     }
     public void addUser(AssetUser assetUser) {
-        log.info("About to create a user");
-        log.info(assetUser.toString());
+        log.info(String.format("About to create a user with name [ %s ]", assetUser.getUsername()));
+        log.info(String.format("User object = [ %s ]", assetUser.toString()));
         UserDetails userDetails = User.withUsername(assetUser.getUsername())
                         .password(assetUser.getPassword())
                                 .roles("ADMIN", "USER")
                                         .build();
         log.info("Added user "+ assetUser.getUsername() + " to InMemoryStore");
-        UserAuthService.instance.getInMemoryUserDetailsManager().createUser(userDetails);
+        UserAuthServiceImpl.instance.getInMemoryUserDetailsManager().createUser(userDetails);
     }
 }

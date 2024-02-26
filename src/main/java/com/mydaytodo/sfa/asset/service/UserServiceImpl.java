@@ -85,7 +85,7 @@ public class UserServiceImpl {
             AssetUser createdUser = userRepository.saveUser(userRequest);
             log.info(createdUser.toString());
             log.info("Now about to add user to basic auth store");
-            UserAuthService.instance.addUser(createdUser);
+            UserAuthServiceImpl.instance.addUser(createdUser);
             // CustomUserService.instance.getInMemoryUserDetailsManager().
             return ServiceResponse.builder()
                     .message("")

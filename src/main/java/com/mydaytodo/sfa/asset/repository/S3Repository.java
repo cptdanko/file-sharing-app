@@ -29,7 +29,7 @@ public class S3Repository {
     public boolean fileExists(String filename){
         log.info(String.format("Checking if [ %s ] file exists", filename));
         boolean fileExists = awsConfig.s3Client().doesObjectExist(awsConfig.getS3UploadBucketName(), filename);
-        log.info(String.format("Normal exists -> [  %s ]", fileExists));
+        log.info(String.format("File exists? -> [  %s ]", fileExists));
         return fileExists;
     }
 
@@ -150,7 +150,12 @@ public class S3Repository {
             log.info("" + s3is.available());
             String modFilename = filename.substring(filename.indexOf("/") + 1);
             log.info(String.format("Mod filename [ %s ]", modFilename));
-            try (FileOutputStream fileOutputStream = new FileOutputStream(modFilename)) {
+            return ServiceResponse.builder()
+                    .status(HttpStatus.OK.value())
+                    .data(s3is.readAllBytes())
+                    .message("")
+                    .build();
+            /*try (FileOutputStream fileOutputStream = new FileOutputStream(modFilename)) {
                 log.info("In the file output stream");
                 byte [] read_buf = new byte[1024];
                 int read_len = 0;
@@ -160,10 +165,10 @@ public class S3Repository {
                 log.info("finished writing to fileoutputstream");
                 return ServiceResponse.builder()
                         .status(HttpStatus.OK.value())
-                        .data(fileOutputStream.toString())
+                        .data(s3is.readAllBytes())
                         .message("")
                         .build();
-            }
+            }*/
         } catch (IOException io) {
             log.error(io.getMessage());
             return ServiceResponse.builder()
