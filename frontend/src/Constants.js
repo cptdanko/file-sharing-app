@@ -1,0 +1,1 @@
+export const API_FILE_PATH = "/api/file";
