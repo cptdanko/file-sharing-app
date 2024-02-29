@@ -5,7 +5,6 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.s3.waiters.AmazonS3Waiters;
-import com.amazonaws.waiters.WaiterParameters;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 

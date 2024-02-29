@@ -23,26 +23,28 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.httpBasic(Customizer.withDefaults())
-                        .authorizeHttpRequests(auth -> {
-                           try {
-                               auth.dispatcherTypeMatchers(FORWARD, ERROR).permitAll();
-                               auth.requestMatchers("/api/user/login",
-                                       "/index",
-                                       "/ping",
-                                       "/healthcheck").permitAll()
-                                       .anyRequest()
-                                       .authenticated();
-                           } catch(RuntimeException re) {
-                               throw new RuntimeException("Error in the security config ->" + re.getMessage());
-                           }
-                        })
+                .authorizeHttpRequests(auth -> {
+                    try {
+                        auth.dispatcherTypeMatchers(FORWARD, ERROR).permitAll();
+                        auth.requestMatchers("/api/user/login",
+                                        "/api/user/",
+                                        "/index",
+                                        "/ping",
+                                        "/healthcheck").permitAll()
+                                .anyRequest()
+                                .authenticated();
+                    } catch (RuntimeException re) {
+                        throw new RuntimeException("Error in the security config ->" + re.getMessage());
+                    }
+                })
                 .csrf(httpSecurityCsrfConfigurer ->
                         httpSecurityCsrfConfigurer.ignoringRequestMatchers("/api/asset/upload"
-                                ,"/api/file/**"
-                                ,"/api/user/"));
+                                , "/api/file/**"
+                                , "/api/user/"));
 
         return httpSecurity.build();
     }
@@ -54,7 +56,8 @@ public class SecurityConfig {
                 .password(bCryptPasswordEncoder().encode("password"))
                 .roles("ADMIN", "USER")
                 .build();
-        inMemoryUserDetailsManager.createUser(userDetails);;
+        inMemoryUserDetailsManager.createUser(userDetails);
+        ;
         return inMemoryUserDetailsManager;
     }
 }

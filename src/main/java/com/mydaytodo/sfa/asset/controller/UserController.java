@@ -23,20 +23,24 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<ServiceResponse> getUser(@PathVariable("userId") String userId) {
-        log.info("About to query user with id "+ userId);
+        log.info("About to query user with id " + userId);
         ServiceResponse response = userService.getUser(userId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
-    @PostMapping("/")
+
+    @PostMapping(value = "/", consumes = {"application/json"})
     public ResponseEntity<ServiceResponse> createUser(@RequestBody CreateUserRequest createUserRequest) {
+        log.info(String.format("Got request [ %s ]", createUserRequest.toString()));
         ServiceResponse response = userService.saveUser(createUserRequest);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<ServiceResponse> deleteUser(@PathVariable("userId") String userId) {
         ServiceResponse deleteState = userService.deleteUser(userId);
         return new ResponseEntity<>(deleteState, HttpStatus.valueOf(deleteState.getStatus()));
     }
+
     @PutMapping("/{userId}")
     public ResponseEntity<ServiceResponse> updateUserDetails(@PathVariable("userId") String userId, @RequestBody CreateUserRequest createUserRequest) {
         ServiceResponse response = userService.updateUser(userId, createUserRequest);
@@ -45,6 +49,7 @@ public class UserController {
 
     /**
      * Get all users by department
+     *
      * @param department
      * @return
      */
@@ -53,6 +58,7 @@ public class UserController {
         List<AssetUser> users = new ArrayList<>();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
     @GetMapping("/username")
     public ResponseEntity<ServiceResponse> getByUsername(@RequestParam("username") String username) {
         ServiceResponse response = userService.getByUsername(username);

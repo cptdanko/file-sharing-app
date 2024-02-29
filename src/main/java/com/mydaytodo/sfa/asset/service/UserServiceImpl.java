@@ -24,7 +24,7 @@ public class UserServiceImpl {
         try {
             log.info("About to query userRepository with id " + id);
             user = userRepository.getUser(id);
-            if(user == null) {
+            if (user == null) {
                 log.info("Got response");
                 return ServiceResponse.builder()
                         .status(HttpStatus.NOT_FOUND.value())
@@ -35,7 +35,7 @@ public class UserServiceImpl {
                     .status(HttpStatus.OK.value())
                     .data(user)
                     .build();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ServiceResponse.builder()
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .data(null)
@@ -43,12 +43,13 @@ public class UserServiceImpl {
                     .build();
         }
     }
+
     public ServiceResponse getByUsername(String username) {
         Optional<AssetUser> user;
         log.info("About to get user by username");
         try {
             user = userRepository.getUserByUsername(username);
-            if(user.isPresent()) {
+            if (user.isPresent()) {
                 return ServiceResponse.builder()
                         .data(user)
                         .status(HttpStatus.OK.value())
@@ -56,7 +57,7 @@ public class UserServiceImpl {
                         .build();
             } else {
                 return ServiceResponse.builder()
-                        .message("User with username " + username +" not found. Are you sure it's the right name?")
+                        .message("User with username " + username + " not found. Are you sure it's the right name?")
                         .status(HttpStatus.NOT_FOUND.value())
                         .build();
             }
@@ -69,12 +70,13 @@ public class UserServiceImpl {
     }
 
     public ServiceResponse saveUser(CreateUserRequest userRequest) {
-        String key = KeyStart.USER_KEY +  System.currentTimeMillis();
+        log.info(String.format("About to print out user data [ %s ]", userRequest.toString()));
+        String key = KeyStart.USER_KEY + System.currentTimeMillis();
         userRequest.setUserId(key);
-        log.info("About to save user with name "+ userRequest.getUsername());
+        log.info("About to save user with name " + userRequest.getUsername());
         try {
             // add validation to ensure user does not exist
-            if(userRepository.getUserByUsername(userRequest.getUsername()).isPresent()) {
+            if (userRepository.getUserByUsername(userRequest.getUsername()).isPresent()) {
                 return ServiceResponse.builder()
                         .data(null)
                         .message(userRequest.getUsername() + " already exists in database")
@@ -100,6 +102,7 @@ public class UserServiceImpl {
                     .build();
         }
     }
+
     public ServiceResponse deleteUser(String userId) {
         try {
             Integer responseCode = userRepository.deleteUser(userId);
@@ -116,6 +119,7 @@ public class UserServiceImpl {
                     .build();
         }
     }
+
     public ServiceResponse updateUser(String userId, CreateUserRequest createUserRequest) {
         try {
             AssetUser assetUser = CreateUserRequest.convertRequest(createUserRequest);

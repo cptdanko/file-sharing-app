@@ -5,7 +5,6 @@ import { API_FILE_PATH } from "./Constants";
 import { CookiesProvider, useCookies, Cookies } from "react-cookie";
 
 function App() {
-  const [ping, setPing] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
@@ -14,7 +13,6 @@ function App() {
   const [file, setFile] = useState(null);
 
   useEffect(() => {
-    doHealthCheck();
     if (cookie.user && cookie.user.username) {
       setLoggedIn(true);
     }
@@ -22,11 +20,7 @@ function App() {
   function getUserNamePassForBasicAuth() {
     return "Basic " + btoa(username + ":" + password);
   }
-  async function doHealthCheck() {
-    const resp = await fetch("/ping");
-    const txt = await resp.text();
-    setPing(txt);
-  }
+
   async function login() {
     console.log("In the login method");
     // call the healthcheck method to know it's valid
@@ -49,6 +43,10 @@ function App() {
     }
   }
   async function filesUploaded() {
+    if (username.length === 0) {
+      alert("You need to login before using this");
+      return;
+    }
     // fetching the no of files uploaded
     const userNamePasswd = getUserNamePassForBasicAuth();
     const urlStr = `/api/file/list?userId=${username}`;
@@ -63,28 +61,6 @@ function App() {
   function onFileSelect(event) {
     console.log(event.target.value);
     setFile(event.target.value);
-  }
-  async function uploadFile(event) {
-    event.preventDefault();
-    let frm = document.getElementById("uploadDocument");
-    const formData = new FormData(frm);
-    fetch(`/api/file/upload`, {
-      method: "POST",
-      headers: {
-        Authorization: cookie.user.userNamePasswd,
-      },
-      body: formData,
-    }).then((resp) => {
-      console.log(JSON.stringify(resp));
-      console.log(resp.status);
-      if (resp.status === 403) {
-        alert(
-          "Max file upload limit reached! Delete files first before uploading now."
-        );
-      } else {
-        filesUploaded();
-      }
-    });
   }
 
   async function deleteFile(filename) {
@@ -101,6 +77,52 @@ function App() {
     filesUploaded();
   }
 
+  async function uploadFile(event) {
+    event.preventDefault();
+    let frm = document.getElementById("uploadDocument");
+    const formData = new FormData(frm);
+    fetch(`/api/file/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: cookie.user.userNamePasswd,
+      },
+      body: formData,
+    }).then((resp) => {
+      console.log(JSON.stringify(resp));
+      console.log(resp.status);
+      if (resp.status === 403) {
+        alert("Max file upload limit reached! Delete files first before uploading now.");
+      } else {
+        filesUploaded();
+      }
+    });
+  }
+  async function signup(event) {
+    event.preventDefault();
+    const frm = document.getElementById("signupForm");
+    const formData = new FormData(frm);
+    const jsonSignup = {};
+    formData.entries().forEach((entry) => (jsonSignup[entry[0]] = entry[1]));
+    console.log("Printing out the form data");
+    console.log(JSON.stringify(jsonSignup));
+    fetch("/api/user/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonSignup),
+    }).then((resp) => {
+      console.log(JSON.stringify(resp));
+    });
+  }
+  function logout(event) {
+    event.preventDefault();
+    setCookie("user", null, "/");
+    setLoggedIn(false);
+    setUserFiles(null);
+    setUsername("");
+  }
+
   return (
     <CookiesProvider>
       <div className="App">
@@ -110,44 +132,72 @@ function App() {
           <h3> User Details </h3>
           <p>
             Username:{" "}
-            <input
-              type="text"
-              onChange={(e) => setUsername(e.target.value)}
-              value={username}
-            />
+            <input type="text" onChange={(e) => setUsername(e.target.value)} value={username} />
           </p>
           <p>
             Password:{" "}
-            <input
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-            />
+            <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} />
           </p>
           <div>
             {loggedIn ? (
-              <span>
-                Logged in as
-                <b>
-                  {cookie ? (
-                    <b>
-                      <i> {cookie.user.username}</i>
-                    </b>
-                  ) : (
-                    <span> --- </span>
-                  )}
-                </b>{" "}
-              </span>
+              <div>
+                <div>
+                  Logged in as
+                  <b>
+                    {cookie ? (
+                      <b>
+                        <i> {cookie.user.username}</i>
+                      </b>
+                    ) : (
+                      <span> --- </span>
+                    )}
+                  </b>{" "}
+                </div>
+                <div>
+                  <button className="btn btn-sm btn-success" onClick={logout}>
+                    {" "}
+                    Logout{" "}
+                  </button>
+                </div>
+              </div>
             ) : (
-              <button onClick={() => login()}> Login </button>
+              <button className="btn btn-sm btn-success" onClick={() => login()}>
+                {" "}
+                Login{" "}
+              </button>
             )}
           </div>
         </div>
+        {loggedIn ? (
+          <span> --- </span>
+        ) : (
+          <div id="signup">
+            <h3> Form for new user sign up</h3>
+            <hr />
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <form onSubmit={signup} id="signupForm">
+                <div style={{ margin: 8 }}>
+                  {" "}
+                  <input type="text" name="name" placeholder="Your name" />{" "}
+                </div>
+                <div style={{ margin: 8 }}>
+                  <input type="text" name="username" placeholder="Your email address" />
+                </div>
+                <div style={{ margin: 8 }}>
+                  <input type="password" name="password" placeholder="Your secret password" />
+                </div>
+                <div>
+                  <button className="btn btn-sm btn-success" type="submit">
+                    {" "}
+                    Signup{" "}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
         <hr />
-        <div id="signupForm">
-          <h3> Form for new user sign up</h3>
-          <hr />
-        </div>
+
         <div id="listFilesUploaded">
           <div>
             {userFiles != null && userFiles.length > 0 ? (
@@ -212,7 +262,7 @@ function App() {
                 ) : (
                   <p>
                     {" "}
-                    <button className="btn btn-success" onClick={filesUploaded}>
+                    <button className="btn btn-sm btn-success" onClick={filesUploaded}>
                       Show
                     </button>
                   </p>

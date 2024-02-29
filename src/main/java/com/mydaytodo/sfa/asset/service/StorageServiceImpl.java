@@ -64,6 +64,7 @@ public class StorageServiceImpl {
             log.info(String.format("Fetching files by username [ %d ]", files.size()));
             log.info("No of files " + files.size());
             Optional<AssetUser> optionalUser = userRepository.getUserByUsername(userId);
+            log.info(String.format("Got user by name [ %s ]", optionalUser.get()));
             AssetUser user = optionalUser.orElseThrow();
             if (files.size() >= awsConfig.getUploadLimit()) {
                 log.info("Max upload limit reached");
@@ -74,7 +75,7 @@ public class StorageServiceImpl {
 
             }
             // user.getAssetsUploaded().add(file.getOriginalFilename());
-            userRepository.updateUser(user.getUserid(), user);
+            // userRepository.updateUser(user.getUserid(), user);
         } catch (Exception e) {
             return ServiceResponse.builder()
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -88,6 +89,7 @@ public class StorageServiceImpl {
         // hard coded asset type to DOCUMENT for now
         request.setAssetType("DOCUMENT");
         request.setUserId(userId);
+        log.info("Set the documentMetaUploadRequest obje3ct");
         ServiceResponse metadataUploadResp = documentService.saveDocumentMetadata(request);
         if (metadataUploadResp.getStatus() > 299) {
             return ServiceResponse.builder()
