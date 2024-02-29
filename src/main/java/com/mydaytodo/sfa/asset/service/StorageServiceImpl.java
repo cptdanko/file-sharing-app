@@ -48,6 +48,7 @@ public class StorageServiceImpl {
     public ServiceResponse createBucket(CreateBucketRequest createBucketRequest) {
         return s3Repository.createBucket(createBucketRequest);
     }
+
     /**
      * 1. Get the filename along with userid
      * 2. Save all that info in the Document class
@@ -58,17 +59,21 @@ public class StorageServiceImpl {
 
         // perform some validation on how many files does the user already have
         try {
+            ServiceResponse serviceResponse = listFilesInBucket(userId);
+            List<String> files = (List<String>) serviceResponse.getData();
+            log.info(String.format("Fetching files by username [ %d ]", files.size()));
+            log.info("No of files " + files.size());
             Optional<AssetUser> optionalUser = userRepository.getUserByUsername(userId);
             AssetUser user = optionalUser.orElseThrow();
-            if(user.getAssetsUploaded().size() >= awsConfig.getUploadLimit()) {
+            if (files.size() >= awsConfig.getUploadLimit()) {
+                log.info("Max upload limit reached");
                 return ServiceResponse.builder()
                         .status(HttpStatus.FORBIDDEN.value())
                         .message("You have reached the limit of the no of documents you can upload")
                         .build();
 
             }
-            user.getAssetsUploaded().add(file.getOriginalFilename());
-
+            // user.getAssetsUploaded().add(file.getOriginalFilename());
             userRepository.updateUser(user.getUserid(), user);
         } catch (Exception e) {
             return ServiceResponse.builder()
@@ -84,7 +89,7 @@ public class StorageServiceImpl {
         request.setAssetType("DOCUMENT");
         request.setUserId(userId);
         ServiceResponse metadataUploadResp = documentService.saveDocumentMetadata(request);
-        if(metadataUploadResp.getStatus() > 299) {
+        if (metadataUploadResp.getStatus() > 299) {
             return ServiceResponse.builder()
                     .message("Something went wrong, please try again later")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -97,6 +102,7 @@ public class StorageServiceImpl {
 
     /**
      * Method to show all files uploaded by user
+     *
      * @param userId
      * @return
      */
@@ -111,8 +117,10 @@ public class StorageServiceImpl {
                 .message("")
                 .build();
     }
+
     /**
      * Not sure how to work this one out yet
+     *
      * @param filename
      */
     public void downloadFile(String filename) {
@@ -125,7 +133,7 @@ public class StorageServiceImpl {
      */
     public ServiceResponse deleteFile(String userId, String filename) {
         String fullpath = userId + "/" + filename;
-        if(!s3Repository.fileExists(fullpath)) {
+        if (!s3Repository.fileExists(fullpath)) {
             return ServiceResponse.builder()
                     .data(null)
                     .status(HttpStatus.NOT_FOUND.value())
@@ -135,10 +143,11 @@ public class StorageServiceImpl {
         }
         return s3Repository.deleteFile(fullpath);
     }
+
     public ServiceResponse downloadFile(String userId, String filename) throws IOException {
         String fullpath = userId + "/" + filename;
         log.info(String.format("Checking if file [ %s ] exists?", fullpath));
-        if(!s3Repository.fileExists(fullpath)) {
+        if (!s3Repository.fileExists(fullpath)) {
             return ServiceResponse.builder()
                     .data(null)
                     .status(HttpStatus.NOT_FOUND.value())
@@ -151,7 +160,6 @@ public class StorageServiceImpl {
     }
 
     /**
-     *
      * @param multipartFile
      * @return
      * @throws IOException

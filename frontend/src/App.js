@@ -1,16 +1,23 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
+import { API_FILE_PATH } from "./Constants";
+import { CookiesProvider, useCookies, Cookies } from "react-cookie";
 
 function App() {
   const [ping, setPing] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [userFiles, setUserFiles] = useState([]);
+  const [userFiles, setUserFiles] = useState(null);
+  const [cookie, setCookie] = useCookies(["user"]);
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     doHealthCheck();
+    if (cookie.user && cookie.user.username) {
+      setLoggedIn(true);
+    }
   });
   function getUserNamePassForBasicAuth() {
     return "Basic " + btoa(username + ":" + password);
@@ -34,11 +41,16 @@ function App() {
     } else {
       console.log("YAY successfully logged in");
       setLoggedIn(true);
+      const userObj = {
+        username,
+        userNamePasswd,
+      };
+      setCookie("user", userObj, "/");
     }
   }
   async function filesUploaded() {
     // fetching the no of files uploaded
-    let userNamePasswd = getUserNamePassForBasicAuth();
+    const userNamePasswd = getUserNamePassForBasicAuth();
     const urlStr = `/api/file/list?userId=${username}`;
     const resp = await fetch(urlStr, {
       headers: {
@@ -48,31 +60,54 @@ function App() {
     const json = await resp.json();
     setUserFiles(json.data);
   }
-  async function uploadFile() {}
-  async function deleteFile() {}
-  async function downloadFile(filename) {
-    let userNamePasswd = getUserNamePassForBasicAuth();
-    const urlStr = `/api/file/${filename}/download?userId=${username}`;
+  function onFileSelect(event) {
+    console.log(event.target.value);
+    setFile(event.target.value);
+  }
+  async function uploadFile(event) {
+    event.preventDefault();
+    let frm = document.getElementById("uploadDocument");
+    const formData = new FormData(frm);
+    fetch(`/api/file/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: cookie.user.userNamePasswd,
+      },
+      body: formData,
+    }).then((resp) => {
+      console.log(JSON.stringify(resp));
+      console.log(resp.status);
+      if (resp.status === 403) {
+        alert(
+          "Max file upload limit reached! Delete files first before uploading now."
+        );
+      } else {
+        filesUploaded();
+      }
+    });
+  }
+
+  async function deleteFile(filename) {
+    const urlStr = `${API_FILE_PATH}/delete/${filename}?userId=${username}`;
+    const userNamePasswd = getUserNamePassForBasicAuth();
     const resp = await fetch(urlStr, {
+      method: "DELETE",
       headers: {
         Authorization: userNamePasswd,
       },
     });
-    const json = await resp.json();
+    const status = await resp.status;
+    console.log(`Result of delete operation -> ${status}`);
+    filesUploaded();
   }
 
   return (
-    <div className="App">
-      <h1> Welcome to Document Sharing app </h1>
-      <div id="pingCheck">
-        <h3>Ping state</h3>
-        <p>
-          {" "}
-          It is <b>{ping}</b>
-        </p>
-      </div>
-      <div id="loginForm">
-        <Container>
+    <CookiesProvider>
+      <div className="App">
+        <h1> Welcome to Document Sharing app </h1>
+        <hr />
+        <div id="loginForm">
+          <h3> User Details </h3>
           <p>
             Username:{" "}
             <input
@@ -89,76 +124,132 @@ function App() {
               value={password}
             />
           </p>
-        </Container>
-        <div></div>
-        <div>
-          {loggedIn ? (
-            <span>
-              Logged in as
-              <b>
-                <i> {username} </i>
-              </b>{" "}
-            </span>
-          ) : (
-            <button onClick={() => login()}> Login </button>
-          )}
-        </div>
-      </div>
-      <hr />
-      <div id="signupForm">
-        <h3> Form for new user sign up</h3>
-        <hr />
-      </div>
-      <div id="listFilesUploaded">
-        <h3> File list with download/delete buttons</h3>
-        <hr />
-        <div>
-          {userFiles.length > 0 ? (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
+          <div>
+            {loggedIn ? (
               <span>
-                {" "}
-                Files Uploaded by{" "}
-                <i>
-                  <b>{username}</b>
-                </i>
+                Logged in as
+                <b>
+                  {cookie ? (
+                    <b>
+                      <i> {cookie.user.username}</i>
+                    </b>
+                  ) : (
+                    <span> --- </span>
+                  )}
+                </b>{" "}
               </span>
-              {userFiles.map((file) => (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    marginRight: "5px",
-                  }}
-                >
-                  <div key={file}> {file}</div>
-                  <div>
-                    {" "}
-                    <button>Download</button>{" "}
-                  </div>
-                  <div>
-                    <button>Delete</button>{" "}
-                  </div>
+            ) : (
+              <button onClick={() => login()}> Login </button>
+            )}
+          </div>
+        </div>
+        <hr />
+        <div id="signupForm">
+          <h3> Form for new user sign up</h3>
+          <hr />
+        </div>
+        <div id="listFilesUploaded">
+          <div>
+            {userFiles != null && userFiles.length > 0 ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ marginBottom: 8 }}>
+                  {" "}
+                  Files Uploaded by{" "}
+                  <i>
+                    <b>{username}</b>
+                  </i>
                 </div>
-              ))}
+                {userFiles.map((file) => (
+                  <div
+                    key={file}
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      marginRight: "5px",
+                    }}
+                  >
+                    <div style={{ marginLeft: 8, marginRight: 8 }}> {file}</div>
+                    <div style={{ marginLeft: 8, marginRight: 8 }}>
+                      {" "}
+                      <a
+                        href={`http://localhost:5000/api/file/${file}/download?userId=${username}`}
+                        target="_blank"
+                      >
+                        {" "}
+                        Download{" "}
+                      </a>
+                    </div>
+                    <div>
+                      <a
+                        style={{
+                          textDecoration: "underline",
+                          color: "#0d6efd",
+                        }}
+                        onClick={() => deleteFile(file)}
+                      >
+                        Delete
+                      </a>{" "}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>
+                {userFiles !== null && userFiles.length == 0 ? (
+                  <span>
+                    {" "}
+                    No Files Uploaded by{" "}
+                    <b>
+                      <i>{username} </i>
+                    </b>{" "}
+                  </span>
+                ) : (
+                  <p>
+                    {" "}
+                    <button className="btn btn-success" onClick={filesUploaded}>
+                      Show
+                    </button>
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        <hr />
+        <div
+          id="uploadFile"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <div style={{ margin: 8 }}>
+              <b>Upload a new file</b>
             </div>
-          ) : (
-            <button onClick={filesUploaded}>Show</button>
-          )}
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <form onSubmit={uploadFile} id="uploadDocument">
+                <input type="file" name="file" onChange={onFileSelect} />
+                <input type="hidden" value={username} name="userId" />
+                <div style={{ marginTop: 8 }}>
+                  <button className="btn btn-sm btn-success" type="submit">
+                    {" "}
+                    Upload{" "}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-      <hr />
-      <div id="uploadFile">
-        <h3> Upload new file</h3>
-        <hr />
-        <Container></Container>
-      </div>
-    </div>
+    </CookiesProvider>
   );
 }
 
