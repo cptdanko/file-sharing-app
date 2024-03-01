@@ -30,7 +30,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     try {
                         auth.dispatcherTypeMatchers(FORWARD, ERROR).permitAll();
-                        auth.requestMatchers("/api/user/login",
+                        auth.requestMatchers("/",
+                                        "/static/**",
+                                        "/favicon.ico",
+                                        "/logo192.png",
+                                        "/manifest.json",
+                                        "/index.html",
+                                        "/api/user/login",
                                         "/api/user/",
                                         "/index",
                                         "/ping",

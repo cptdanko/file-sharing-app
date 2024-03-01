@@ -77,7 +77,7 @@ function App() {
     filesUploaded();
   }
 
-  async function uploadFile(event) {
+  function uploadFile(event) {
     event.preventDefault();
     let frm = document.getElementById("uploadDocument");
     const formData = new FormData(frm);
@@ -97,14 +97,16 @@ function App() {
       }
     });
   }
-  async function signup(event) {
+  function signup(event) {
     event.preventDefault();
-    const frm = document.getElementById("signupForm");
-    const formData = new FormData(frm);
+    // const frm = document.getElementById("signupForm");
+    // console.log(frm);
+    // const formData = new FormData(frm);
+    // console.log(formData);
     const jsonSignup = {};
-    formData.entries().forEach((entry) => (jsonSignup[entry[0]] = entry[1]));
-    console.log("Printing out the form data");
-    console.log(JSON.stringify(jsonSignup));
+    jsonSignup["name"] = document.getElementsByName("name")[0].value;
+    jsonSignup["username"] = document.getElementsByName("username")[0].value;
+    jsonSignup["password"] = document.getElementsByName("password")[0].value;
     fetch("/api/user/", {
       method: "POST",
       headers: {
@@ -128,16 +130,22 @@ function App() {
       <div className="App">
         <h1> Welcome to Document Sharing app </h1>
         <hr />
-        <div id="loginForm">
-          <h3> User Details </h3>
-          <p>
-            Username:{" "}
-            <input type="text" onChange={(e) => setUsername(e.target.value)} value={username} />
-          </p>
-          <p>
-            Password:{" "}
-            <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} />
-          </p>
+        <div>
+          <div id="loginForm">
+            <h3> User Details </h3>
+            <p>
+              Username:{" "}
+              <input type="text" onChange={(e) => setUsername(e.target.value)} value={username} />
+            </p>
+            <p>
+              Password:{" "}
+              <input
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+            </p>
+          </div>
           <div>
             {loggedIn ? (
               <div>
@@ -228,7 +236,7 @@ function App() {
                     <div style={{ marginLeft: 8, marginRight: 8 }}>
                       {" "}
                       <a
-                        href={`http://localhost:5000/api/file/${file}/download?userId=${username}`}
+                        href={`/api/file/${file}/download?userId=${username}`}
                         target="_blank"
                       >
                         {" "}
