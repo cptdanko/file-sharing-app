@@ -1,14 +1,9 @@
 package com.mydaytodo.sfa.asset.service;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
-import com.amazonaws.services.s3.waiters.AmazonS3Waiters;
-import com.amazonaws.waiters.WaiterParameters;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
-import com.mydaytodo.sfa.asset.model.AssetUser;
-import com.mydaytodo.sfa.asset.model.DocumentMetadataUploadRequest;
+import com.mydaytodo.sfa.asset.model.FileUser;
+import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.S3Repository;
 import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
@@ -34,7 +29,7 @@ public class StorageServiceImpl {
     @Autowired
     private S3Repository s3Repository;
     @Autowired
-    private DocumentServiceImpl documentService;
+    private FileServiceImpl documentService;
     @Autowired
     private UserRepositoryImpl userRepository;
 
@@ -59,13 +54,13 @@ public class StorageServiceImpl {
 
         // perform some validation on how many files does the user already have
         try {
-            ServiceResponse serviceResponse = listFilesInBucket(userId);
+            ServiceResponse serviceResponse = getFilesUploadedByUser(userId);
             List<String> files = (List<String>) serviceResponse.getData();
             log.info(String.format("Fetching files by username [ %d ]", files.size()));
             log.info("No of files " + files.size());
-            Optional<AssetUser> optionalUser = userRepository.getUserByUsername(userId);
+            Optional<FileUser> optionalUser = userRepository.getUserByUsername(userId);
             log.info(String.format("Got user by name [ %s ]", optionalUser.get()));
-            AssetUser user = optionalUser.orElseThrow();
+            FileUser user = optionalUser.orElseThrow();
             if (files.size() >= awsConfig.getUploadLimit()) {
                 log.info("Max upload limit reached");
                 return ServiceResponse.builder()
@@ -84,7 +79,7 @@ public class StorageServiceImpl {
         }
 
 
-        DocumentMetadataUploadRequest request = new DocumentMetadataUploadRequest();
+        FileMetadataUploadRequest request = new FileMetadataUploadRequest();
         request.setName(file.getOriginalFilename());
         // hard coded asset type to DOCUMENT for now
         request.setAssetType("DOCUMENT");
@@ -108,7 +103,7 @@ public class StorageServiceImpl {
      * @param userId
      * @return
      */
-    public ServiceResponse listFilesInBucket(String userId) {
+    public ServiceResponse getFilesUploadedByUser(String userId) {
         List<String> objectsSavedByUser = s3Repository.filesByUser(userId);
         log.info("Files found");
         log.info(String.valueOf(objectsSavedByUser.size()));

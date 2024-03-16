@@ -8,9 +8,9 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
-import com.mydaytodo.sfa.asset.model.Document;
-import com.mydaytodo.sfa.asset.model.DocumentType;
-import com.mydaytodo.sfa.asset.model.DocumentMetadataUploadRequest;
+import com.mydaytodo.sfa.asset.model.File;
+import com.mydaytodo.sfa.asset.model.FileType;
+import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class DocumentRepositoryImpl {
+public class FileRepositoryImpl {
     private AmazonDynamoDB dynamoDB = null;
 
     @Autowired
@@ -36,19 +36,19 @@ public class DocumentRepositoryImpl {
         dynamoDB = AWSConfig.amazonDynamoDB();
         mapper = new DynamoDBMapper(dynamoDB);
     }
-    public Document getDocument(String id) {
+    public File getDocument(String id) {
         try {
-            return mapper.load(Document.class, id);
+            return mapper.load(File.class, id);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
         return null;
     }
 
-    public Integer saveAsset(DocumentMetadataUploadRequest request) {
+    public Integer saveAsset(FileMetadataUploadRequest request) {
         Integer retVal = HttpStatus.CREATED.value();
         log.info("In saveAsset method");
-        Document asset = DocumentMetadataUploadRequest.convertRequest(request);
+        File asset = FileMetadataUploadRequest.convertRequest(request);
         log.info("Saving document metadata with name "+ asset.getName());
         mapper.save(asset);
         log.info("Saved asset metadata");
@@ -58,8 +58,8 @@ public class DocumentRepositoryImpl {
         DeleteItemRequest request = new DeleteItemRequest();
         request.setTableName("Document");
         request.addKeyEntry("id", new AttributeValue().withS(id));
-        Document document = getDocument(id);
-        if(document == null) {
+        File file = getDocument(id);
+        if(file == null) {
             return HttpStatus.NOT_FOUND.value();
         }
         try {
@@ -72,51 +72,51 @@ public class DocumentRepositoryImpl {
         }
     }
 
-    public Integer updateDocument(String id, DocumentMetadataUploadRequest documentMetadataUploadRequest) {
-        Document documentToUpdate = getDocument(id);
-        if(documentToUpdate == null) {
+    public Integer updateDocument(String id, FileMetadataUploadRequest fileMetadataUploadRequest) {
+        File fileToUpdate = getDocument(id);
+        if(fileToUpdate == null) {
             return HttpStatus.NOT_FOUND.value();
         }
-        log.info("About to update document with id "+ documentMetadataUploadRequest.getId());
-        documentToUpdate.transformForUpdate(documentMetadataUploadRequest);
+        log.info("About to update document with id "+ fileMetadataUploadRequest.getId());
+        fileToUpdate.transformForUpdate(fileMetadataUploadRequest);
         DynamoDBSaveExpression saveOp = new DynamoDBSaveExpression()
                 .withExpectedEntry("id", new ExpectedAttributeValue().withValue(new AttributeValue(id)));
-        mapper.save(documentToUpdate, saveOp);
+        mapper.save(fileToUpdate, saveOp);
         return org.apache.http.HttpStatus.SC_NO_CONTENT;
     }
-    public List<Document> getUserDocuments(String userId) {
+    public List<File> getUserDocuments(String userId) {
         Map<String, AttributeValue> eav = new HashMap<>();
-        Document document = Document
+        File file = File
                             .builder()
                             .userId(userId)
                             .build();
         eav.put(":userId", new AttributeValue().withS(userId));
 
-        DynamoDBQueryExpression<Document> queryExp = new DynamoDBQueryExpression<Document>()
+        DynamoDBQueryExpression<File> queryExp = new DynamoDBQueryExpression<File>()
                 .withIndexName("user_id-index")
                 .withKeyConditionExpression("user_id= :userId")
                 .withExpressionAttributeValues(eav)
                 .withConsistentRead(false);
 
-        return mapper.query(Document.class, queryExp);
+        return mapper.query(File.class, queryExp);
     }
 
     /**
      * Note: there is a cost associated with dynamoDB indexes
      * Perhaps for mvp change this to scan the table to get
      * all values in the table, and filter in code, here
-     * @param documentType
+     * @param fileType
      * @return
      */
-    public List<Document> getDocumentsOfType(DocumentType documentType) {
+    public List<File> getDocumentsOfType(FileType fileType) {
         Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":type", new AttributeValue().withS(documentType.getType()));
-        DynamoDBQueryExpression<Document> queryExp = new DynamoDBQueryExpression<Document>()
+        eav.put(":type", new AttributeValue().withS(fileType.getType()));
+        DynamoDBQueryExpression<File> queryExp = new DynamoDBQueryExpression<File>()
                 .withIndexName("asset_type-index")
                 .withKeyConditionExpression("asset_type = :type")
                 .withExpressionAttributeValues(eav)
                 .withConsistentRead(false);
-        return mapper.query(Document.class, queryExp);
+        return mapper.query(File.class, queryExp);
 
     }
 }

@@ -1,13 +1,11 @@
 package com.mydaytodo.sfa.asset.controller;
 
-import com.amazonaws.util.IOUtils;
 import com.mydaytodo.sfa.asset.model.CustomCreateBucketRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.StorageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,11 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 
@@ -70,7 +65,7 @@ public class FileStorageController {
     @GetMapping("/list")
     public ResponseEntity<ServiceResponse> listFilesUploadedByUser(@RequestParam("userId") String userId) {
         log.info(String.format("Request to list files for [ %s ]", userId));
-        ServiceResponse response = storageService.listFilesInBucket(userId);
+        ServiceResponse response = storageService.getFilesUploadedByUser(userId);
         log.info(response.getMessage());
         log.info(response.getStatus() + "");
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));

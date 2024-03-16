@@ -2,9 +2,8 @@ package com.mydaytodo.sfa.asset.controller;
 
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
-import com.mydaytodo.sfa.asset.model.AssetUser;
+import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.service.UserServiceImpl;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,8 +53,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/all/{department}")
-    public ResponseEntity<List<AssetUser>> getAllUserBy(@RequestParam("department") String department) {
-        List<AssetUser> users = new ArrayList<>();
+    public ResponseEntity<List<FileUser>> getAllUserBy(@RequestParam("department") String department) {
+        List<FileUser> users = new ArrayList<>();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

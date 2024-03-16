@@ -1,7 +1,7 @@
 package com.mydaytodo.sfa.asset.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mydaytodo.sfa.asset.model.AssetUser;
+import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,16 +26,16 @@ public class UserControllerTest {
     @InjectMocks
     private UserController userController;
     private final String BASE_URL = "/api/user";
-    JacksonTester<AssetUser> userJacksonTester;
+    JacksonTester<FileUser> userJacksonTester;
     private final String MOCK_USER_ID = "USR_123";
-    private AssetUser assetUser;
+    private FileUser assetUser;
     private MockMvc mockMvc;
 
     @BeforeEach
     void populate() {
-        assetUser = AssetUser.builder()
+        assetUser = FileUser.builder()
                 .name("")
-                .assetsUploaded(Arrays.asList("file1.pdf", "file2.docx"))
+                .filesUploaded(Arrays.asList("file1.pdf", "file2.docx"))
                 .role("owner")
                 .department("finance")
                 .dateJoined(Date.from(Instant.now()))

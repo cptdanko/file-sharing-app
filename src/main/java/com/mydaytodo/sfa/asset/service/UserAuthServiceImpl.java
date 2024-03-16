@@ -1,6 +1,6 @@
 package com.mydaytodo.sfa.asset.service;
 
-import com.mydaytodo.sfa.asset.model.AssetUser;
+import com.mydaytodo.sfa.asset.model.FileUser;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
@@ -22,7 +22,7 @@ public class UserAuthServiceImpl {
     private UserAuthServiceImpl() {
 
     }
-    public void addUser(AssetUser assetUser) {
+    public void addUser(FileUser assetUser) {
         log.info(String.format("About to create a user with name [ %s ]", assetUser.getUsername()));
         log.info(String.format("User object = [ %s ]", assetUser.toString()));
         UserDetails userDetails = User.withUsername(assetUser.getUsername())

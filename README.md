@@ -1,13 +1,13 @@
 # My Day To-Do - Document sharing system
 
-This is a simple document sharing system similar to Google Drive. The content upload will not be limited to documents
-hence each document, hence the class name Asset in the model folder. In this system a user will be able to upload and
+This is a simple file sharing system similar to Google Drive. The content upload will not be limited to documents
+hence each file, hence the class name Asset in the model folder. In this system a user will be able to upload and
 track multiple assets.
 
 > **_NOTE:_**  User roles and permissions will be be a part of the MVP.
 
 # Objective
-The goal is to gain an understanding of the complexity of creating a document sharing system and provide code samples 
+The goal is to gain an understanding of the complexity of creating a file sharing system and provide code samples 
 for anyone looking to create a system like this. Once fully developed a user will be able to, 
 - Create an account and login via basic authentication
 - Upload assets (e.g. documents)
@@ -30,8 +30,8 @@ The app is built using
 To run this spring boot project, 
 1. Clone the repository and navigate to the repo directory
 ```shell
-git clone git@github.com:cptdanko/document-sharing.git
-cd document-sharing
+git clone git@github.com:cptdanko/file-sharing.git
+cd file-sharing
 ```
 2. Open application.yml file in either VSCode or IntelliJ
 3. Update the following with your AWS credentials

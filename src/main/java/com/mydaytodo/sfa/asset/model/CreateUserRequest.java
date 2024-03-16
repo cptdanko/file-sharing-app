@@ -1,7 +1,6 @@
 package com.mydaytodo.sfa.asset.model;
 
 import com.amazonaws.util.StringUtils;
-import jakarta.validation.constraints.Null;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -28,11 +27,11 @@ public class CreateUserRequest {
     private String password;
     private String department = "";
 
-    public static AssetUser convertRequest(CreateUserRequest request) {
-        return AssetUser.builder()
+    public static FileUser convertRequest(CreateUserRequest request) {
+        return FileUser.builder()
                 .role(request.getRole())
                 .name(request.getName())
-                .assetsUploaded(request.getAssetsUploaded())
+                .filesUploaded(request.getAssetsUploaded())
                 .userid(StringUtils.isNullOrEmpty(request.getUserId()) ? "" : request.getUserId())
                 .department(request.getDepartment())
                 .dateJoined(request.getDateJoined())

@@ -3,7 +3,7 @@ package com.mydaytodo.sfa.asset.model;
 import lombok.Getter;
 
 @Getter
-public enum DocumentType {
+public enum FileType {
     DOCUMENT("document"),
     IMAGE("image"),
     PDF("pdf");
@@ -11,11 +11,11 @@ public enum DocumentType {
     private final String type;
 
 
-    DocumentType(String type) {
+    FileType(String type) {
         this.type = type;
     }
-    public static DocumentType fromTypeStr(String name) {
-        for(DocumentType type: DocumentType.values()) {
+    public static FileType fromTypeStr(String name) {
+        for(FileType type: FileType.values()) {
             if(type.getType().equalsIgnoreCase(name)) {
                 return type;
             }
