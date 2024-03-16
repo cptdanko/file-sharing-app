@@ -9,7 +9,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
-import com.mydaytodo.sfa.asset.model.AssetUser;
+import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import com.mydaytodo.sfa.asset.service.UserAuthServiceImpl;
 import jakarta.annotation.PostConstruct;
@@ -38,29 +38,29 @@ public class UserRepositoryImpl {
         initLoadUsers();
     }
 
-    public Optional<AssetUser> getUserByUsername(String username) throws Exception {
+    public Optional<FileUser> getUserByUsername(String username) throws Exception {
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":username", new AttributeValue().withS(username));
-        DynamoDBQueryExpression<AssetUser> queryExp = new DynamoDBQueryExpression<AssetUser>()
+        DynamoDBQueryExpression<FileUser> queryExp = new DynamoDBQueryExpression<FileUser>()
                 .withIndexName("username-index")
                 .withKeyConditionExpression("username= :username")
                 .withExpressionAttributeValues(eav)
                 .withConsistentRead(false);
-        return mapper.query(AssetUser.class, queryExp)
+        return mapper.query(FileUser.class, queryExp)
                 .stream()
                 .findFirst();
     }
 
-    public AssetUser getUser(String id) throws Exception {
-        return mapper.load(AssetUser.class, id);
+    public FileUser getUser(String id) throws Exception {
+        return mapper.load(FileUser.class, id);
     }
 
     public void initLoadUsers() {
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
                 .withConsistentRead(true);
 
-        List<AssetUser> aUsers = new ArrayList<>(mapper.scan(AssetUser.class, scanExpression));
-        for (AssetUser user : aUsers) {
+        List<FileUser> aUsers = new ArrayList<>(mapper.scan(FileUser.class, scanExpression));
+        for (FileUser user : aUsers) {
             UserAuthServiceImpl.instance.addUser(user);
         }
     }
@@ -69,9 +69,9 @@ public class UserRepositoryImpl {
      * @param createUserRequest
      * @return
      */
-    public AssetUser saveUser(CreateUserRequest createUserRequest) throws Exception {
+    public FileUser saveUser(CreateUserRequest createUserRequest) throws Exception {
         log.info("In the save user method");
-        AssetUser user = CreateUserRequest.convertRequest(createUserRequest);
+        FileUser user = CreateUserRequest.convertRequest(createUserRequest);
         user.setDateJoined(new Date());
         user.setLastLogin(new Date());
         user.setPassword(createUserRequest.getPassword());
@@ -85,7 +85,7 @@ public class UserRepositoryImpl {
         DeleteItemRequest request = new DeleteItemRequest();
         request.setTableName("AssetUser");
         request.addKeyEntry("user_id", new AttributeValue().withS(userId));
-        AssetUser assetUser = getUser(userId);
+        FileUser assetUser = getUser(userId);
         if (assetUser == null) {
             return HttpStatus.NOT_FOUND.value();
         }
@@ -99,11 +99,11 @@ public class UserRepositoryImpl {
      * @return
      * @throws Exception
      */
-    public AssetUser updateUser(String userId, AssetUser user) throws Exception {
+    public FileUser updateUser(String userId, FileUser user) throws Exception {
         log.info("in updateUser() - " + userId);
         Map<String, AttributeValue> itemKey = new HashMap<>();
         log.info("RAN THE UPDATE COMMAND");
-        AssetUser assetUser = getUser(userId);
+        FileUser assetUser = getUser(userId);
         if (assetUser == null) {
             return null;
         }
@@ -126,7 +126,7 @@ public class UserRepositoryImpl {
             updatedValues.put("last_login", new AttributeValueUpdate().withValue(new AttributeValue().withS(user.getLastLogin().toString())));*/
 
         List<AttributeValue> attributeValues = new ArrayList<>();
-        for (String doc : user.getAssetsUploaded()) {
+        for (String doc : user.getFilesUploaded()) {
             attributeValues.add(new AttributeValue().withS(doc));
         }
         updatedValues.put("assets_uploaded", new AttributeValueUpdate().withValue(new AttributeValue().withL(attributeValues)));

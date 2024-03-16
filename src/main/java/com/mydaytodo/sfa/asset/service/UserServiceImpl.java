@@ -3,7 +3,7 @@ package com.mydaytodo.sfa.asset.service;
 import com.mydaytodo.sfa.asset.constants.KeyStart;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
-import com.mydaytodo.sfa.asset.model.AssetUser;
+import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class UserServiceImpl {
     private UserRepositoryImpl userRepository;
 
     public ServiceResponse getUser(String id) {
-        AssetUser user = null;
+        FileUser user = null;
         try {
             log.info("About to query userRepository with id " + id);
             user = userRepository.getUser(id);
@@ -45,7 +45,7 @@ public class UserServiceImpl {
     }
 
     public ServiceResponse getByUsername(String username) {
-        Optional<AssetUser> user;
+        Optional<FileUser> user;
         log.info("About to get user by username");
         try {
             user = userRepository.getUserByUsername(username);
@@ -84,7 +84,7 @@ public class UserServiceImpl {
                         .build();
             }
             userRequest.setPassword(new BCryptPasswordEncoder().encode(userRequest.getPassword()));
-            AssetUser createdUser = userRepository.saveUser(userRequest);
+            FileUser createdUser = userRepository.saveUser(userRequest);
             log.info(createdUser.toString());
             log.info("Now about to add user to basic auth store");
             UserAuthServiceImpl.instance.addUser(createdUser);
@@ -122,7 +122,7 @@ public class UserServiceImpl {
 
     public ServiceResponse updateUser(String userId, CreateUserRequest createUserRequest) {
         try {
-            AssetUser assetUser = CreateUserRequest.convertRequest(createUserRequest);
+            FileUser assetUser = CreateUserRequest.convertRequest(createUserRequest);
             assetUser = userRepository.updateUser(userId, assetUser);
             return ServiceResponse.builder()
                     .data(assetUser)

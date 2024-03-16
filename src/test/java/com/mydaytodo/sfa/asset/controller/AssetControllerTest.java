@@ -2,9 +2,9 @@ package com.mydaytodo.sfa.asset.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mydaytodo.sfa.asset.model.Document;
+import com.mydaytodo.sfa.asset.model.File;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
-import com.mydaytodo.sfa.asset.service.DocumentServiceImpl;
+import com.mydaytodo.sfa.asset.service.FileServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,28 +31,28 @@ public class AssetControllerTest {
 
     private MockMvc  mockMvc;
     @Mock
-    private DocumentServiceImpl documentService;
+    private FileServiceImpl documentService;
 
     @InjectMocks
-    private AssetController assetController;
+    private FileMetadataController assetController;
 
-    private Document document = new Document();
+    private File file = new File();
     private ServiceResponse serviceResponse = new ServiceResponse();
-    JacksonTester<Document> documentJacksonTester;
+    JacksonTester<File> documentJacksonTester;
     private final String BASE_URL = "/api/asset/";
     private final String MOCK_ASSET_ID = "AST_1234";
 
     @BeforeEach
     void populate() {
 
-        document = Document.builder()
+        file = File.builder()
                 .id("DOC_123")
                 .assetType("document")
                 .keyStorePath("/opt/document")
                 .name("test")
                 .userId("USR_123")
                 .build();
-        serviceResponse.setData(document);
+        serviceResponse.setData(file);
         serviceResponse.setStatus(HttpStatus.OK.value());
         JacksonTester.initFields(this, new ObjectMapper());
         mockMvc = MockMvcBuilders.standaloneSetup(assetController)
@@ -64,7 +64,7 @@ public class AssetControllerTest {
         when(documentService.getDocument(any())).thenReturn(serviceResponse);
         mockMvc.perform(get("/api/asset/detail/AST_123")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(documentJacksonTester.write(document).getJson())
+                .content(documentJacksonTester.write(file).getJson())
         ).andExpect(status().isOk());
     }
     @Test
@@ -74,7 +74,7 @@ public class AssetControllerTest {
                 .status(HttpStatus.CREATED.value()).build());
         mockMvc.perform(post("/api/asset/upload")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(documentJacksonTester.write(document).getJson()))
+                        .content(documentJacksonTester.write(file).getJson()))
                 .andExpect(status().isCreated());
 
     }
@@ -90,11 +90,11 @@ public class AssetControllerTest {
 
     @Test
     void testModifyAsset() throws Exception {
-        when(documentService.updateDocumentMetadata(any(), any())).thenReturn(ServiceResponse.builder()
+        when(documentService.updateFileMetadata(any(), any())).thenReturn(ServiceResponse.builder()
                 .data(null).status(HttpStatus.NO_CONTENT.value()).build());
         mockMvc.perform(put(BASE_URL+"/"+MOCK_ASSET_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(documentJacksonTester.write(document).getJson())
+                .content(documentJacksonTester.write(file).getJson())
         ).andExpect(status().isNoContent());
     }
     @Test
@@ -107,7 +107,7 @@ public class AssetControllerTest {
     }
     @Test
     void testGetAssetOfType() throws Exception {
-        when(documentService.getDocumentsOfType(any())).thenReturn(new ArrayList<>());
+        when(documentService.getFilesOfType(any())).thenReturn(new ArrayList<>());
         mockMvc.perform(get(BASE_URL + "/type/document")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

@@ -2,7 +2,6 @@ package com.mydaytodo.sfa.asset.model;
 
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,5 +17,5 @@ public class Role {
 
     private Long id;
     private String name;
-    private List<AssetUser> users;
+    private List<FileUser> users;
 }

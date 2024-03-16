@@ -10,8 +10,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@DynamoDBTable(tableName = "Document")
-public class Document {
+@DynamoDBTable(tableName = "File")
+public class File {
 
     @DynamoDBAttribute(attributeName = "name")
     private String name;
@@ -28,10 +28,10 @@ public class Document {
     @DynamoDBAttribute(attributeName = "user_id")
     private String userId;
 
-    public void transformForUpdate(DocumentMetadataUploadRequest documentMetadataUploadRequest) {
-        setName(documentMetadataUploadRequest.getName());
-        setAssetType(documentMetadataUploadRequest.getAssetType());
-        setUserId(documentMetadataUploadRequest.getUserId());
-        setKeyStorePath(documentMetadataUploadRequest.getPath());
+    public void transformForUpdate(FileMetadataUploadRequest fileMetadataUploadRequest) {
+        setName(fileMetadataUploadRequest.getName());
+        setAssetType(fileMetadataUploadRequest.getAssetType());
+        setUserId(fileMetadataUploadRequest.getUserId());
+        setKeyStorePath(fileMetadataUploadRequest.getPath());
     }
 }

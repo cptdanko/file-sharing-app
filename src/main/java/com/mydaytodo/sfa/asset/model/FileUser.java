@@ -1,14 +1,11 @@
 package com.mydaytodo.sfa.asset.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBFlattened;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +17,7 @@ import java.util.List;
 @Builder
 @DynamoDBTable(tableName = "AssetUser")
 @ToString
-public class AssetUser {
+public class FileUser {
     @Getter
     enum ROLE {
         ADMIN("admin"),
@@ -57,6 +54,6 @@ public class AssetUser {
     // maybe in the start, leave it to a "," separated string?
     //Use Lists and not a String[] array. Array types not supported by DynamoDB
     @DynamoDBAttribute(attributeName = "assets_uploaded")
-    private List<String> assetsUploaded;
+    private List<String> filesUploaded;
 
 }
