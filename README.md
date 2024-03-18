@@ -1,30 +1,35 @@
 # My Day To-Do - Document sharing system
 
-This is a simple file sharing system similar to Google Drive. The content upload will not be limited to documents
-hence each file, hence the class name Asset in the model folder. In this system a user will be able to upload and
-track multiple assets.
+This is a simple file sharing system similar to Google Drive. In this system anyone who signs up to be a user is able to upload, share and track multiple files.
 
 > **_NOTE:_**  User roles and permissions will be be a part of the MVP.
 
 # Objective
-The goal is to gain an understanding of the complexity of creating a file sharing system and provide code samples 
-for anyone looking to create a system like this. Once fully developed a user will be able to, 
-- Create an account and login via basic authentication
-- Upload assets (e.g. documents)
-- View all the assets uploaded
-- Share the assets with other users
+Create a file sharing app powered by Java Spring Boot, React and the uses AWS's public cloud offereing to CRUD data. Once implemented, aspects of this repository will also serve as code samples that anyone that wants to build a system like this can learn from. During development, there will also be a series of blogposts that will be shared on the My Day To-Do blog. Below are some of the blogposts shared so far,
+1. [Upload to AWS S3 bucket from Java Spring Boot app]
+2. [File share app - social file share feature]
+3. [How to build a Spring Boot API with reactjs frontend]
 
-> **_NOTE:_** at this stage, it will either be a full REST API or depending on time, may have simple UI
+## Features
+This app is composed of a Spring boot API with a simple and function reactjs based UI. It features the following, 
+1. New user sign up
+2. Upload and Manage files from cloud storaege
+3. Security with basic authentication
+4. Share uploaded files with other users
 
+Show below is a screenshot of the simple reactjs based UI that allows, a user to login, upload, download, delete and share files.
+
+<img width="549" alt="fileShareAppScreen" src="https://github.com/cptdanko/file-sharing-app/assets/919243/128dccfa-7792-42bc-a10a-8ac961356376">
 
 # Tech stack
 The app is built using 
 - Java 17
 - Spring Boot 3
-- Spring Security (_to be added_)
+- Spring Security
 - Lombok
 - AWS DynamoDB
-- S3 (_to be added_)
+- AWS S3
+- CI/CD via Github actions
 
 # Setup and run
 To run this spring boot project, 
@@ -73,6 +78,9 @@ If you like what I am doing, you can [buy me a coffee]
 
 Click on the next link for more info on the [software engineering career journey] of the author.
 
+[Upload to AWS S3 bucket from Java Spring Boot app]: https://mydaytodo.com/upload-to-aws-s3-bucket-from-java-spring-boot-app/
+[File share app - social file share feature]: https://mydaytodo.com/epic-social-file-share-feature/
+[How to build a Spring Boot API with reactjs frontend]: https://mydaytodo.com/spring-boot-api-with-reactjs/
 [Jokes API with Spring RestTemplate]: https://mydaytodo.com/how-to-build-a-jokes-client-in-java-spring-boot-with-resttemplate/
 [Call Rest API with Spring WebClient]: https://mydaytodo.com/how-to-call-rest-api-with-webclient/
 [Node Typescript CRUD Notes]: https://github.com/cptdanko/node_typescript_crud_notes
