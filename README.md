@@ -1,4 +1,4 @@
-# My Day To-Do - Document sharing system
+# My Day To-Do - File sharing app
 
 This is a simple file sharing system similar to Google Drive. In this system anyone who signs up to be a user is able to upload, share and track multiple files.
 
