@@ -45,7 +45,7 @@ public class FileRepositoryImpl {
         return null;
     }
 
-    public Integer saveAsset(FileMetadataUploadRequest request) {
+    public Integer saveFileMetadata(FileMetadataUploadRequest request) {
         Integer retVal = HttpStatus.CREATED.value();
         log.info("In saveAsset method");
         File asset = FileMetadataUploadRequest.convertRequest(request);

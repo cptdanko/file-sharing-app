@@ -26,7 +26,7 @@ public class FileServiceImpl {
 
         return ServiceResponse.builder()
                 .data(null)
-                .status(fileRepository.saveAsset(uploadRequest))
+                .status(fileRepository.saveFileMetadata(uploadRequest))
                 .build();
     }
 

@@ -5,13 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Slf4j
 public class FileMetadataUploadRequest {
 
     private String name;
@@ -29,7 +27,7 @@ public class FileMetadataUploadRequest {
                 .keyStorePath(uploadRequest.getPath())
                 .assetType(uploadRequest.getAssetType())
                 .name(uploadRequest.getName())
-                .id(StringUtils.isNullOrEmpty(uploadRequest.getId())? null: uploadRequest.getId())
+                .id(StringUtils.isNullOrEmpty(uploadRequest.getId()) ? null : uploadRequest.getId())
                 .userId(uploadRequest.getUserId())
                 .build();
     }
