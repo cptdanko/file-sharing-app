@@ -2,7 +2,7 @@
 
 This is a simple file sharing system similar to Google Drive. In this system anyone who signs up to be a user is able to upload, share and track multiple files.
 
-> **_NOTE:_**  User roles and permissions will be be a part of the MVP.
+> **_NOTE:_**  User roles and permissions will NOT be a part of the MVP.
 
 # Objective
 Create a file sharing app powered by Java Spring Boot, React and the uses AWS's public cloud offereing to CRUD data. Once implemented, aspects of this repository will also serve as code samples that anyone that wants to build a system like this can learn from. During development, there will also be a series of blogposts that will be shared on the My Day To-Do blog. Below are some of the blogposts shared so far,
