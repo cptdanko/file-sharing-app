@@ -1,12 +1,11 @@
 package com.mydaytodo.sfa.asset.service;
 
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
-import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
+import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.S3Repository;
-import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,8 +29,9 @@ public class StorageServiceImpl {
     private S3Repository s3Repository;
     @Autowired
     private FileServiceImpl documentService;
+
     @Autowired
-    private UserRepositoryImpl userRepository;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private AWSConfig awsConfig;
@@ -50,17 +50,14 @@ public class StorageServiceImpl {
      * 3. Save the Document in the DocumentRepositoryImpl
      * 4. Move on to uploading the actual file to S3 via S3Repository
      */
-    public ServiceResponse uploadFile(MultipartFile file, String userId) throws IOException {
-
+    public ServiceResponse uploadFile(MultipartFile file, String username) throws IOException, Exception {
         // perform some validation on how many files does the user already have
         try {
-            ServiceResponse serviceResponse = getFilesUploadedByUser(userId);
+            ServiceResponse serviceResponse = getFilesUploadedByUser(username);
+            @SuppressWarnings("unchecked")
             List<String> files = (List<String>) serviceResponse.getData();
             log.info(String.format("Fetching files by username [ %d ]", files.size()));
             log.info("No of files " + files.size());
-            Optional<FileUser> optionalUser = userRepository.getUserByUsername(userId);
-            log.info(String.format("Got user by name [ %s ]", optionalUser.get()));
-            FileUser user = optionalUser.orElseThrow();
             if (files.size() >= awsConfig.getUploadLimit()) {
                 log.info("Max upload limit reached");
                 return ServiceResponse.builder()
@@ -69,8 +66,6 @@ public class StorageServiceImpl {
                         .build();
 
             }
-            // user.getAssetsUploaded().add(file.getOriginalFilename());
-            // userRepository.updateUser(user.getUserid(), user);
         } catch (Exception e) {
             return ServiceResponse.builder()
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -78,23 +73,25 @@ public class StorageServiceImpl {
                     .build();
         }
 
-
         FileMetadataUploadRequest request = new FileMetadataUploadRequest();
         request.setName(file.getOriginalFilename());
         // hard coded asset type to DOCUMENT for now
         request.setAssetType("DOCUMENT");
-        request.setUserId(userId);
-        log.info("Set the documentMetaUploadRequest obje3ct");
+        request.setUserId(username);
+        log.info(String.format("About to save document metadata [ %s ]", request.toString()));
         ServiceResponse metadataUploadResp = documentService.saveDocumentMetadata(request);
+        log.info(String.format("Saved the metadata"));
         if (metadataUploadResp.getStatus() > 299) {
             return ServiceResponse.builder()
                     .message("Something went wrong, please try again later")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .build();
         }
-        String filename = userId + "/" + file.getOriginalFilename();
+        String filename = username + "/" + file.getOriginalFilename();
         log.info(filename);
-        return s3Repository.putS3Object(convertMultipartFile(file), filename);
+        ServiceResponse response = s3Repository.putS3Object(convertMultipartFile(file), filename);
+        userServiceImpl.addFIlenameToFilesUploadedByUser(username, filename);
+        return response;
     }
 
     /**

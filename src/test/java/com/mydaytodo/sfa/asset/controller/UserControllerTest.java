@@ -36,8 +36,6 @@ public class UserControllerTest {
         assetUser = FileUser.builder()
                 .name("")
                 .filesUploaded(Arrays.asList("file1.pdf", "file2.docx"))
-                .role("owner")
-                .department("finance")
                 .dateJoined(Date.from(Instant.now()))
                 .lastLogin(Date.from(Instant.now()))
                 .password("temp")

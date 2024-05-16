@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .csrf(httpSecurityCsrfConfigurer ->
                         httpSecurityCsrfConfigurer.ignoringRequestMatchers("/api/asset/upload"
                                 , "/api/file/**"
-                                , "/api/user/"));
+                                , "/api/user/**"));
 
         return httpSecurity.build();
     }

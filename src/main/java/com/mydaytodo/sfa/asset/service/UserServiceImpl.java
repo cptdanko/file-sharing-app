@@ -11,11 +11,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @Slf4j
 public class UserServiceImpl {
+
     @Autowired
     private UserRepositoryImpl userRepository;
 
@@ -61,6 +64,23 @@ public class UserServiceImpl {
                         .status(HttpStatus.NOT_FOUND.value())
                         .build();
             }
+        } catch (Exception e) {
+            return ServiceResponse.builder()
+                    .message(e.getMessage())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
+    public ServiceResponse getFilesAccessibleToUser(String username) {
+        log.info("In getFilesAccessibleToUser method");
+        try {
+            FileUser user = userRepository.getUserByUsername(username).get();
+            log.info(String.format("These [ %s ] files are accessible to user", user.getFilesUploaded()));
+            return ServiceResponse.builder()
+                    .data(user.getFilesUploaded())
+                    .status(HttpStatus.OK.value())
+                    .message("User found")
+                    .build();
         } catch (Exception e) {
             return ServiceResponse.builder()
                     .message(e.getMessage())
@@ -120,9 +140,18 @@ public class UserServiceImpl {
         }
     }
 
+    /**
+     * ins
+     * 
+     * @param userId
+     * @param createUserRequest
+     * @return
+     */
     public ServiceResponse updateUser(String userId, CreateUserRequest createUserRequest) {
         try {
+            log.info(String.format("CreateUserRequest body received [ %s ]", createUserRequest.toString()));
             FileUser assetUser = CreateUserRequest.convertRequest(createUserRequest);
+            log.info(String.format("Got the file user obj [ %s ]", assetUser.toString()));
             assetUser = userRepository.updateUser(userId, assetUser);
             return ServiceResponse.builder()
                     .data(assetUser)
@@ -136,5 +165,50 @@ public class UserServiceImpl {
                     .message(e.getLocalizedMessage())
                     .build();
         }
+    }
+
+    /**
+     * as a later update, add rules to check
+     * whether or not the file can be shared by the user e.g.
+     * something like only the user who uploaded the file
+     * can share it or so
+     * 
+     * @throws Exception
+     */
+    public ServiceResponse shareFile(String from, String to, String filename) throws Exception {
+        try {
+            log.info("Received a reqiuest to share file, " + filename);
+            String filepath = from + "/" + filename;
+            log.info(String.format("%s about to share file %s with %s", from, filepath, to));
+            addFIlenameToFilesUploadedByUser(to, filepath);
+            return new ServiceResponse().builder()
+                    .data(new Object()).status(HttpStatus.OK.value())
+                    .message("Successful")
+                    .build();
+        } catch (Exception e) {
+            throw new Exception("Error occured while sharing file with user");
+        }
+    }
+
+    /**
+     * @param username
+     * @param filename
+     * @throws Exception
+     */
+    public void addFIlenameToFilesUploadedByUser(String username, String filename) throws Exception {
+        log.info("About to add the filename to files uploaded");
+        Optional<FileUser> optionalUser = userRepository.getUserByUsername(username);
+        FileUser user = optionalUser.get();
+        log.info(String.format("Got user by name [ %s ]", user));
+        log.info("About to get files uploaded");
+        List<String> fileList = user.getFilesUploaded();
+        if (fileList == null) {
+            fileList = new ArrayList<>();
+            user.setFilesUploaded(fileList);
+        }
+        log.info(String.format("The number of files uploaded by user are %d", fileList.size()));
+        fileList.add(filename);
+        userRepository.addFilenameToFilesUploaded(user.getUserid(), fileList);
+        log.info(String.format("Updated user object [ %d]", user.getFilesUploaded().size()));
     }
 }

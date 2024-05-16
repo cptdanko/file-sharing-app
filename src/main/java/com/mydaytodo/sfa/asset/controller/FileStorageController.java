@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-
 @RestController
 @RequestMapping("/api/file")
 @Slf4j
@@ -43,18 +42,18 @@ public class FileStorageController {
      * - document too large or something
      *
      * @param file
-     * @param userId
+     * @param username
      * @return
      * @throws IOException
      */
     @RequestMapping("/upload")
     public ResponseEntity<ServiceResponse> handleFileUpload(@RequestParam("file") MultipartFile file,
-                                                            @RequestParam("userId") String userId)
-            throws IOException {
+            @RequestParam("username") String username)
+            throws Exception {
         InputStream is = file.getInputStream();
         String filename = file.getOriginalFilename();
         log.info("Request to upload file = " + filename);
-        ServiceResponse response = storageService.uploadFile(file, userId);
+        ServiceResponse response = storageService.uploadFile(file, username);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
@@ -76,7 +75,8 @@ public class FileStorageController {
      * @return
      */
     @DeleteMapping("/delete/{fileId}")
-    public ResponseEntity<ServiceResponse> deleteFile(@RequestParam("userId") String userId, @PathVariable("fileId") String fileId) {
+    public ResponseEntity<ServiceResponse> deleteFile(@RequestParam("userId") String userId,
+            @PathVariable("fileId") String fileId) {
         log.info(String.format("Request to delete file [ %s ]  by user [ %s ]", fileId, userId));
         ServiceResponse response = storageService.deleteFile(userId, fileId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
@@ -91,9 +91,10 @@ public class FileStorageController {
      * @throws IOException
      */
     @GetMapping("/{fileId}/download")
-    public ResponseEntity<Resource> getFileData(@RequestParam("userId") String userId, @PathVariable("fileId") String fileId) throws IOException, URISyntaxException {
+    public ResponseEntity<Resource> getFileData(@RequestParam("userId") String userId,
+            @PathVariable("fileId") String fileId) throws IOException, URISyntaxException {
         ServiceResponse response = storageService.downloadFile(userId, fileId);
-        //if(response.getStatus().equals(HttpStatus.OK.toString())) {
+        // if(response.getStatus().equals(HttpStatus.OK.toString())) {
         ByteArrayResource byteArrayResource = new ByteArrayResource((byte[]) response.getData());
         byte[] resourceAsBytes = (byte[]) response.getData();
         return ResponseEntity.ok()
@@ -101,8 +102,8 @@ public class FileStorageController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachmemnt; filename=\"" + fileId + "\"")
                 .contentLength(byteArrayResource.contentLength())
                 .body(byteArrayResource);
-        //}
-        //return new ResponseEntity<>(null, HttpStatus.valueOf(response.getStatus()));
+        // }
+        // return new ResponseEntity<>(null, HttpStatus.valueOf(response.getStatus()));
     }
 
     /**
@@ -115,4 +116,3 @@ public class FileStorageController {
     }
 
 }
-

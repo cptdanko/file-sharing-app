@@ -25,6 +25,7 @@ public class File {
     @DynamoDBAttribute(attributeName = "asset_type")
     private String assetType;
 
+    // the user id is the owner of the file
     @DynamoDBAttribute(attributeName = "user_id")
     private String userId;
 
