@@ -11,6 +11,9 @@ function App() {
   const [userFiles, setUserFiles] = useState(null);
   const [cookie, setCookie] = useCookies(["user"]);
   const [file, setFile] = useState(null);
+  const [shareWithEmailAdd, setShareWithEmailAdd] = useState("");
+  const [fileToShare, setFileToShare] = useState("");
+  const [fileUploading, setFileUploading] = useState(false);
 
   useEffect(() => {
     if (cookie.user && cookie.user.username) {
@@ -21,6 +24,17 @@ function App() {
     return "Basic " + btoa(username + ":" + password);
   }
 
+  const myDialogModal = document.querySelector("#dialog");
+  const myCloseModalBtn = document.querySelector("#closeModalBtn");
+
+  if (myDialogModal) {
+    myCloseModalBtn && myCloseModalBtn.addEventListener("click", () => myDialogModal.close());
+  }
+  function openShareDialog(toShare) {
+    console.log("about to share file:" + toShare);
+    setFileToShare(toShare);
+    myDialogModal.showModal();
+  }
   async function login() {
     console.log("In the login method");
     // call the healthcheck method to know it's valid
@@ -79,6 +93,7 @@ function App() {
 
   function uploadFile(event) {
     event.preventDefault();
+    setFileUploading(true);
     let frm = document.getElementById("uploadDocument");
     const formData = new FormData(frm);
     fetch(`/api/file/upload`, {
@@ -117,6 +132,7 @@ function App() {
       console.log(JSON.stringify(resp));
     });
   }
+
   function logout(event) {
     event.preventDefault();
     setCookie("user", null, "/");
@@ -124,7 +140,47 @@ function App() {
     setUserFiles(null);
     setUsername("");
   }
+  function shareFiles() {
+    const emailAdd = shareWithEmailAdd.target.value;
+    console.log("In the share files function");
+    console.log(fileToShare);
+    const filename = `${cookie.user.username}/${fileToShare}`;
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernamePass = getUserNamePassForBasicAuth();
 
+    if (pattern.test(emailAdd)) {
+      console.log("valid email id supplied, calling server");
+      // get the logged in user
+      const msg = `${cookie.user.username} shared ${fileToShare} with you`;
+
+      const emailBody = {
+        to: emailAdd,
+        cc: [],
+        bcc: [],
+        subject: msg,
+        body: `Dear ${emailAdd}, kindly download the attachment`,
+        filesToAttach: [filename],
+      };
+      fetch("/api/user/sendMail", {
+        method: "POST",
+        headers: {
+          Authorization: usernamePass,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailBody),
+      }).then((resp) => {
+        console.log(resp);
+        myDialogModal.close();
+        setFileUploading(false);
+      }).catch(e => {
+        console.log(`Error occured ${e}`);
+        setFileUploading(false);
+        myDialogModal.close();
+      });
+    } else {
+      console.log("Invalid email address");
+    }
+  }
   return (
     <CookiesProvider>
       <div className="App">
@@ -235,10 +291,7 @@ function App() {
                     <div style={{ marginLeft: 8, marginRight: 8 }}> {file}</div>
                     <div style={{ marginLeft: 8, marginRight: 8 }}>
                       {" "}
-                      <a
-                        href={`/api/file/${file}/download?userId=${username}`}
-                        target="_blank"
-                      >
+                      <a href={`/api/file/${file}/download?userId=${username}`} target="_blank">
                         {" "}
                         Download{" "}
                       </a>
@@ -248,11 +301,26 @@ function App() {
                         style={{
                           textDecoration: "underline",
                           color: "#0d6efd",
+                          marginRight: "5px",
                         }}
                         onClick={() => deleteFile(file)}
                       >
                         Delete
                       </a>{" "}
+                    </div>
+                    <div>
+                      <a
+                        style={{
+                          textDecoration: "underline",
+                          color: "#0d6efd",
+                          marginLeft: "5px",
+                        }}
+                        id="openModalBtn"
+                        onClick={() => openShareDialog(file)}
+                      >
+                        {" "}
+                        Share{" "}
+                      </a>
                     </div>
                   </div>
                 ))}
@@ -305,6 +373,41 @@ function App() {
               </form>
             </div>
           </div>
+        </div>
+        <div>
+          <dialog
+            id="dialog"
+            style={{
+              width: 300,
+              height: 200,
+              borderStyle: 2,
+              borderColor: "blue",
+            }}
+          >
+            <h2> Share file</h2>
+            <p>
+              <input
+                name={shareWithEmailAdd}
+                onChange={setShareWithEmailAdd}
+                placeholder="enter email addresses"
+              />
+            </p>
+            <div>
+            {fileUploading ? <h5>Loading file ...</h5> : <b>-</b>}
+            </div>
+            <div
+              style={{
+                margin: 8,
+                padding: 8,
+              }}
+            >
+              <button style={{ marginRight: 8 }} onClick={shareFiles}>
+                {" "}
+                Share{" "}
+              </button>
+              <button id="closeModalBtn"> Cancel </button>
+            </div>
+          </dialog>
         </div>
       </div>
     </CookiesProvider>

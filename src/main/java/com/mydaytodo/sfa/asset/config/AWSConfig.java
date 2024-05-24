@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.MailSender;
 import org.springframework.stereotype.Component;
 
 @Configuration
@@ -41,14 +42,16 @@ public class AWSConfig {
     /**
      * AWS region set to AP_SOUTHEAST_2
      * It can be changed in the config.yaml file
+     *
      * @return
      */
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
         return new AmazonDynamoDBClient(amazonAwsCredentials())
-                                    .withEndpoint(amazonDBEndpoint)
-                                    .withRegion(Regions.fromName(region));
+                .withEndpoint(amazonDBEndpoint)
+                .withRegion(Regions.fromName(region));
     }
+
     @Bean
     public AWSCredentials amazonAwsCredentials() {
         return new BasicAWSCredentials(key, secret);

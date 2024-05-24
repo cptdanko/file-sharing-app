@@ -6,11 +6,13 @@ import com.mydaytodo.sfa.asset.model.FileType;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.FileRepositoryImpl;
+import com.mydaytodo.sfa.asset.utilities.StringManipService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -71,5 +73,28 @@ public class FileServiceImpl {
     public List<File> getFilesOfType(String type) {
         FileType fileType = FileType.fromTypeStr(type);
         return fileRepository.getDocumentsOfType(fileType);
+    }
+
+    public ServiceResponse validateFileType(String[] filenames) {
+        log.info("About to validate filenames {}", Arrays.toString(filenames));
+        for (String filename : filenames) {
+            String ext = StringManipService.getExtension(filename).toLowerCase();
+            log.info("ext {}", ext);
+            if (!Arrays.stream(StringManipService.VALID_EXT).anyMatch(s -> s.contains(ext))) {
+                String msg = String.format("Filename with %s, does not have a valid extension", filename);
+                log.info("Incorrect filename supplied because of {}", msg);
+                return ServiceResponse.builder()
+                        .message(msg)
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .data(null)
+                        .build();
+            }
+        }
+        log.info("successfully validated the filenames");
+        return ServiceResponse.builder()
+                        .status(null)
+                        .data(null)
+                        .message("Filenames valid")
+                        .build();
     }
 }

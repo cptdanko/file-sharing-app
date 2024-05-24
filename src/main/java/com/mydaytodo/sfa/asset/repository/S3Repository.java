@@ -146,28 +146,14 @@ public class S3Repository {
         try (S3ObjectInputStream s3is = object.getObjectContent()) {
             log.info("Got the S3ObjectInputStream.....");
             log.info(s3is.toString());
-            log.info("" + s3is.available());
+            log.info("{}", s3is.available());
             String modFilename = filename.substring(filename.indexOf("/") + 1);
-            log.info(String.format("Mod filename [ %s ]", modFilename));
+            log.info("Mod filename [ {} ]", modFilename);
             return ServiceResponse.builder()
                     .status(HttpStatus.OK.value())
                     .data(s3is.readAllBytes())
                     .message("")
                     .build();
-            /*try (FileOutputStream fileOutputStream = new FileOutputStream(modFilename)) {
-                log.info("In the file output stream");
-                byte [] read_buf = new byte[1024];
-                int read_len = 0;
-                while ((read_len = s3is.read(read_buf)) > 0) {
-                    fileOutputStream.write(read_buf, 0, read_len);
-                }
-                log.info("finished writing to fileoutputstream");
-                return ServiceResponse.builder()
-                        .status(HttpStatus.OK.value())
-                        .data(s3is.readAllBytes())
-                        .message("")
-                        .build();
-            }*/
         } catch (IOException io) {
             log.error(io.getMessage());
             return ServiceResponse.builder()
@@ -177,4 +163,19 @@ public class S3Repository {
                     .build();
         }
     }
+
+    public byte[] getDataForFile(String filename) throws IOException {
+        S3Object object = awsConfig.s3Client().getObject(awsConfig.getS3UploadBucketName(), filename);
+        try (S3ObjectInputStream s3is = object.getObjectContent()) {
+            log.info(s3is.toString());
+            log.info("s3 inputStream availability {}", s3is.available());
+            String modFilename = filename.substring(filename.indexOf("/") + 1);
+            log.info("Modified filename [ {} ]", modFilename);
+            return s3is.readAllBytes();
+        } catch (IOException io) {
+            log.error(io.getMessage());
+            return null;
+        }
+    }
+
 }
