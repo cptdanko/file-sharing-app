@@ -48,7 +48,7 @@ public class FileStorageController {
      */
     @RequestMapping("/upload")
     public ResponseEntity<ServiceResponse> handleFileUpload(@RequestParam("file") MultipartFile file,
-            @RequestParam("username") String username)
+                                                            @RequestParam("username") String username)
             throws Exception {
         InputStream is = file.getInputStream();
         String filename = file.getOriginalFilename();
@@ -76,7 +76,7 @@ public class FileStorageController {
      */
     @DeleteMapping("/delete/{fileId}")
     public ResponseEntity<ServiceResponse> deleteFile(@RequestParam("userId") String userId,
-            @PathVariable("fileId") String fileId) {
+                                                      @PathVariable("fileId") String fileId) {
         log.info(String.format("Request to delete file [ %s ]  by user [ %s ]", fileId, userId));
         ServiceResponse response = storageService.deleteFile(userId, fileId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
@@ -92,18 +92,14 @@ public class FileStorageController {
      */
     @GetMapping("/{fileId}/download")
     public ResponseEntity<Resource> getFileData(@RequestParam("userId") String userId,
-            @PathVariable("fileId") String fileId) throws IOException, URISyntaxException {
+                                                @PathVariable("fileId") String fileId) throws IOException {
         ServiceResponse response = storageService.downloadFile(userId, fileId);
-        // if(response.getStatus().equals(HttpStatus.OK.toString())) {
         ByteArrayResource byteArrayResource = new ByteArrayResource((byte[]) response.getData());
-        byte[] resourceAsBytes = (byte[]) response.getData();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachmemnt; filename=\"" + fileId + "\"")
                 .contentLength(byteArrayResource.contentLength())
                 .body(byteArrayResource);
-        // }
-        // return new ResponseEntity<>(null, HttpStatus.valueOf(response.getStatus()));
     }
 
     /**
