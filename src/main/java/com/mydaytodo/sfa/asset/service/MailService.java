@@ -7,14 +7,22 @@ import jakarta.activation.DataSource;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.IOException;
 
 @Service
 @Slf4j
@@ -24,6 +32,7 @@ public class MailService {
      */
     @Autowired
     private JavaMailSender javaMailSender;
+    // JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
     @Autowired
     private S3Repository s3Repository;
@@ -33,45 +42,44 @@ public class MailService {
     }
 
     public ServiceResponse sendEmail(EmailRequest emailRequest) {
-        try {
-            MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
-            log.info("1");
 
-            StringBuilder builder = new StringBuilder();
-            builder.append("<hi> Creative User </h1>");
-            builder.append(emailRequest.getBody());
-            builder.append("<h2> You are awesome </h2>,<br /> Cheers, <br/> Bhuman</h2>");
-            mimeMailMessage.setContent(builder.toString(), "text/html; charset=utf-8");
+        MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
+        StringBuilder builder = new StringBuilder();
+        builder.append(emailRequest.getBody());
+        try {
             // if the email request contains any attachments, then send it
             for (String filename : emailRequest.getFilesToAttach()) {
-                log.info("In the filesToAttachLoop");
                 MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMailMessage, true);
-                String name = filename.substring(filename.indexOf("/"));
                 byte[] fileData = s3Repository.getDataForFile(filename);
-                DataSource dataSource = new ByteArrayDataSource(fileData, "application/pdf");
-                messageHelper.addAttachment(name, dataSource);
+                String name = filename.substring(filename.indexOf("/") + 1);
+                String extension = name.substring(name.lastIndexOf('.') + 1);
+                log.info("File extension is {}", extension);
+                ByteArrayResource fileDataResource = new ByteArrayResource(fileData);
+                messageHelper.addAttachment(name, fileDataResource);
+                messageHelper.setText(builder.toString(), true);
             }
-            log.info("5");
-
             mimeMailMessage.setFrom("bhuman@mydaytodo.com");
             mimeMailMessage.setSubject(emailRequest.getSubject());
-            log.info("6");
-            // mimeMailMessage.setFrom("mdt@mydaytodo.com");
             addRecipients(Message.RecipientType.TO, new String[]{emailRequest.getTo()}, mimeMailMessage);
             addRecipients(Message.RecipientType.CC, emailRequest.getCc(), mimeMailMessage);
             addRecipients(Message.RecipientType.BCC, emailRequest.getBcc(), mimeMailMessage);
-            mimeMailMessage.setHeader("Content-Type", "application/pdf");
             javaMailSender.send(mimeMailMessage);
-            log.info("7");
-
             return ServiceResponse.builder()
                     .data(builder.toString())
                     .status(HttpStatus.SC_NO_CONTENT)
                     .build();
-        } catch (Exception e) {
+        } catch (MailException e) {
             log.error(e.getMessage());
             log.error(e.getLocalizedMessage());
             throw new RuntimeException(e.getMessage());
+        } catch (MessagingException me) {
+            log.error(me.getMessage());
+            log.info("Messaging exception occurred with {}", me.getLocalizedMessage());
+            throw new RuntimeException(me);
+        } catch (IOException ioe) {
+            log.error(ioe.getMessage());
+            log.info("IO exception occurred while sending mail {}", ioe.getLocalizedMessage());
+            throw new RuntimeException(ioe);
         }
     }
 
