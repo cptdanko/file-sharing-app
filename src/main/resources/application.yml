@@ -1,17 +1,39 @@
 server:
-  port: 8080
+  port: 5000
 
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   security:
     user:
       name: admin
       password: passw@rd
+google:
+  gmail:
+    username:
+    password:
+    host: smtp.gmail.com
+    port: 587
+    smtp:
+      auth: true
+      starttls:
+        enable: true
 
 aws:
-  upload-limit:
+  upload-limit: 5
   region:
   key:
   secret:
   dynamo-db:
-    amazonDBEndpoint: dynamodb.ap-southeast-2.amazonaws.com
+    amazonDBEndpoint:
   s3UploadBucketName:

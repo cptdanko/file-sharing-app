@@ -1,6 +1,7 @@
 package com.mydaytodo.sfa.asset.controller;
 
 import com.mydaytodo.sfa.asset.model.*;
+import com.mydaytodo.sfa.asset.service.FileServiceImpl;
 import com.mydaytodo.sfa.asset.service.MailService;
 import com.mydaytodo.sfa.asset.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,9 @@ public class UserController {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private FileServiceImpl fileService;
 
     @GetMapping("/{userId}")
     public ResponseEntity<ServiceResponse> getUser(@PathVariable("userId") String userId) {
@@ -104,6 +108,7 @@ public class UserController {
 
     @PostMapping(value = "/sendMail")
     public ResponseEntity<ServiceResponse> sendMail(@RequestBody EmailRequest emailRequest) {
+        fileService.validateFileType(emailRequest.getFilesToAttach());
         ServiceResponse serviceResponse = mailService.sendEmail(emailRequest);
         return new ResponseEntity<>(serviceResponse, HttpStatus.valueOf(serviceResponse.getStatus()));
     }
