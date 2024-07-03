@@ -27,7 +27,7 @@ public class FileMetadataController {
     public ResponseEntity<File> getAssetDetail(@PathVariable("assetId") String id) {
         log.info("Received request to get asset with id "+ id);
         ServiceResponse response = assetService.getDocument(id);
-        File doc = (File) response.getData() ;
+        File doc = (File) response.getData();
         return new ResponseEntity<>(doc, HttpStatus.valueOf(response.getStatus()));
     }
     @PostMapping("/upload")
