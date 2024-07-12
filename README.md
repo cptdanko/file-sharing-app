@@ -90,6 +90,21 @@ monolithic web app with the react based UI, you need to edit the pom.xml file an
 If you have difficulty understanding anything about this repo, feel free to reach out to me through this Github account
 or at bhuman at mydaytodoDOTcom or bhuman.soni@gmail.com.
 
+## How to contribute to this repo?
+This repository uses the Git feature based workflow, so if you would like to add something to this
+1. Create an issue on Github
+2. Create a feature branch
+```
+git branch feature/your-awesome-feature
+git checkout feature/your-awesome-feature
+```
+3. Build your awesome feature, commit as much as you like
+4. Squash your commits (if you haven't done this before, please ask me and I am happy to help) 
+5. Push all your changes and create a PR
+
+If you you would like to know more about how to the git feature based workflow, you can read [git feature branch workflow].
+
+
 ## Tutorials
 
 Have a read of some of the tutorials with code samples on my blog,
@@ -141,3 +156,4 @@ Click on the next link for more info on the [software engineering career journey
 [blogpost]: https://mydaytodo.com/blog/
 
 [buy me a coffee]: https://www.buymeacoffee.com/bhumansoni
+- [git feature branch workflow]: https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow
