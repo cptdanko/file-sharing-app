@@ -28,7 +28,7 @@ This app is composed of a Spring boot API with a simple and function reactjs bas
 Show below is a screenshot of the simple reactjs based UI that allows, a user to login, upload, download, delete and
 share files.
 
-<img width="549" alt="fileShareAppScreen" src="https://github.com/cptdanko/file-sharing-app/assets/919243/128dccfa-7792-42bc-a10a-8ac961356376">
+<img width="549" alt="fileShareAppScreen" src="https://github.com/user-attachments/assets/791d0d71-3c2f-4212-94cb-7f8045768cf2">
 
 # Tech stack
 
