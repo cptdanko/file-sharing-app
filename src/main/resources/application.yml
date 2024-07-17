@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 5000
 
 spring:
   mail:
@@ -15,15 +15,18 @@ spring:
             enable: true
 
   security:
+    jwt:
+      secret:
     user:
-      name: admin
+      name:
       password: passw@rd
+
 
 aws:
   upload-limit: 5
-  region:
+  region: ap-southeast-2
   key:
   secret:
   dynamo-db:
-    amazonDBEndpoint:
-  s3UploadBucketName: mdtupload
+    amazonDBEndpoint: 
+  s3UploadBucketName:

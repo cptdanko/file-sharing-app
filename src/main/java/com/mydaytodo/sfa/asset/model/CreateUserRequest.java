@@ -3,7 +3,6 @@ package com.mydaytodo.sfa.asset.model;
 import com.amazonaws.util.StringUtils;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

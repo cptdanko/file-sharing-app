@@ -1,35 +1,51 @@
 package com.mydaytodo.sfa.asset.config;
 
+
+import com.mydaytodo.sfa.asset.filter.JwtAuthFilter;
 import com.mydaytodo.sfa.asset.service.UserAuthServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static jakarta.servlet.DispatcherType.ERROR;
-import static jakarta.servlet.DispatcherType.FORWARD;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+@Slf4j
 public class SecurityConfig {
 
+    @Autowired
+    private JwtAuthFilter authFilter;
+
+    // User Creation
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    public UserDetailsService userDetailsService() {
+        return UserAuthServiceImpl.instance;
     }
 
+    // Configuring HttpSecurity
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.httpBasic(Customizer.withDefaults())
-                .authorizeHttpRequests(auth -> {
-                    try {
-                        auth.dispatcherTypeMatchers(FORWARD, ERROR).permitAll();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        /*http.csrf(httpSecurityCsrfConfigurer ->
+                httpSecurityCsrfConfigurer.ignoringRequestMatchers("/api/asset/upload"
+                        , "/api/file/**"
+                        , "/api/user/create"
+                        ,"/api/user/login"));*/
+        return http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/",
                                         "/static/**",
                                         "/favicon.ico",
@@ -37,33 +53,35 @@ public class SecurityConfig {
                                         "/manifest.json",
                                         "/index.html",
                                         "/api/user/login",
-                                        "/api/user/",
+                                        "/api/user/create",
                                         "/index",
                                         "/ping",
                                         "/healthcheck").permitAll()
                                 .anyRequest()
-                                .authenticated();
-                    } catch (RuntimeException re) {
-                        throw new RuntimeException("Error in the security config ->" + re.getMessage());
-                    }
-                })
-                .csrf(httpSecurityCsrfConfigurer ->
-                        httpSecurityCsrfConfigurer.ignoringRequestMatchers("/api/asset/upload"
-                                , "/api/file/**"
-                                , "/api/user/**"));
+                                .authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
 
-        return httpSecurity.build();
+    // Password Encoding
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager inMemoryUserDetailsManager = UserAuthServiceImpl.instance.getInMemoryUserDetailsManager();
-        UserDetails userDetails = User.withUsername("bhuman")
-                .password(bCryptPasswordEncoder().encode("password"))
-                .roles("ADMIN", "USER")
-                .build();
-        inMemoryUserDetailsManager.createUser(userDetails);
-        ;
-        return inMemoryUserDetailsManager;
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }

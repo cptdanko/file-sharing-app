@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -25,7 +23,7 @@ public class UserServiceImpl {
     public ServiceResponse getUser(String id) {
         FileUser user = null;
         try {
-            log.info("About to query userRepository with id " + id);
+            log.info("About to query userRepository with id {}", id);
             user = userRepository.getUser(id);
             if (user == null) {
                 log.info("Got response");
@@ -104,9 +102,16 @@ public class UserServiceImpl {
                         .build();
             }
             userRequest.setPassword(new BCryptPasswordEncoder().encode(userRequest.getPassword()));
-            FileUser createdUser = userRepository.saveUser(userRequest);
-            log.info(createdUser.toString());
-            log.info("Now about to add user to basic auth store");
+            Map.Entry<String, FileUser> entry = userRepository.saveUser(userRequest);
+            if(entry.getKey() != null) {
+                return ServiceResponse.builder()
+                        .data(null)
+                        .message(entry.getKey())
+                        .build();
+            }
+            FileUser createdUser = entry.getValue();
+            log.info("User created");
+            log.info(entry.toString());
             UserAuthServiceImpl.instance.addUser(createdUser);
             // CustomUserService.instance.getInMemoryUserDetailsManager().
             return ServiceResponse.builder()
@@ -152,7 +157,7 @@ public class UserServiceImpl {
             log.info(String.format("CreateUserRequest body received [ %s ]", createUserRequest.toString()));
             FileUser assetUser = CreateUserRequest.convertRequest(createUserRequest);
             log.info(String.format("Got the file user obj [ %s ]", assetUser.toString()));
-            assetUser = userRepository.updateUser(userId, assetUser);
+            userRepository.updateUser(userId, assetUser);
             return ServiceResponse.builder()
                     .data(assetUser)
                     .status(HttpStatus.NO_CONTENT.value())

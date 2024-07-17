@@ -32,7 +32,7 @@ export const FileList = (props) => {
         const urlStr = `/api/file/list?userId=${cookies.user.username}`;
         const resp = await fetch(urlStr, {
             headers: {
-                Authorization: cookies.user.userNamePasswd,
+                Authorization: `Bearer ${cookies.user.token}`,
             },
         });
         const json = await resp.json();
@@ -46,7 +46,7 @@ export const FileList = (props) => {
         const resp = await fetch(urlStr, {
             method: "DELETE",
             headers: {
-                Authorization: cookies.user.userNamePasswd,
+                Authorization: `Bearer ${cookies.user.token}`,
             },
         });
         const status = await resp.status;
@@ -82,7 +82,7 @@ export const FileList = (props) => {
         fetch("/api/user/sendMail", {
             method: "POST",
             headers: {
-                Authorization: cookies.user.userNamePasswd,
+                Authorization: `Bearer ${cookies.user.token}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(emailBody),
@@ -112,7 +112,7 @@ export const FileList = (props) => {
         console.log(`Url to download file is ${url}`);
         fetch(url, {
             headers: {
-                Authorization: cookies.user.userNamePasswd,
+                Authorization: `Bearer ${cookies.user.token}`,
             },
         })
         .then(resp => resp.blob())
