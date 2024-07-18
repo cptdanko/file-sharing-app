@@ -22,10 +22,15 @@ function App() {
         <Typography component="h1" variant="h3">
           File Sharing App
         </Typography>
+        
         <UserAuth />
+        
         <Divider sx={{ margin: 2 }} flexItem orientation="horizontal"></Divider>
+
         <FileUpload />
+
         <Divider sx={{ margin: 2 }} flexItem orientation="horizontal"></Divider>
+
         <FileList />
       </div>
     </CookiesProvider>

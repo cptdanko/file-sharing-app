@@ -3,7 +3,6 @@ package com.mydaytodo.sfa.asset.service;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
-import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.S3Repository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * A storage service to handle file uploads to
@@ -57,7 +55,7 @@ public class StorageServiceImpl {
             @SuppressWarnings("unchecked")
             List<String> files = (List<String>) serviceResponse.getData();
             log.info(String.format("Fetching files by username [ %d ]", files.size()));
-            log.info("No of files " + files.size());
+            log.info("No of files {}", files.size());
             if (files.size() >= awsConfig.getUploadLimit()) {
                 log.info("Max upload limit reached");
                 return ServiceResponse.builder()

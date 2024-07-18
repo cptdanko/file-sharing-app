@@ -38,9 +38,10 @@ public class UserRepositoryImpl {
         initLoadUsers();
     }
 
-    public Optional<FileUser> getUserByUsername(String username) throws Exception {
+    public Optional<FileUser> getUserByUsername(String username) throws UnsupportedOperationException {
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":username", new AttributeValue().withS(username));
+        log.info("In get user by username {}", username);
         DynamoDBQueryExpression<FileUser> queryExp = new DynamoDBQueryExpression<FileUser>()
                 .withIndexName("username-index")
                 .withKeyConditionExpression("username= :username")
@@ -56,11 +57,14 @@ public class UserRepositoryImpl {
     }
 
     public void initLoadUsers() {
+        log.info("In init load method and about to get files");
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
                 .withConsistentRead(true);
-
+        log.info("scan expression created");
         List<FileUser> aUsers = new ArrayList<>(mapper.scan(FileUser.class, scanExpression));
+        log.info("Managed to get all the users");
         for (FileUser user : aUsers) {
+            log.info("Now about to save users");
             UserAuthServiceImpl.instance.addUser(user);
         }
     }
@@ -69,16 +73,29 @@ public class UserRepositoryImpl {
      * @param createUserRequest
      * @return
      */
-    public FileUser saveUser(CreateUserRequest createUserRequest) throws Exception {
+    public Map.Entry<String, FileUser> saveUser(CreateUserRequest createUserRequest) {
         log.info("In the save user method");
         FileUser user = CreateUserRequest.convertRequest(createUserRequest);
         user.setDateJoined(new Date());
         user.setLastLogin(new Date());
         user.setPassword(createUserRequest.getPassword());
-        mapper.save(user);
-        log.info("Request with name " + createUserRequest.getName() + " transformed");
+        log.info("Setup everything, final FileUser object : {}", user);
+        try {
+            mapper.save(user);
+            log.info("After calling the save obj");
+        } catch (UnsupportedOperationException uoe) {
+            log.info("UnsupportedOperationException.Command after mapper.save");
+            log.error(uoe.getLocalizedMessage());
+            log.info("Printing out exception messages");
+            log.error(uoe.getMessage());
+            return new AbstractMap.SimpleEntry<>(uoe.getMessage(), user);
+        } catch (Exception e) {
+            log.info("Exception occured: {}", e.getMessage());
+            return new AbstractMap.SimpleEntry<>(e.getMessage(), user);
+        }
+        log.info("Request with name {} transformed", createUserRequest.getName());
         log.info("User saved");
-        return user;
+        return new AbstractMap.SimpleEntry<>(null, user);
     }
 
     public Integer deleteUser(String userId) throws Exception {
@@ -117,7 +134,7 @@ public class UserRepositoryImpl {
             log.info("About to update item");
             dynamoDB.updateItem(request);
         } catch (Exception e) {
-            log.info("Exception occured in the update command");
+            log.info("Exception occurred in the update command");
             log.error(e.getMessage());
             return null;
         }
@@ -130,8 +147,8 @@ public class UserRepositoryImpl {
      * @return
      * @throws Exception
      */
-    public FileUser updateUser(String userId, FileUser user) throws Exception {
-        log.info("in updateUser() - " + userId);
+    public void updateUser(String userId, FileUser user) throws Exception {
+        log.info("in updateUser() - {}", userId);
         Map<String, AttributeValue> itemKey = new HashMap<>();
         /*  assetUser = getUser(userId);
         if (assetUser == null) {
@@ -165,13 +182,8 @@ public class UserRepositoryImpl {
         try {
             dynamoDB.updateItem(request);
         } catch (Exception e) {
-            log.info("Exception occured in the update command");
             log.error(e.getMessage());
-            return null;
         }
-        log.info("Saved the ddb obj");
-        return null;
-        // return assetUser;
+        log.info("User updated in Database");
     }
-
 }

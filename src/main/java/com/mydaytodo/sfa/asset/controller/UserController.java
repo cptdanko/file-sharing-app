@@ -2,13 +2,17 @@ package com.mydaytodo.sfa.asset.controller;
 
 import com.mydaytodo.sfa.asset.model.*;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
+import com.mydaytodo.sfa.asset.service.JwtService;
 import com.mydaytodo.sfa.asset.service.MailService;
 import com.mydaytodo.sfa.asset.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,14 +31,20 @@ public class UserController {
     @Autowired
     private FileServiceImpl fileService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtService jwtService;
+
     @GetMapping("/{userId}")
     public ResponseEntity<ServiceResponse> getUser(@PathVariable("userId") String userId) {
-        log.info("About to query user with id " + userId);
+        log.info("About to query user with id {}", userId);
         ServiceResponse response = userService.getUser(userId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-    @PostMapping(value = "/", consumes = {"application/json"})
+    @PostMapping(value = "/create", consumes = {"application/json"})
     public ResponseEntity<ServiceResponse> createUser(@RequestBody CreateUserRequest createUserRequest) {
         log.info(String.format("Got request [ %s ]", createUserRequest.toString()));
         ServiceResponse response = userService.saveUser(createUserRequest);
@@ -79,7 +89,7 @@ public class UserController {
     }
 
     @GetMapping("/username")
-    public ResponseEntity<ServiceResponse> getByUsername(@RequestParam("username") String username) {
+    public ResponseEntity<ServiceResponse> getByUsername(@RequestParam("username") String username) throws UsernameNotFoundException{
         ServiceResponse response = userService.getByUsername(username);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -115,5 +125,19 @@ public class UserController {
 
         ServiceResponse serviceResponse = mailService.sendEmail(emailRequest);
         return new ResponseEntity<>(serviceResponse, HttpStatus.valueOf(serviceResponse.getStatus()));
+    }
+
+    @PostMapping(value = "/login", consumes = {"application/json"})
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        log.info("Called generateToken API and about to generate authenticate via authentication manager");
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        log.info("Auth object {}", Boolean.toString(authentication.isAuthenticated()));
+        if (authentication.isAuthenticated()) {
+            log.info("Authentication successful");
+            return jwtService.generateToken(authRequest.getUsername());
+        } else {
+            log.info("Authentication NOT successful");
+            throw new UsernameNotFoundException("invalid user request");
+        }
     }
 }

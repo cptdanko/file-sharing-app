@@ -31,7 +31,7 @@ export const FileUpload = () => {
         fetch(`/api/file/upload`, {
             method: "POST",
             headers: {
-                Authorization: cookies.user.userNamePasswd,
+                Authorization: `Bearer ${cookies.user.token}`,
             },
             body: formData,
         })

@@ -6,7 +6,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,5 +40,4 @@ public class FileUser {
     //Use Lists and not a String[] array. Array types not supported by DynamoDB
     @DynamoDBAttribute(attributeName = "files_uploaded")
     private List<String> filesUploaded;
-
 }

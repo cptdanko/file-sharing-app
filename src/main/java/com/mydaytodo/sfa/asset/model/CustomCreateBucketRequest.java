@@ -1,7 +1,6 @@
 package com.mydaytodo.sfa.asset.model;
 
 import lombok.*;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Builder
 @Getter

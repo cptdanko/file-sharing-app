@@ -19,20 +19,27 @@ export const UserAuth = () => {
 
     const login = async () => {
         // call the healthcheck method to know it's valid
-        let userNamePasswd = "Basic " + btoa(username + ":" + password);
-        const resp = await fetch("/healthcheck", {
+        const url = `/api/user/login`;
+        const resp = await fetch(url, {
+            method: "POST",
             headers: {
-                Authorization: userNamePasswd,
+                "Content-Type": "application/json"
             },
+            body: JSON.stringify({
+              "username": username,
+              "password": password  
+            })
         });
-        if (resp.status == 401) {
+        if (resp.status > 299) {
             setLoginError(true);
         } else {
-            console.log("YAY successfully logged in");
+            console.log("Login successful");
             setUserLoggedIn(true);
+            const token = await resp.text();;
+            console.log(`Received the JSON token ${token}`);
             const userObj = {
                 username,
-                userNamePasswd,
+                token,
             };
             setCookie("user", JSON.stringify(userObj), "/");
         }
@@ -131,7 +138,7 @@ export const UserAuth = () => {
             }
             {!userLoggedIn ?
                 showSigninSignupForm()
-            :<></> }
+                : <></>}
 
 
         </Container>

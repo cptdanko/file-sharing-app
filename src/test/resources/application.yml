@@ -1,15 +1,32 @@
 server:
-  port: 8080
+  port: 5000
 
 spring:
+  mail:
+    host:
+    port:
+    username: bhuman.soni@gmail.com
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   security:
+    jwt:
+      secret:
     user:
-      name: admin
-      password: passw@rd
+      name:
+      password:
+
 
 aws:
+  upload-limit: 5
   region:
   key:
   secret:
   dynamo-db:
-    amazonDBEndpoint: 
+    amazonDBEndpoint:
+  s3UploadBucketName:
