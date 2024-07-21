@@ -1,4 +1,4 @@
-import { Box, Button, Container, styled, Typography } from "@mui/material"
+import { Alert, Box, Button, Container, styled, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { AlertDialog } from "../dialogs/AlertDialog";
@@ -63,19 +63,23 @@ export const FileUpload = () => {
                 <form onSubmit={uploadFile} id="uploadDocument" style={{
                     display: 'flex',
                     justifyContent: "center",
+                    alignContent:"center",
+                    flexDirection: "column",
                     marginTop: 4
                 }}>
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
                         width: "50%"
                     }}>
                         {cookies.user ?
                             <>
                                 <input type="file" name="file" onChange={onFileSelect} />
                                 <input type="hidden" value={username} name="username" />
-                                <Button sx={{marginTop: 1}}
+                                <Button sx={{ marginTop: 1 }}
                                     size="small"
                                     variant="contained"
                                     type="submit">
@@ -90,6 +94,14 @@ export const FileUpload = () => {
                                 type="submit">
                                 {uploadBtnText} </Button>
                         }
+                    </Box>
+                    <Box sx={{marginTop: 2, opacity: 0.5, 
+                    width: "80%", 
+                    marginLeft: "auto",
+                    marginRight: "auto"}}>
+                        <Alert variant="outlined" severity="info">
+                            Only [".pdf", ".doc", ".docx", ".txt", ".md", ".json"] file types are supported so far
+                        </Alert>
                     </Box>
                 </form>
             </Box>
