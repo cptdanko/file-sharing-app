@@ -41,6 +41,9 @@ The app is built using
 - AWS DynamoDB
 - AWS S3
 - CI/CD via Github actions
+- ReactJS
+- MUI
+- Github Actions
 
 # Setup and run
 
