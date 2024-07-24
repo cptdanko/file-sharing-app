@@ -98,6 +98,10 @@ public class UserController {
      * File sharing algorithm
      * A user can share a file owned
      * A user who doesn't own only has read access, no share
+     * NOT USED RIGHT NOW - THIS ENDPOINT WAS ADDED PREMATURELY
+     * WITHOUT THINKING THROUGH THE EVERYTHING THE FEATURE WOULD
+     * INVOLVE E.G. it makes sense to add this when social features
+     * such as follower, friend or acquaintance is added to the app
      */
     @PostMapping(value = "/share", consumes = {"application/json"})
     public ResponseEntity<ServiceResponse> postShareResponse(@RequestBody ShareFileRequest shareFileRequest)
