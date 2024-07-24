@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material"
+import { Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material"
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { API_FILE_PATH } from "../Constants";
@@ -32,22 +32,22 @@ export const FileList = (props) => {
         }
         // fetching the no of files uploaded
         const urlStr = `/api/file/list?userId=${cookies.user.username}`;
-        const resp = await fetch(urlStr, {
+        fetch(urlStr, {
             headers: {
                 Authorization: `Bearer ${cookies.user.token}`,
             },
         })
-        .then(resp => resp.json()
-        .then(data => {
-            if(data.status === 403 || data.status === 401) {
-                setAlertHeader("Expired Token");
-                setAlertMessage(data.data);
-                setAlertOpen(true);
-            } else {
-                setUserFiles(data.data);
-                setShowFiles(true);
-            }
-        }).catch(err => console.log(err)));
+            .then(resp => resp.json()
+                .then(data => {
+                    if (data.status === 403 || data.status === 401) {
+                        setAlertHeader("Expired Token");
+                        setAlertMessage(data.data);
+                        setAlertOpen(true);
+                    } else {
+                        setUserFiles(data.data);
+                        setShowFiles(true);
+                    }
+                }).catch(err => console.log(err)));
     }
 
     async function deleteFile(filename) {
@@ -117,25 +117,26 @@ export const FileList = (props) => {
         setShowFiles(false);
     }
     const downloadFile = (file) => {
-        const url = `/api/file/${file}/download`;
+        const url = `/api/file/${file}/download?userId=${cookies.user.username}`;
         console.log(`Url to download file is ${url}`);
         fetch(url, {
             headers: {
                 Authorization: `Bearer ${cookies.user.token}`,
             },
         })
-        .then(resp => resp.blob())
-        .then(blob => {
-            const url2 = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url2;
-            a.download = file;
-            a.click();
-            URL.revokeObjectURL(url2);
-        }).catch(err => {
-            console.log(`Error occured`);
-            console.error('File download error', err);
-        });
+            .then(resp => resp.blob())
+            .then(blob => {
+                console.log(JSON.stringify(blob));
+                const url2 = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url2;
+                a.download = file;
+                a.click();
+                URL.revokeObjectURL(url2);
+            }).catch(err => {
+                console.log(`Error occured`);
+                console.error('File download error', err);
+            });
     }
 
     return (
@@ -156,8 +157,8 @@ export const FileList = (props) => {
                         marginRight: "auto",
                         marginBottom: 5
                     }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column'}}>
-                            <Button variant="contained" onClick={hideFiles} sx={{marginBottom: 2}}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <Button variant="contained" onClick={hideFiles} sx={{ marginBottom: 2 }}>
                                 Hide
                             </Button>
                             <Typography component={'span'} >
@@ -188,7 +189,7 @@ export const FileList = (props) => {
                         ))}
                     </Box>
                 ) : (
-                    <Box gap={2} sx={{marginBottom: 5}}>
+                    <Box gap={2} sx={{ marginBottom: 5 }}>
                         {userFiles !== null && userFiles.length === 0 ? (
                             <Typography component={'span'} > No Files Uploaded by
                                 <Chip>{cookies.user.username}</Chip>
@@ -208,12 +209,12 @@ export const FileList = (props) => {
                 handleClose={handleAlertClose}
                 title={alertHeader}
                 content={alertMessage} />
-            
+
             <AlertDialog open={notLoginErr}
                 handleClose={handleLoginAlertClose}
                 title="Not Logged in"
                 content="You need to login first before using this" />
-            
+
 
             <Dialog
                 open={dialogOpen}

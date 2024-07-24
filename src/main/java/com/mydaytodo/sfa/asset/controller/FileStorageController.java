@@ -2,6 +2,7 @@ package com.mydaytodo.sfa.asset.controller;
 
 import com.mydaytodo.sfa.asset.model.CustomCreateBucketRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
+import com.mydaytodo.sfa.asset.service.FileServiceImpl;
 import com.mydaytodo.sfa.asset.service.StorageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class FileStorageController {
 
     @Autowired
     private StorageServiceImpl storageService;
+
+    @Autowired
+    private FileServiceImpl fileService;
 
     @PostMapping("/bucket")
     public ResponseEntity<ServiceResponse> createNewBucket(@RequestBody CustomCreateBucketRequest createBucketRequest) {
@@ -49,9 +53,12 @@ public class FileStorageController {
     public ResponseEntity<ServiceResponse> handleFileUpload(@RequestParam("file") MultipartFile file,
                                                             @RequestParam("username") String username)
             throws Exception {
-        InputStream is = file.getInputStream();
-        String filename = file.getOriginalFilename();
-        log.info("Request to upload file = " + filename);
+        log.info("Original filename to upload {}", file.getOriginalFilename());
+        String[] filenames = new String[]{file.getOriginalFilename()};
+        if(fileService.validateFileType(filenames).getStatus() != null) {
+            ServiceResponse response = fileService.validateFileType(filenames);
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        }
         ServiceResponse response = storageService.uploadFile(file, username);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -92,6 +99,8 @@ public class FileStorageController {
     @GetMapping("/{fileId}/download")
     public ResponseEntity<Resource> getFileData(@RequestParam("userId") String userId,
                                                 @PathVariable("fileId") String fileId) throws IOException {
+        log.info("In the download file request");
+        log.info("Downloading files for {} with name {}", userId, fileId);
         ServiceResponse response = storageService.downloadFile(userId, fileId);
         ByteArrayResource byteArrayResource = new ByteArrayResource((byte[]) response.getData());
         return ResponseEntity.ok()
@@ -102,6 +111,7 @@ public class FileStorageController {
     }
 
     /**
+     * TODO: have to implement replacing the uploaded file
      * @param fileId
      * @return
      */

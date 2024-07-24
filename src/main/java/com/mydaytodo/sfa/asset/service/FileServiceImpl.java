@@ -81,7 +81,7 @@ public class FileServiceImpl {
             String ext = StringManipService.getExtension(filename).toLowerCase();
             log.info("ext {}", ext);
             if (!Arrays.stream(StringManipService.VALID_EXT).anyMatch(s -> s.contains(ext))) {
-                String msg = String.format("Files %s that have  [ %s ] extension cannot be shared", filename, ext);
+                String msg = String.format("Files %s that have  [ %s ] extension cannot be uploaded", filename, ext);
                 log.info("Incorrect filename supplied because of {}", msg);
                 return ServiceResponse.builder()
                         .message(msg)

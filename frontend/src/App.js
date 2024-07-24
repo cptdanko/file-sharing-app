@@ -1,13 +1,11 @@
 import "./App.css";
-import { CookiesProvider, useCookies, Cookies } from "react-cookie";
+import { CookiesProvider } from "react-cookie";
 import { UserAuth } from "./components/UserAuth";
 import { Typography, Divider } from "@mui/material";
 import { FileList } from "./components/FileList";
 import { FileUpload } from "./components/FileUpload";
 
 function App() {
-  const [cookies, setCookie, removeCookie] = useCookies(['user']);
-  
 
   return (
     <CookiesProvider>
@@ -35,11 +33,6 @@ function App() {
       </div>
     </CookiesProvider>
   );
-}
-function IniitalState() {
-  return {
-    loggedIn: false,
-  };
 }
 
 export default App;
