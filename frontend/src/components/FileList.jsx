@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material"
+import { Alert, Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material"
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { API_FILE_PATH } from "../Constants";
@@ -16,6 +16,8 @@ export const FileList = (props) => {
     const [alertMessage, setAlertMessage] = useState("");
 
     const handleAlertClose = () => {
+        setAlertHeader("");
+        setAlertMessage("");
         setAlertOpen(false);
     }
     const handleLoginAlertClose = () => {
@@ -34,11 +36,18 @@ export const FileList = (props) => {
             headers: {
                 Authorization: `Bearer ${cookies.user.token}`,
             },
-        });
-        const json = await resp.json();
-        const fl = json.data;
-        setUserFiles(fl);
-        setShowFiles(true);
+        })
+        .then(resp => resp.json()
+        .then(data => {
+            if(data.status === 403 || data.status === 401) {
+                setAlertHeader("Expired Token");
+                setAlertMessage(data.data);
+                setAlertOpen(true);
+            } else {
+                setUserFiles(data.data);
+                setShowFiles(true);
+            }
+        }).catch(err => console.log(err)));
     }
 
     async function deleteFile(filename) {
@@ -204,7 +213,7 @@ export const FileList = (props) => {
                 handleClose={handleLoginAlertClose}
                 title="Not Logged in"
                 content="You need to login first before using this" />
-
+            
 
             <Dialog
                 open={dialogOpen}

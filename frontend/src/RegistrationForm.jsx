@@ -15,7 +15,8 @@ export const RegistrationForm = (props) => {
         jsonSignup["username"] = username;
         // TODO: still sending password in plain text, FIX!!!
         jsonSignup["password"] = password;
-        fetch("/api/user/", {
+        console.log(`About to create new user with ${JSON.stringify(jsonSignup)}`);
+        fetch("/api/user/create", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -23,6 +24,7 @@ export const RegistrationForm = (props) => {
             body: JSON.stringify(jsonSignup),
         }).then((resp) => {
             console.log(JSON.stringify(resp));
+            closeForm(false);
         });
     };
 
@@ -67,12 +69,12 @@ export const RegistrationForm = (props) => {
                         <Button size="small"
                             variant="contained"
                             type="submit">
-                            Submit
+                            Create Account
                         </Button>
                         <Button size="small"
                             variant="contained"
                             onClick={closeForm}>
-                            Close Form
+                            Cancel & Go Back
                         </Button>
                     </Box>
                 </form>
