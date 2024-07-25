@@ -1,4 +1,4 @@
-# My Day To-Do - File sharing app
+# MyDT - File Sharing App
 
 This is a simple file sharing system similar to Google Drive. In this system anyone who signs up to be a user is able to
 upload, share and track multiple files.
@@ -13,8 +13,9 @@ like this can learn from. During development, there will also be a series of blo
 To-Do blog. Below are some of the blogposts shared so far,
 
 1. [Upload to AWS S3 bucket from Java Spring Boot app]
-2. [File share app - social file share feature]
-3. [How to build a Spring Boot API with reactjs frontend]
+2. [How to Catch ExpiredJwtException in Spring OncePerRequestFilter]
+3. [File share app - social file share feature]
+4. [How to build a Spring Boot API with reactjs frontend]
 
 ## Features
 
@@ -127,6 +128,8 @@ tutorials and "how-to" articles with detailed code samples.
 If you like what I am doing, you can [buy me a coffee]
 
 Click on the next link for more info on the [software engineering career journey] of the author.
+
+[How to Catch ExpiredJwtException in Spring OncePerRequestFilter]: https://mydaytodo.com/how-to-catch-expiredjwtexception-in-spring-onceperrequestfilter/
 
 [Upload to AWS S3 bucket from Java Spring Boot app]: https://mydaytodo.com/upload-to-aws-s3-bucket-from-java-spring-boot-app/
 
