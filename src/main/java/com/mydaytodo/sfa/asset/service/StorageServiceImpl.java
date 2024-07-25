@@ -1,11 +1,13 @@
 package com.mydaytodo.sfa.asset.service;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.S3Repository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -64,7 +66,7 @@ public class StorageServiceImpl {
                         .build();
 
             }
-        } catch (Exception e) {
+        } catch (SdkClientException e) {
             return ServiceResponse.builder()
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .message(e.getMessage())
@@ -87,8 +89,10 @@ public class StorageServiceImpl {
         }
         String filename = username + "/" + file.getOriginalFilename();
         log.info(filename);
-        ServiceResponse response = s3Repository.putS3Object(convertMultipartFile(file), filename);
+        File convertedMultiPFile = convertMultipartFile(file);
+        ServiceResponse response = s3Repository.putS3Object(convertedMultiPFile, filename);
         userServiceImpl.addFIlenameToFilesUploadedByUser(username, filename);
+        convertedMultiPFile.deleteOnExit();
         return response;
     }
 
@@ -108,15 +112,6 @@ public class StorageServiceImpl {
                 .status(HttpStatus.OK.value())
                 .message("")
                 .build();
-    }
-
-    /**
-     * Not sure how to work this one out yet
-     *
-     * @param filename
-     */
-    public void downloadFile(String filename) {
-
     }
 
     /**
@@ -157,11 +152,9 @@ public class StorageServiceImpl {
      * @throws IOException
      */
     private File convertMultipartFile(MultipartFile multipartFile) throws IOException {
-        File convFile = new File(multipartFile.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(multipartFile.getBytes());
-        fos.close();
+        // File convFile = new File(multipartFile.getOriginalFilename());
+        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + multipartFile.getOriginalFilename());
+        multipartFile.transferTo(convFile);
         return convFile;
-
     }
 }

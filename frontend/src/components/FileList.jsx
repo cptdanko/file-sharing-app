@@ -191,9 +191,24 @@ export const FileList = (props) => {
                 ) : (
                     <Box gap={2} sx={{ marginBottom: 5 }}>
                         {userFiles !== null && userFiles.length === 0 ? (
-                            <Typography component={'span'} > No Files Uploaded by
-                                <Chip>{cookies.user.username}</Chip>
-                            </Typography>
+                            <Box p={2} gap={2} sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                overflow: "scroll",
+                                boxShadow: "3px 1px 5px 5px grey",
+                                borderRadius: 8,
+                                marginLeft: "auto",
+                                marginRight: "auto",
+                                marginBottom: 5
+                            }}>
+                                <Typography component={'span'} > No Files Uploaded by
+                                    <Chip label={cookies.user.username}></Chip>
+                                </Typography>
+                                <Button variant="contained" size="small" onClick={filesUploaded}>
+                                    Show
+                                </Button>
+                            </Box>
                         ) : (
                             <Box gap={2}>
                                 <Button variant="contained" size="small" onClick={filesUploaded}>
