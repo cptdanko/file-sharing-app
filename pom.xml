@@ -11,8 +11,8 @@
     <groupId>com.mydaytodo.sfa</groupId>
     <artifactId>file-share</artifactId>
     <version>1.0.0</version>
-    <name>asset</name>
-    <description>A file (asset) sharing app</description>
+    <name>File Share App</name>
+    <description>A file sharing app</description>
     <properties>
         <java.version>17</java.version>
         <aws.java.sdk.version>2.20.160</aws.java.sdk.version>
