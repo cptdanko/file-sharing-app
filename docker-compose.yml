@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  file-share-api:
+    image: file-share-api
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: mvn spring-boot:run
+    volumes:
+      - ./api:/api
+    ports:
+      - "5000:5000"
+  file-share-frontend:
+    image: file-share-frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    command: npm start
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules/
+    ports:
+      - "3000:3000"
+
