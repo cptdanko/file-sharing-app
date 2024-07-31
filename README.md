@@ -69,7 +69,7 @@ aws:
     amazonDBEndpoint: <get yours from here https://docs.aws.amazon.com/general/latest/gr/ddb.html>
 ```
 
-4. Once you have setup everything, when running for the first time, execute the following,
+4. After you have setup everything, when running for the first time, execute the following,
 
  ```
 mvn clean install package 
@@ -80,9 +80,17 @@ mvn clean install package
 ```shell
 mvn spring-boot:run
 ```
+Alternatively, you can run the app via docker, for this first install docker and run the following commands,
+```
+cd file-sharing-app/
+docker compose up
+```
+Then you should see the instructions on the sitge
 
-> **_NOTE:_** : if you don't add your AWS credentials, the app will fail at startup when trying to create the DynamoDB
-> beans.
+> **_NOTE:_** 
+> 1. if you don't add your AWS credentials, the app will fail at startup
+> 2. if you are on a mac, change server port in application.yml to <your-new-no>
+> 3. also change the proxy in package.json to http://localhost:<your-new-no>
 
 ### How to run the monolithic web app with react based UI
 
