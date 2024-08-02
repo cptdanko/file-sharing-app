@@ -72,7 +72,7 @@ public class FileStorageController {
         log.info(String.format("Request to list files for [ %s ]", userId));
         ServiceResponse response = storageService.getFilesUploadedByUser(userId);
         log.info(response.getMessage());
-        log.info(response.getStatus() + "");
+        log.info(response.getStatus().toString());
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 

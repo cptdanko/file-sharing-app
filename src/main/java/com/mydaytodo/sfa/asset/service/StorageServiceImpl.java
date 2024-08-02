@@ -4,17 +4,17 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
+import com.mydaytodo.sfa.asset.model.FileType;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.S3Repository;
+import com.mydaytodo.sfa.asset.utilities.StringManipService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class StorageServiceImpl {
     @Autowired
     private S3Repository s3Repository;
     @Autowired
-    private FileServiceImpl documentService;
+    private FileServiceImpl fileService;
 
     @Autowired
     private UserServiceImpl userServiceImpl;
@@ -75,11 +75,13 @@ public class StorageServiceImpl {
 
         FileMetadataUploadRequest request = new FileMetadataUploadRequest();
         request.setName(file.getOriginalFilename());
-        // hard coded asset type to DOCUMENT for now
-        request.setAssetType("DOCUMENT");
+        String extension = StringManipService.getExtension(file.getOriginalFilename());
+        log.info("Got the file extension as {}", extension);
+        FileType fileType = FileType.getFileTypeFromExtension(extension);
+        request.setAssetType(fileType.getType());
         request.setUserId(username);
         log.info(String.format("About to save document metadata [ %s ]", request.toString()));
-        ServiceResponse metadataUploadResp = documentService.saveDocumentMetadata(request);
+        ServiceResponse metadataUploadResp = this.fileService.saveDocumentMetadata(request);
         log.info(String.format("Saved the metadata"));
         if (metadataUploadResp.getStatus() > 299) {
             return ServiceResponse.builder()
@@ -128,6 +130,14 @@ public class StorageServiceImpl {
                     .build();
 
         }
+        log.info("About to delete filename from user array");
+        // 1: delete a record of the file from users files uploaded field
+        userServiceImpl.deleteFilenameFromFilesUploaded(filename, userId);
+        // 2: delete the file from the fileMeta data table by filename and userId
+        log.info("About to delete file metadata ");
+        fileService.deleteFilesByUser(filename, userId);
+        // log.info("The retrieved user is {}", resp.toString());
+
         return s3Repository.deleteFile(fullpath);
     }
 

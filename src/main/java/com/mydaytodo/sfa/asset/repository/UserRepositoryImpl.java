@@ -147,14 +147,14 @@ public class UserRepositoryImpl {
      * @return
      * @throws Exception
      */
-    public void updateUser(String userId, FileUser user) throws Exception {
+    public void updateUser(String userId, FileUser user) {
         log.info("in updateUser() - {}", userId);
         Map<String, AttributeValue> itemKey = new HashMap<>();
         /*  assetUser = getUser(userId);
         if (assetUser == null) {
             return null;
         }*/
-        log.info("Retrieved assetUser");
+        log.info("Received user body, {}", user.toString());
 
         UpdateItemRequest request = new UpdateItemRequest();
         request.setTableName("FileUser");
@@ -179,11 +179,7 @@ public class UserRepositoryImpl {
         updatedValues.put("files_uploaded", new AttributeValueUpdate().withValue(new AttributeValue().withL(attributeValues)));
 
         request.setAttributeUpdates(updatedValues);
-        try {
-            dynamoDB.updateItem(request);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
+        dynamoDB.updateItem(request);
         log.info("User updated in Database");
     }
 }

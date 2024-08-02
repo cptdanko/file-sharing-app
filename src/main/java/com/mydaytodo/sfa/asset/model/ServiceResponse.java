@@ -1,14 +1,12 @@
 package com.mydaytodo.sfa.asset.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class ServiceResponse {
     private Integer status;
     private Object data;

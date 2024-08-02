@@ -55,7 +55,7 @@ public class FileServiceImpl {
 
     public ServiceResponse deleteAsset(String id) {
         return ServiceResponse.builder()
-                .status(fileRepository.deleteDocument(id))
+                .status(fileRepository.deleteFile(id))
                 .build();
     }
 
@@ -73,6 +73,10 @@ public class FileServiceImpl {
     public List<File> getFilesOfType(String type) {
         FileType fileType = FileType.fromTypeStr(type);
         return fileRepository.getDocumentsOfType(fileType);
+    }
+
+    public void deleteFilesByUser(String filename, String username) {
+        fileRepository.deleteFileByUser(filename, username);
     }
 
     public ServiceResponse validateFileType(String[] filenames) {
