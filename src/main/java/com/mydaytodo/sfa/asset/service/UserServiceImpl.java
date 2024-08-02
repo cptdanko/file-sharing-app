@@ -2,9 +2,11 @@ package com.mydaytodo.sfa.asset.service;
 
 import com.mydaytodo.sfa.asset.constants.KeyStart;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
+import com.mydaytodo.sfa.asset.model.File;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+@ToString
 @Service
 @Slf4j
 public class UserServiceImpl {
@@ -177,7 +181,7 @@ public class UserServiceImpl {
      * whether or not the file can be shared by the user e.g.
      * something like only the user who uploaded the file
      * can share it or so
-     * 
+     *
      * @throws Exception
      */
     public ServiceResponse shareFile(String from, String to, String filename) throws Exception {
@@ -215,5 +219,21 @@ public class UserServiceImpl {
         fileList.add(filename);
         userRepository.addFilenameToFilesUploaded(user.getUserid(), fileList);
         log.info(String.format("Updated user object [ %d]", user.getFilesUploaded().size()));
+    }
+    public void deleteFilenameFromFilesUploaded(String filename, String username) {
+        log.info("Got request to delete file {} by user {}", filename, username);
+        FileUser user = userRepository.getUserByUsername(username).orElseThrow();
+        log.info("No of files before deleted {}", user.getFilesUploaded().size());
+
+        log.info("name {}",filename);
+        log.info("username {}", username);
+
+        List<String> filenames = user.getFilesUploaded().stream()
+                .filter(name -> !name.equalsIgnoreCase(String.format("%s/%s",username, filename)))
+                .collect(Collectors.toList());
+        user.setFilesUploaded(filenames);
+        log.info("No of files after deleted {}", user.getFilesUploaded().size());
+        log.info("About to update the user object with total no of files changed");
+        userRepository.updateUser(user.getUserid(), user);
     }
 }

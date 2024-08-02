@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -49,14 +50,14 @@ public class FileRepositoryImpl {
         Integer retVal = HttpStatus.CREATED.value();
         log.info("In saveAsset method");
         File asset = FileMetadataUploadRequest.convertRequest(request);
-        log.info("Saving document metadata with name "+ asset.getName());
+        log.info("Saving document metadata with name {}", asset.getName());
         mapper.save(asset);
         log.info("Saved asset metadata");
         return retVal;
     }
-    public Integer deleteDocument(String id) {
+    public Integer deleteFile(String id) {
         DeleteItemRequest request = new DeleteItemRequest();
-        request.setTableName("Document");
+        request.setTableName("File");
         request.addKeyEntry("id", new AttributeValue().withS(id));
         File file = getDocument(id);
         if(file == null) {
@@ -66,8 +67,8 @@ public class FileRepositoryImpl {
             dynamoDB.deleteItem(request);
             return HttpStatus.NO_CONTENT.value();
         } catch (Exception e) {
-            log.info("Exception occured in deleting document");
-            log.info("Document id ="+ id);
+            log.info("Exception occurred in deleting document");
+            log.info("Document id = {}", id);
             return HttpStatus.INTERNAL_SERVER_ERROR.value();
         }
     }
@@ -77,7 +78,7 @@ public class FileRepositoryImpl {
         if(fileToUpdate == null) {
             return HttpStatus.NOT_FOUND.value();
         }
-        log.info("About to update document with id "+ fileMetadataUploadRequest.getId());
+        log.info("About to update document with id {}", fileMetadataUploadRequest.getId());
         fileToUpdate.transformForUpdate(fileMetadataUploadRequest);
         DynamoDBSaveExpression saveOp = new DynamoDBSaveExpression()
                 .withExpectedEntry("id", new ExpectedAttributeValue().withValue(new AttributeValue(id)));
@@ -86,12 +87,7 @@ public class FileRepositoryImpl {
     }
     public List<File> getUserDocuments(String userId) {
         Map<String, AttributeValue> eav = new HashMap<>();
-        File file = File
-                            .builder()
-                            .userId(userId)
-                            .build();
         eav.put(":userId", new AttributeValue().withS(userId));
-
         DynamoDBQueryExpression<File> queryExp = new DynamoDBQueryExpression<File>()
                 .withIndexName("user_id-index")
                 .withKeyConditionExpression("user_id= :userId")
@@ -99,6 +95,19 @@ public class FileRepositoryImpl {
                 .withConsistentRead(false);
 
         return mapper.query(File.class, queryExp);
+    }
+    public void deleteFileByUser(String filename, String username) {
+        log.info("In delete file metadata by user function");
+        List<File> userFiles =
+                getUserDocuments(username)
+                        .stream().filter(file -> file.getName().equalsIgnoreCase(filename))
+                        .collect(Collectors.toList());
+        log.info("{} is the no of files uploaded by user with name, {}", userFiles.size(), filename);
+        for(File file: userFiles) {
+            log.info("About to delete file, {}", file.getName());
+            deleteFile(file.getId());
+        }
+        log.info("Deleted all the files from FileMetadata");
     }
 
     /**
