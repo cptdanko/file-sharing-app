@@ -23,8 +23,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(jwtException.getMessage())
                 .status(HttpStatus.FORBIDDEN.value())
                 .build();
-        ResponseEntity<ServiceResponse> res = new ResponseEntity<>(resp, HttpStatus.FORBIDDEN);
-        return res;
+        return new ResponseEntity<>(resp, HttpStatus.FORBIDDEN);
         // return handleExceptionInternal(jwtException, res, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+    @ExceptionHandler(UsernameMismatchException.class)
+    public ResponseEntity<ServiceResponse> handleUsernameMismatchException(UsernameMismatchException exception, WebRequest request) {
+        log.info("Handling username mismatch exception");
+        ServiceResponse response = ServiceResponse.builder()
+                .data(null)
+                .message("Username supplied does not match token")
+                .status(HttpStatus.FORBIDDEN.value())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

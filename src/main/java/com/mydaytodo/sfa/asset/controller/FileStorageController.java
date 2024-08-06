@@ -1,5 +1,6 @@
 package com.mydaytodo.sfa.asset.controller;
 
+import com.mydaytodo.sfa.asset.error.Validator;
 import com.mydaytodo.sfa.asset.model.CustomCreateBucketRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
@@ -69,7 +70,8 @@ public class FileStorageController {
      */
     @GetMapping("/list")
     public ResponseEntity<ServiceResponse> listFilesUploadedByUser(@RequestParam("userId") String userId) {
-        log.info(String.format("Request to list files for [ %s ]", userId));
+        log.info("Request to list files for [ {} ]", userId);
+        Validator.validateUsernameAndToken(userId);
         ServiceResponse response = storageService.getFilesUploadedByUser(userId);
         log.info(response.getMessage());
         log.info(response.getStatus().toString());
@@ -83,7 +85,8 @@ public class FileStorageController {
     @DeleteMapping("/delete/{fileId}")
     public ResponseEntity<ServiceResponse> deleteFile(@RequestParam("userId") String userId,
                                                       @PathVariable("fileId") String fileId) {
-        log.info(String.format("Request to delete file [ %s ]  by user [ %s ]", fileId, userId));
+        log.info("Request to delete file [ {} ]  by user [ {} ]", fileId, userId);
+        Validator.validateUsernameAndToken(userId);
         ServiceResponse response = storageService.deleteFile(userId, fileId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }

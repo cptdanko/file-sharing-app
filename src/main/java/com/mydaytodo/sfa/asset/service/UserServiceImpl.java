@@ -2,7 +2,6 @@ package com.mydaytodo.sfa.asset.service;
 
 import com.mydaytodo.sfa.asset.constants.KeyStart;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
-import com.mydaytodo.sfa.asset.model.File;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
@@ -76,8 +75,9 @@ public class UserServiceImpl {
     public ServiceResponse getFilesAccessibleToUser(String username) {
         log.info("In getFilesAccessibleToUser method");
         try {
-            FileUser user = userRepository.getUserByUsername(username).get();
-            log.info(String.format("These [ %s ] files are accessible to user", user.getFilesUploaded()));
+            // we don't expect this to be null anyway
+            FileUser user = userRepository.getUserByUsername(username).orElseThrow();
+            log.info("These [ {} ] files are accessible to user", user.getFilesUploaded());
             return ServiceResponse.builder()
                     .data(user.getFilesUploaded())
                     .status(HttpStatus.OK.value())
