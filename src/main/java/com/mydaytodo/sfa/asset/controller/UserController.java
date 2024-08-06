@@ -1,5 +1,6 @@
 package com.mydaytodo.sfa.asset.controller;
 
+import com.mydaytodo.sfa.asset.error.Validator;
 import com.mydaytodo.sfa.asset.model.*;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
 import com.mydaytodo.sfa.asset.service.JwtService;
@@ -46,7 +47,7 @@ public class UserController {
 
     @PostMapping(value = "/create", consumes = {"application/json"})
     public ResponseEntity<ServiceResponse> createUser(@RequestBody CreateUserRequest createUserRequest) {
-        log.info(String.format("Got request [ %s ]", createUserRequest.toString()));
+        log.info("Got request [ {} ]", createUserRequest.toString());
         ServiceResponse response = userService.saveUser(createUserRequest);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -72,6 +73,7 @@ public class UserController {
      */
     @GetMapping(value = "/files")
     public ResponseEntity<ServiceResponse> getFilesAccessibleToUser(@RequestParam("username") String username) {
+        Validator.validateUsernameAndToken(username);
         ServiceResponse response = userService.getFilesAccessibleToUser(username);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -90,6 +92,9 @@ public class UserController {
 
     @GetMapping("/username")
     public ResponseEntity<ServiceResponse> getByUsername(@RequestParam("username") String username) throws UsernameNotFoundException{
+        // a user can only see their own details
+        // check for user role to be added later i.e. admin can see everything
+        Validator.validateUsernameAndToken(username);
         ServiceResponse response = userService.getByUsername(username);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
