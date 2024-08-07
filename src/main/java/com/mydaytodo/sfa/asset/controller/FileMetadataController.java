@@ -4,6 +4,7 @@ import com.mydaytodo.sfa.asset.model.File;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/asset")
+@Tag(name = "File Metadata Controller")
 @Slf4j
 public class FileMetadataController {
     @Autowired
@@ -38,7 +40,7 @@ public class FileMetadataController {
     }
     @DeleteMapping("/{assetId}")
     public ResponseEntity<HttpStatus> deleteAsset(@PathVariable("assetId")String assetId) {
-        log.info("request to delete an asset with id "+ assetId);
+        log.info("request to delete an asset with id {}", assetId);
         ServiceResponse response = assetService.deleteAsset(assetId);
         return new ResponseEntity<>(HttpStatus.valueOf(response.getStatus()));
     }
@@ -50,7 +52,7 @@ public class FileMetadataController {
     }
     @GetMapping("/by/{userId}")
     public ResponseEntity<List<File>> getUserAssets(@PathVariable("userId") String userId) {
-        log.info("received request to get assets for user with id "+ userId);
+        log.info("received request to get assets for user with id {}", userId);
         log.info("");
 
         List<File> assets = assetService.getUserDouments(userId);

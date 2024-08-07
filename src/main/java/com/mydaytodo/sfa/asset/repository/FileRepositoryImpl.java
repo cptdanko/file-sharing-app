@@ -101,7 +101,7 @@ public class FileRepositoryImpl {
         List<File> userFiles =
                 getUserDocuments(username)
                         .stream().filter(file -> file.getName().equalsIgnoreCase(filename))
-                        .collect(Collectors.toList());
+                        .toList();
         log.info("{} is the no of files uploaded by user with name, {}", userFiles.size(), filename);
         for(File file: userFiles) {
             log.info("About to delete file, {}", file.getName());

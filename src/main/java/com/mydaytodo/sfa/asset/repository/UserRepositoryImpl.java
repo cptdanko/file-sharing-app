@@ -175,7 +175,7 @@ public class UserRepositoryImpl {
         for (String doc : user.getFilesUploaded()) {
             attributeValues.add(new AttributeValue().withS(doc));
         }
-        log.info(String.format("Total no of attribute value added [ %d ]", attributeValues.size()));
+        log.info("Total no of attribute value added [ {} ]", attributeValues.size());
         updatedValues.put("files_uploaded", new AttributeValueUpdate().withValue(new AttributeValue().withL(attributeValues)));
 
         request.setAttributeUpdates(updatedValues);

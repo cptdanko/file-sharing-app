@@ -21,4 +21,4 @@ usermod -aG docker vscode
 EOF
 # install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
-CMD ["mvn", "spring-boot:run"]
+CMD ["mvn", "-Dspring.devtools.restart.enabled=true", "spring-boot:run"]

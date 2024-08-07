@@ -5,6 +5,7 @@ import com.mydaytodo.sfa.asset.model.CustomCreateBucketRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
 import com.mydaytodo.sfa.asset.service.StorageServiceImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -21,6 +22,7 @@ import java.io.InputStream;
 
 @RestController
 @RequestMapping("/api/file")
+@Tag(name = "File Storage Controller")
 @Slf4j
 public class FileStorageController {
 
@@ -29,16 +31,6 @@ public class FileStorageController {
 
     @Autowired
     private FileServiceImpl fileService;
-
-    @PostMapping("/bucket")
-    public ResponseEntity<ServiceResponse> createNewBucket(@RequestBody CustomCreateBucketRequest createBucketRequest) {
-        return null;
-    }
-
-    @GetMapping("/bucket/files/{bucketName}")
-    public ResponseEntity<ServiceResponse> listFilesInBucket(@PathVariable("bucketName") String bucketName) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
     /**
      * Possible 400 errors could be
@@ -50,11 +42,12 @@ public class FileStorageController {
      * @return
      * @throws IOException
      */
-    @RequestMapping("/upload")
+    @PostMapping("/upload")
     public ResponseEntity<ServiceResponse> handleFileUpload(@RequestParam("file") MultipartFile file,
                                                             @RequestParam("username") String username)
             throws Exception {
         log.info("Original filename to upload {}", file.getOriginalFilename());
+        Validator.validateUsernameAndToken(username);
         String[] filenames = new String[]{file.getOriginalFilename()};
         if(fileService.validateFileType(filenames).getStatus() != null) {
             ServiceResponse response = fileService.validateFileType(filenames);
@@ -118,7 +111,7 @@ public class FileStorageController {
      * @param fileId
      * @return
      */
-    @RequestMapping("/updateFile")
+    @PutMapping("/updateFile")
     public ResponseEntity<ServiceResponse> replaceUploadedFile(@PathVariable("fileId") String fileId) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

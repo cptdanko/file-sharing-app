@@ -88,7 +88,7 @@ export const FileList = (props) => {
             body: `Dear ${emailAdd}, kindly download the attachment`,
             filesToAttach: [filename],
         };
-        fetch("/api/user/sendMail", {
+        fetch("/api/social/sendMail", {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${cookies.user.token}`,
