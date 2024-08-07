@@ -53,10 +53,13 @@ public class SecurityConfig {
                                         "/logo192.png",
                                         "/manifest.json",
                                         "/index.html",
-                                        "/api/user/login",
+                                        "/api/auth/login",
+                                        "/api/auth/ping",
                                         "/api/user/create",
                                         "/index",
                                         "/ping",
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
                                         "/healthcheck").permitAll()
                                 .anyRequest()
                                 .authenticated()

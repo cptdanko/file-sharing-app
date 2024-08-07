@@ -19,7 +19,7 @@ export const UserAuth = () => {
 
     const login = async () => {
         // call the healthcheck method to know it's valid
-        const url = `/api/user/login`;
+        const url = `/api/auth/login`;
         const resp = await fetch(url, {
             method: "POST",
             headers: {

@@ -53,7 +53,7 @@ public class UserAuthServiceImpl implements UserDetailsService {
         log.info("User exists, so getting it now");
         log.info("Got the optional {}", repository.getUserByUsername(username).isPresent());
         FileUser user = repository.getUserByUsername(username).get();
-        log.info("Got the user {}", user.toString());
+        log.info("Got the user {}", user.getUsername());
         UserDetails details = new User(user.getUsername(), user.getPassword(), new ArrayList<>());
         log.info("Successfully initialised {} user details object", details.toString());
         return details;

@@ -114,8 +114,7 @@ public class UserServiceImpl {
                         .build();
             }
             FileUser createdUser = entry.getValue();
-            log.info("User created");
-            log.info(entry.toString());
+            log.info("User created {}", entry.toString());
             UserAuthServiceImpl.instance.addUser(createdUser);
             // CustomUserService.instance.getInMemoryUserDetailsManager().
             return ServiceResponse.builder()
@@ -185,18 +184,14 @@ public class UserServiceImpl {
      * @throws Exception
      */
     public ServiceResponse shareFile(String from, String to, String filename) throws Exception {
-        try {
-            log.info("Received a reqiuest to share file, " + filename);
-            String filepath = from + "/" + filename;
-            log.info(String.format("%s about to share file %s with %s", from, filepath, to));
-            addFIlenameToFilesUploadedByUser(to, filepath);
-            return new ServiceResponse().builder()
-                    .data(new Object()).status(HttpStatus.OK.value())
-                    .message("Successful")
-                    .build();
-        } catch (Exception e) {
-            throw new Exception("Error occured while sharing file with user");
-        }
+        log.info("Received a request to share file, {}", filename);
+        String filepath = from + "/" + filename;
+        log.info("{} about to share file {} with {}", from, filepath, to);
+        addFIlenameToFilesUploadedByUser(to, filepath);
+        return new ServiceResponse().builder()
+                .data(new Object()).status(HttpStatus.OK.value())
+                .message("Successful")
+                .build();
     }
 
     /**
@@ -208,17 +203,17 @@ public class UserServiceImpl {
         log.info("About to add the filename to files uploaded");
         Optional<FileUser> optionalUser = userRepository.getUserByUsername(username);
         FileUser user = optionalUser.get();
-        log.info(String.format("Got user by name [ %s ]", user));
+        log.info("Got user by name [ {} ]", user);
         log.info("About to get files uploaded");
         List<String> fileList = user.getFilesUploaded();
         if (fileList == null) {
             fileList = new ArrayList<>();
             user.setFilesUploaded(fileList);
         }
-        log.info(String.format("The number of files uploaded by user are %d", fileList.size()));
+        log.info("The number of files uploaded by user are {}", fileList.size());
         fileList.add(filename);
         userRepository.addFilenameToFilesUploaded(user.getUserid(), fileList);
-        log.info(String.format("Updated user object [ %d]", user.getFilesUploaded().size()));
+        log.info("Updated user object [ {}]", user.getFilesUploaded().size());
     }
     public void deleteFilenameFromFilesUploaded(String filename, String username) {
         log.info("Got request to delete file {} by user {}", filename, username);
