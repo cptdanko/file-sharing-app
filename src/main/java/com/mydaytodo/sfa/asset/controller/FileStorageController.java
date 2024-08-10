@@ -1,7 +1,6 @@
 package com.mydaytodo.sfa.asset.controller;
 
 import com.mydaytodo.sfa.asset.error.Validator;
-import com.mydaytodo.sfa.asset.model.CustomCreateBucketRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
 import com.mydaytodo.sfa.asset.service.StorageServiceImpl;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 @RestController
 @RequestMapping("/api/file")

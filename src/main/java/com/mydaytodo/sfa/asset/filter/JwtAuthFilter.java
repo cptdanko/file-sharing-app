@@ -42,9 +42,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 token = authHeader.substring(7);
                 username = jwtService.extractUsername(token);
             }
-
+            log.info("Username extracted from JWT token, {}", username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+               log.info("Loaded userdetails object, {}", userDetails.getUsername());
                 if (jwtService.validateToken(token, userDetails)) {
                     log.info("JWT token validated for expiry and about to set session context");
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

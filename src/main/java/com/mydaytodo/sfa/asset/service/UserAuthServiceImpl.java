@@ -34,8 +34,8 @@ public class UserAuthServiceImpl implements UserDetailsService {
 
     }
     public void addUser(FileUser assetUser) {
-        log.info(String.format("About to create a user with name [ %s ]", assetUser.getUsername()));
-        log.info(String.format("User object = [ %s ]", assetUser.toString()));
+        log.info("About to create a user with name [ {} ]", assetUser.getUsername());
+        log.info("User object = [ {} ]", assetUser.toString());
         UserDetails userDetails = User.withUsername(assetUser.getUsername())
                         .password(assetUser.getPassword())
                                 .roles("ADMIN", "USER")
@@ -47,14 +47,19 @@ public class UserAuthServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("In load by username {}", username);
-        if(!repository.getUserByUsername(username).isPresent()) {
+        if(repository.getUserByUsername(username).isEmpty()) {
             throw new UsernameNotFoundException(String.format("User with name %s not found", username));
         }
         log.info("User exists, so getting it now");
         log.info("Got the optional {}", repository.getUserByUsername(username).isPresent());
         FileUser user = repository.getUserByUsername(username).get();
         log.info("Got the user {}", user.getUsername());
-        UserDetails details = new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        UserDetails details;
+        if(user.getIsSocialLoginGoogle()) {
+            details = new User(user.getUsername(), "", new ArrayList<>());
+        } else {
+            details = new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        }
         log.info("Successfully initialised {} user details object", details.toString());
         return details;
 

@@ -33,6 +33,9 @@ public class FileUser {
     @DynamoDBAttribute(attributeName = "last_login")
     private Date lastLogin;
 
+    @DynamoDBAttribute(attributeName = "social_login_google")
+    private Boolean isSocialLoginGoogle;
+
     // @DynamoDBAttribute(attributeName = "email")
     // private String email;
     // @DynamoDBFlattened

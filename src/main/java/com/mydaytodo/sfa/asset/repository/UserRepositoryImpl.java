@@ -64,6 +64,8 @@ public class UserRepositoryImpl {
         List<FileUser> aUsers = new ArrayList<>(mapper.scan(FileUser.class, scanExpression));
         log.info("Managed to get all the users");
         for (FileUser user : aUsers) {
+            // in case a user logged in via their social media account e.g. Google
+            if(user.getPassword() == null) continue;
             log.info("Now about to save users");
             UserAuthServiceImpl.instance.addUser(user);
         }
@@ -78,6 +80,7 @@ public class UserRepositoryImpl {
         FileUser user = CreateUserRequest.convertRequest(createUserRequest);
         user.setDateJoined(new Date());
         user.setLastLogin(new Date());
+        user.setIsSocialLoginGoogle(createUserRequest.isSocialLoginGoogle());
         user.setPassword(createUserRequest.getPassword());
         log.info("Setup everything, final FileUser object : {}", user);
         try {
