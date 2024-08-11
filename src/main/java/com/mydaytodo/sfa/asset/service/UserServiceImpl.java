@@ -92,10 +92,10 @@ public class UserServiceImpl {
     }
 
     public ServiceResponse saveUser(CreateUserRequest userRequest) {
-        log.info(String.format("About to print out user data [ %s ]", userRequest.toString()));
+        log.info("About to print out user data [ {} ]", userRequest.toString());
         String key = KeyStart.USER_KEY + System.currentTimeMillis();
         userRequest.setUserId(key);
-        log.info("About to save user with name " + userRequest.getUsername());
+        log.info("About to save user with name {}", userRequest.getUsername());
         try {
             // add validation to ensure user does not exist
             if (userRepository.getUserByUsername(userRequest.getUsername()).isPresent()) {
@@ -105,7 +105,9 @@ public class UserServiceImpl {
                         .status(HttpStatus.CONFLICT.value())
                         .build();
             }
-            userRequest.setPassword(new BCryptPasswordEncoder().encode(userRequest.getPassword()));
+            if(userRequest.getPassword() != null) {
+                userRequest.setPassword(new BCryptPasswordEncoder().encode(userRequest.getPassword()));
+            }
             Map.Entry<String, FileUser> entry = userRepository.saveUser(userRequest);
             if(entry.getKey() != null) {
                 return ServiceResponse.builder()
@@ -115,7 +117,9 @@ public class UserServiceImpl {
             }
             FileUser createdUser = entry.getValue();
             log.info("User created {}", entry.toString());
-            UserAuthServiceImpl.instance.addUser(createdUser);
+            if(!userRequest.isSocialLoginGoogle()) {
+                UserAuthServiceImpl.instance.addUser(createdUser);
+            }
             // CustomUserService.instance.getInMemoryUserDetailsManager().
             return ServiceResponse.builder()
                     .message("")

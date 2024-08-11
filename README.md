@@ -1,16 +1,13 @@
-# MyDT - File Sharing App
+# MDT - File Sharing App
 
-This is a simple file sharing system similar to Google Drive. In this system anyone who signs up to be a user is able to
-upload, share and track multiple files.
+A full stack file sharing app like DropBox or Google Drive. Unlike those apps, this is limited to documents only.
 
-> **_NOTE:_**  User roles and permissions will NOT be a part of the MVP.
+# Summary
 
-# Objective
-
-Create a file sharing app powered by Java Spring Boot, React and the uses AWS's public cloud offereing to CRUD data.
-Once implemented, aspects of this repository will also serve as code samples that anyone that wants to build a system
-like this can learn from. During development, there will also be a series of blogposts that will be shared on the My Day
-To-Do blog. Below are some of the blogposts shared so far,
+This repo shows a file sharing app built with Java Spring Boot, React, with appropriate security mechanisms and 
+stores data in AWS services. Aspects of this repository serve as code 
+samples for other developers who want to build an app like this. A series of blogposts i.e. 
+How-To tutorials have also been shared on the My Day To-Do blog, they are,
 
 1. [Upload to AWS S3 bucket from Java Spring Boot app]
 2. [How to Catch ExpiredJwtException in Spring OncePerRequestFilter]
@@ -22,8 +19,8 @@ To-Do blog. Below are some of the blogposts shared so far,
 This app is composed of a Spring boot API with a simple and function reactjs based UI. It features the following,
 
 1. New user sign up
-2. Upload and Manage files from cloud storaege
-3. Security with basic authentication
+2. Upload and Manage files from cloud storage
+3. A combination of Google login via Oauth2.0, new user sign-ups and JWT auth  
 4. Share uploaded files with other users
 
 Show below is a screenshot of the simple reactjs based UI that allows, a user to login, upload, download, delete and
@@ -38,6 +35,7 @@ The app is built using
 - Java 17
 - Spring Boot 3
 - Spring Security
+- Spring mail
 - Lombok
 - AWS DynamoDB
 - AWS S3
@@ -45,20 +43,21 @@ The app is built using
 - ReactJS
 - MUI
 - Github Actions
+- Docker
+- Google login via Oauth2.0
 
 # Setup and run
 
 To run this spring boot project,
 
-1. Clone the repository and navigate to the repo directory
+Clone the repository and navigate to the repo directory
 
 ```shell
 git clone git@github.com:cptdanko/file-sharing.git
 cd file-sharing
 ```
 
-2. Open application.yml file in either VSCode or IntelliJ
-3. Update the following with your AWS credentials
+Update the application.yml file with your AWS credentials
 
 ```shell
 aws:
@@ -69,13 +68,13 @@ aws:
     amazonDBEndpoint: <get yours from here https://docs.aws.amazon.com/general/latest/gr/ddb.html>
 ```
 
-4. After you have setup everything, when running for the first time, execute the following,
+After you have setup everything, when running for the first time, execute the following,
 
  ```
 mvn clean install package 
 ```
 
-5. Then to run the app as you make changes, from the terminal, git bash or command line, run
+Then to run the app as you make changes, from the terminal, git bash or command line, run
 
 ```shell
 mvn spring-boot:run
@@ -85,11 +84,16 @@ Alternatively, you can run the app via docker, for this first install docker and
 cd file-sharing-app/
 docker compose up
 ```
-Then you should see the instructions on the sitge
+Then you should see the instructions on the site
+
+**(OPTIONAL)**: if you want to use Google login
+1. create a .env file in the root frontend directory
+2. create a variable REACT_APP_GOOGLE_CLIENT_ID=<your-google-client-id>
+3. in case you don't know, an online search should tell you more about 'how to add Gogole login to your app'
 
 > **_NOTE:_** 
 > 1. if you don't add your AWS credentials, the app will fail at startup
-> 2. if you are on a mac, change server port in application.yml to <your-new-no>
+> 2. if you are on a mac, change server port in application.yml to <anything-else-than-5000>
 > 3. also change the proxy in package.json to http://localhost:<your-new-no>
 
 ### How to run the monolithic web app with react based UI
@@ -100,7 +104,7 @@ monolithic web app with the react based UI, you need to edit the pom.xml file an
 ## Any help?
 
 If you have difficulty understanding anything about this repo, feel free to reach out to me through this Github account
-or at bhuman at mydaytodoDOTcom or bhuman.soni@gmail.com.
+or at _**bhuman@mydaytodo.com**_ or **_bhuman.soni@gmail.com_**
 
 ## How to contribute to this repo?
 This repository uses the Git feature based workflow, so if you would like to add something to this

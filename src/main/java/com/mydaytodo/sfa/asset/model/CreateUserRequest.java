@@ -23,6 +23,8 @@ public class CreateUserRequest {
     private Date dateJoined = null;
     private List<String> filesUploaded;
     private String password;
+    private boolean isSocialLoginGoogle = false;
+    private String profilePicLink;
 
     public static FileUser convertRequest(CreateUserRequest request) {
         FileUser fileUser = FileUser.builder()
@@ -35,7 +37,7 @@ public class CreateUserRequest {
         if (request.getFilesUploaded() != null) {
             fileUser.setFilesUploaded(request.getFilesUploaded());
         }
-        log.info(String.format("About to save fileUser obj [ %s ]", fileUser.toString()));
+        log.info("About to save fileUser obj [ {} ]", fileUser.toString());
         return fileUser;
     }
 }
