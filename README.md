@@ -137,9 +137,10 @@ and you can find more at https://www.mydaytodo.com/blog/
 I will be writing a detailed tutorial on how to work with this repo on my blog. Until then refer to [my blog] for other
 tutorials and "how-to" articles with detailed code samples.
 
-If you like what I am doing, you can [buy me a coffee]
+If you like what I am doing, you can [buy me a coffee].
 
-Click on the next link for more info on the [software engineering career journey] of the author.
+Until next time, live long and prosper!
+
 
 [How to Catch ExpiredJwtException in Spring OncePerRequestFilter]: https://mydaytodo.com/how-to-catch-expiredjwtexception-in-spring-onceperrequestfilter/
 
@@ -174,4 +175,4 @@ Click on the next link for more info on the [software engineering career journey
 [blogpost]: https://mydaytodo.com/blog/
 
 [buy me a coffee]: https://www.buymeacoffee.com/bhumansoni
-- [git feature branch workflow]: https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow
+[git feature branch workflow]: https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow

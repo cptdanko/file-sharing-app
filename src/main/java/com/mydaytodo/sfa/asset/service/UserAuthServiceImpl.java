@@ -54,13 +54,16 @@ public class UserAuthServiceImpl implements UserDetailsService {
         log.info("Got the optional {}", repository.getUserByUsername(username).isPresent());
         FileUser user = repository.getUserByUsername(username).get();
         log.info("Got the user {}", user.getUsername());
+        log.info("Printing out user, {}", user.toString());
         UserDetails details;
-        if(user.getIsSocialLoginGoogle()) {
+
+        if (user.getIsSocialLoginGoogle() != null) {
             details = new User(user.getUsername(), "", new ArrayList<>());
         } else {
             details = new User(user.getUsername(), user.getPassword(), new ArrayList<>());
         }
         log.info("Successfully initialised {} user details object", details.toString());
+
         return details;
 
     }
