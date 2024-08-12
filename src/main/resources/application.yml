@@ -10,23 +10,34 @@ spring:
     properties:
       mail:
         smtp:
-          auth: true
+          auth:
           starttls:
-            enable: true
+            enable: 
+  ses:
+    smtp-endpoint:
+    iam-username:
+    smtp-username:
+    smt-password:
 
   security:
     jwt:
       secret:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId:
+            clientSecret:
     user:
       name:
-      password: passw@rd
+      password:
 
 
 aws:
-  upload-limit: 5
-  region: ap-southeast-2
+  upload-limit:
+  region:
   key:
   secret:
   dynamo-db:
-    amazonDBEndpoint: 
+    amazonDBEndpoint: dynamodb.ap-southeast-2.amazonaws.com
   s3UploadBucketName:

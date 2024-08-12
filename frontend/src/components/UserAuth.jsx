@@ -79,10 +79,8 @@ export const UserAuth = () => {
         if (resp.status > 299) {
             setLoginError(true);
         } else {
-            console.log("Login successful");
             setUserLoggedIn(true);
             const token = await resp.text();
-            console.log(`Received the JSON token ${token}`);
             const userObj = {
                 username,
                 token,
@@ -101,7 +99,6 @@ export const UserAuth = () => {
     }
     const submit = (e) => {
         e.preventDefault();
-        console.log("About to submit an event");
     }
     const closeForm = () => {
         setShowRegForm(false);
