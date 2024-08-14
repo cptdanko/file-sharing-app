@@ -233,6 +233,7 @@ public class UserServiceImpl {
         user.setFilesUploaded(filenames);
         log.info("No of files after deleted {}", user.getFilesUploaded().size());
         log.info("About to update the user object with total no of files changed");
-        userRepository.updateUser(user.getUserid(), user);
+        userRepository.updateUserFilesUploaded(user.getUserid(), user);
+        log.info("*********** deleteFilenameFromFilesUploaded ********************8");
     }
 }

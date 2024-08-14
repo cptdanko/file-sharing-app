@@ -185,4 +185,22 @@ public class UserRepositoryImpl {
         dynamoDB.updateItem(request);
         log.info("User updated in Database");
     }
+    public void updateUserFilesUploaded(String userId, FileUser user) {
+        log.info("in updateUserFilesUploaded() - {}", userId);
+        Map<String, AttributeValue> itemKey = new HashMap<>();
+        UpdateItemRequest request = new UpdateItemRequest();
+        request.setTableName("FileUser");
+        itemKey.put("user_id", new AttributeValue().withS(userId));
+        request.setKey(itemKey);
+        HashMap<String, AttributeValueUpdate> updatedValues = new HashMap<>();
+        List<AttributeValue> attributeValues = new ArrayList<>();
+        for (String doc : user.getFilesUploaded()) {
+            attributeValues.add(new AttributeValue().withS(doc));
+        }
+        log.info("updateUserFilesUploaded.attribute values added [ {} ]", attributeValues.size());
+        updatedValues.put("files_uploaded", new AttributeValueUpdate().withValue(new AttributeValue().withL(attributeValues)));
+
+        request.setAttributeUpdates(updatedValues);
+        dynamoDB.updateItem(request);
+    }
 }

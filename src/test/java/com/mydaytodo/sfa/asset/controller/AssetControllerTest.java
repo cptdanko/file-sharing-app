@@ -99,7 +99,7 @@ public class AssetControllerTest {
     }
     @Test
     void testGetUserAssets() throws Exception {
-        when(documentService.getUserDouments(any())).thenReturn(new ArrayList<>());
+        when(documentService.getUserDocuments(any())).thenReturn(new ArrayList<>());
         mockMvc.perform(get(BASE_URL + "/by/USR_123")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

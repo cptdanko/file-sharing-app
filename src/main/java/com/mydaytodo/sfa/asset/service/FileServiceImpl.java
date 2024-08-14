@@ -66,7 +66,7 @@ public class FileServiceImpl {
                 .build();
     }
 
-    public List<File> getUserDouments(String userId) {
+    public List<File> getUserDocuments(String userId) {
         return fileRepository.getUserDocuments(userId);
     }
 
