@@ -25,7 +25,6 @@ export const FileList = (props) => {
     }
 
     const filesUploaded = async () => {
-        console.log("About to fetch user files");
         if (!cookies.user) {
             setNotLoginError(true);
             return;
@@ -59,12 +58,10 @@ export const FileList = (props) => {
             },
         });
         const status = await resp.status;
-        console.log(`Result of delete operation -> ${status}`);
         filesUploaded();
     }
 
     const openDialog = (file) => {
-        console.log(`Want to share file ${file}`)
         setFileToShare(file);
         setDialogOpen(true);
     }
@@ -76,7 +73,6 @@ export const FileList = (props) => {
         e.preventDefault();
         const emailAdd = document.getElementById("shareEmailId").value;
         const filename = `${cookies.user.username}/${fileToShare}`;
-        console.log("valid email id supplied, calling server");
         // get the logged in user
         const msg = `${cookies.user.username} shared ${fileToShare} with you`;
 

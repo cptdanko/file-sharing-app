@@ -55,7 +55,7 @@ public class FileMetadataController {
         log.info("received request to get assets for user with id {}", userId);
         log.info("");
 
-        List<File> assets = assetService.getUserDouments(userId);
+        List<File> assets = assetService.getUserDocuments(userId);
         return new ResponseEntity<>(assets, HttpStatus.OK);
     }
 

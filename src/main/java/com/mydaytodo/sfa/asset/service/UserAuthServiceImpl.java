@@ -57,14 +57,12 @@ public class UserAuthServiceImpl implements UserDetailsService {
         log.info("Printing out user, {}", user.toString());
         UserDetails details;
 
-        if (user.getIsSocialLoginGoogle() != null) {
+        if (user.getIsSocialLoginGoogle() != null && user.getIsSocialLoginGoogle()) {
             details = new User(user.getUsername(), "", new ArrayList<>());
         } else {
             details = new User(user.getUsername(), user.getPassword(), new ArrayList<>());
         }
         log.info("Successfully initialised {} user details object", details.toString());
-
         return details;
-
     }
 }

@@ -85,11 +85,11 @@ export const UserAuth = () => {
                 username,
                 token,
             };
+            setProfileImage("");
             setCookie("user", JSON.stringify(userObj), "/");
         }
     }
     const createNewAccount = () => {
-        console.log(`About to create new account`);
         setShowRegForm(true);
     }
     const logout = () => {

@@ -38,7 +38,6 @@ export const FileUpload = () => {
             .then(resp => resp.json())
             .then(data => {
                 setFile("");
-                console.log(data);
                 if (data.status > 299) {
                     setAlertHeader("Error uploading");
                     setAlertMessage(data.message);
