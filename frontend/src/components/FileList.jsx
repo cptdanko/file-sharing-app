@@ -1,10 +1,12 @@
-import { Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material"
-import { useState } from "react";
+import { Alert, Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material"
+import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { API_FILE_PATH } from "../Constants";
 import { AlertDialog } from "../dialogs/AlertDialog";
 
 export const FileList = (props) => {
+    const {fileUploadDone, setFileUploadDone} = props;
+
     const [cookies, setCookie, removeCookie] = useCookies(['user']);
     const [userFiles, setUserFiles] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -14,6 +16,15 @@ export const FileList = (props) => {
     const [notLoginErr, setNotLoginError] = useState(false);
     const [alertHeader, setAlertHeader] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
+    const [shareBtnTxt, setShareBtnTxt] = useState("Share");
+    const [shareBtnDisabled, setShareBtnDisabled] = useState(false);
+
+    useEffect(() => {
+        if(fileUploadDone) {
+            filesUploaded();
+            setFileUploadDone(false);
+        }
+    });
 
     const handleAlertClose = () => {
         setAlertHeader("");
@@ -57,7 +68,6 @@ export const FileList = (props) => {
                 Authorization: `Bearer ${cookies.user.token}`,
             },
         });
-        const status = await resp.status;
         filesUploaded();
     }
 
@@ -70,11 +80,13 @@ export const FileList = (props) => {
     }
 
     const shareFile = (e) => {
+        setShareBtnDisabled(true);
+        setShareBtnTxt("Sharing...");
         e.preventDefault();
         const emailAdd = document.getElementById("shareEmailId").value;
         const filename = `${cookies.user.username}/${fileToShare}`;
         // get the logged in user
-        const msg = `${cookies.user.username} shared ${fileToShare} with you`;
+        const msg = `${cookies.user.name} shared ${fileToShare} with you`;
 
         const emailBody = {
             to: emailAdd,
@@ -91,23 +103,17 @@ export const FileList = (props) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(emailBody),
-        })
-            .then(resp => resp.json())
-            .then(data => {
-                setDialogOpen(false);
-                // setFileUploading(false);
-                if (data.status > 299) {
-                    const msg = `${data.message}`;
-                    setAlertHeader("File Share Error");
-                    setAlertMessage(msg);
-                    setAlertOpen(true);
-                }
-            }).catch(e => {
-                console.log(`Error occured ${e}`);
-                console.log(JSON.stringify(e));
-                setDialogOpen(false);
-                // setFileUploading(false);
-            });
+        }).then(() => {
+            setDialogOpen(false);
+            setShareBtnDisabled(false);
+            setShareBtnTxt("Share");
+        }).catch(e => {
+            console.log(`Error occured ${e}`);
+            console.log(JSON.stringify(e));
+            setDialogOpen(false);
+            setShareBtnDisabled(false);
+            setShareBtnTxt("Share");
+        });
     }
     const hideFiles = () => {
         setShowFiles(false);
@@ -158,7 +164,7 @@ export const FileList = (props) => {
                                 Hide
                             </Button>
                             <Typography component={'span'} >
-                                Files Uploaded by <Chip label={cookies.user.username}></Chip>
+                                Files Uploaded by <Chip label={cookies.user.name ?? cookies.user.username}></Chip>
                             </Typography>
                         </Box>
                         <Divider orientation="horizontal" flexItem />
@@ -235,22 +241,35 @@ export const FileList = (props) => {
                     onSubmit: shareFile
                 }}>
                 <DialogTitle> Share File</DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <Alert variant="outlined" severity="info">
+                        Only 1 email address supported
+                    </Alert>
                     <TextField autoFocus
+                        fullWidth
                         required
                         margin="dense"
                         label="Email address to share with"
-                        placeholder="Email address to share with"
+                        placeholder="Enter that person's email address"
                         type="email"
                         id="shareEmailId"
                     />
+
                 </DialogContent>
+
                 <DialogActions>
                     <Button variant="contained"
                         size="small"
                         onClick={closeDialog}>Close</Button>
                     <Button variant="contained"
-                        size="small" type="submit">Share</Button>
+                        disabled={shareBtnDisabled}
+                        size="small" 
+                        type="submit">{shareBtnTxt}</Button>
                 </DialogActions>
             </Dialog>
         </Container >

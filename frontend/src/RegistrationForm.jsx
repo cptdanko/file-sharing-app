@@ -51,6 +51,7 @@ export const RegistrationForm = (props) => {
                     <FormControl sx={{ marginTop: 2 }}>
                         <InputLabel htmlFor="email"> Email </InputLabel>
                         <Input id="username" value={username}
+                            type="email"
                             onChange={(e) => setUsername(e.target.value)} />
                         <FormHelperText id="usernameText">Your username should be your email address</FormHelperText>
                     </FormControl>

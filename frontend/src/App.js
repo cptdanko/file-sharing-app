@@ -4,8 +4,11 @@ import { UserAuth } from "./components/UserAuth";
 import { Typography, Divider } from "@mui/material";
 import { FileList } from "./components/FileList";
 import { FileUpload } from "./components/FileUpload";
+import { useState } from "react";
 
 function App() {
+
+  const [fileUploadDone, setFileUploadDone] = useState(false);
 
   return (
     <CookiesProvider>
@@ -25,11 +28,11 @@ function App() {
         
         <Divider sx={{ margin: 2 }} flexItem orientation="horizontal"></Divider>
 
-        <FileUpload />
+        <FileUpload setFileUploaded={setFileUploadDone} />
 
         <Divider sx={{ margin: 2 }} flexItem orientation="horizontal"></Divider>
 
-        <FileList />
+        <FileList fileUploadDone={fileUploadDone} setFileUploadDone={setFileUploadDone}  />
       </div>
     </CookiesProvider>
   );

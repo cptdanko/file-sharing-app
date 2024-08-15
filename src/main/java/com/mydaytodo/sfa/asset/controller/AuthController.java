@@ -15,6 +15,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
+/**
+ * TODO: refactor and move the logic in the controller to
+ * service layer e.g. AuthService
+ */
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Auth controller")
@@ -31,13 +38,24 @@ public class AuthController {
     private UserServiceImpl userService;
 
     @PostMapping(value = "/login", consumes = {"application/json"})
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<LoginResponse> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
         log.info("Received login request for {}", authRequest.getUsername());
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-        log.info("Auth object {}", Boolean.toString(authentication.isAuthenticated()));
+        log.info("User successfully authenticated {}", Boolean.toString(authentication.isAuthenticated()));
         if (authentication.isAuthenticated()) {
             log.info("Authentication successful");
-            return jwtService.generateToken(authRequest.getUsername());
+            // for now, we are assuming that getByUsername method won't fail
+            // once the user has been authenticated
+
+            Optional<FileUser> user = (Optional<FileUser>) userService.getByUsername(authRequest.getUsername()).getData();
+            assert user.isPresent();
+            String accessToken = jwtService.generateToken(authRequest.getUsername());
+            LoginResponse lResp = LoginResponse.builder()
+                    .username(user.get().getUsername())
+                    .accessToken(accessToken)
+                    .name(user.get().getName())
+                    .build();
+            return new ResponseEntity<>(lResp, HttpStatus.OK);
         } else {
             log.info("Authentication NOT successful");
             throw new UsernameNotFoundException("invalid user request");
