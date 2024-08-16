@@ -78,14 +78,13 @@ public class MailService {
     }
 
     private void addRecipients(Message.RecipientType recipientType, String[] addresses, MimeMessage message) throws MessagingException {
-        if (addresses.length > 0) {
-            InternetAddress[] internetAddresses = new InternetAddress[addresses.length];
-            int idx = 0;
-            for (String s : addresses) {
-                internetAddresses[idx] = new InternetAddress(s);
-                idx += 1;
-            }
-            message.setRecipients(recipientType, internetAddresses);
+        assert addresses.length > 0;
+        InternetAddress[] internetAddresses = new InternetAddress[addresses.length];
+        int idx = 0;
+        for (String s : addresses) {
+            internetAddresses[idx] = new InternetAddress(s);
+            idx += 1;
         }
+        message.setRecipients(recipientType, internetAddresses);
     }
 }

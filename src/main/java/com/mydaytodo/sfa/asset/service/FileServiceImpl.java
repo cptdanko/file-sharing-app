@@ -7,6 +7,7 @@ import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.FileRepositoryImpl;
 import com.mydaytodo.sfa.asset.utilities.StringManipService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Tag(name = "File Service", description = "To CRUD file metadata")
 public class FileServiceImpl {
     @Autowired
     private FileRepositoryImpl fileRepository;

@@ -2,6 +2,7 @@ package com.mydaytodo.sfa.asset.service;
 
 import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 @Data
 @Service
 @Slf4j
+@Tag(name ="User Auth Service", description = "Implements UserDetailsService from Spring security")
 public class UserAuthServiceImpl implements UserDetailsService {
 
     @Autowired

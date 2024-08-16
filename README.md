@@ -4,9 +4,9 @@ A full stack file sharing app like DropBox or Google Drive. Unlike those apps, t
 
 # Summary
 
-This repo shows a file sharing app built with Java Spring Boot, React, with appropriate security mechanisms and 
-stores data in AWS services. Aspects of this repository serve as code 
-samples for other developers who want to build an app like this. A series of blogposts i.e. 
+This repo shows a file sharing app built with Java Spring Boot, React, with appropriate security mechanisms and
+stores data in AWS services. Aspects of this repository serve as code
+samples for other developers who want to build an app like this. A series of blogposts i.e.
 How-To tutorials have also been shared on the My Day To-Do blog, they are,
 
 1. [Upload to AWS S3 bucket from Java Spring Boot app]
@@ -20,7 +20,7 @@ This app is composed of a Spring boot API with a simple and function reactjs bas
 
 1. New user sign up
 2. Upload and Manage files from cloud storage
-3. A combination of Google login via Oauth2.0, new user sign-ups and JWT auth  
+3. A combination of Google login via Oauth2.0, new user sign-ups and JWT auth
 4. Share uploaded files with other users
 
 Show below is a screenshot of the simple reactjs based UI that allows, a user to login, upload, download, delete and
@@ -32,19 +32,28 @@ share files.
 
 The app is built using
 
-- Java 17
-- Spring Boot 3
-- Spring Security
-- Spring mail
-- Lombok
-- AWS DynamoDB
-- AWS S3
+| Technology   | Framework | Libraries                                                  |
+|--------------| ------- |------------------------------------------------------------|
+| --------     | **Backend** | -------                                                    |
+| Java 17      | Spring Boot    | spring-boot-starter-mail, security, webflux, oauth2-client |
+| -            | -    | spring-data-dynamodb                                       |
+| -            | -    | springdoc-openapi-starter-webmvc-ui                        |
+| -            | -    | org.projectlombok                                          |
+| -            | -    | io.jsonwebtoken                                            |
+| --------     | **Frontend** | -------                                                    |
+| Javascript   | ReactJS    | @mui/material, @mui/icons-material                         |
+| -            | -    | react-cookie                                               |
+| -            | -    | @react-oauth/google                                        |
+| --------     | **Cloud** | **Services**                                               |
+| Public cloud | AWS    | DynamoDB                                                   |
+| -            | -    | S3                                                         |
+| -            | -    | Route 53                                                   |
+| -            | -    | Elastic Beanstalk                                          |
+
+
+In addition to the above, this project has,
 - CI/CD via Github actions
-- ReactJS
-- MUI
-- Github Actions
 - Docker
-- Google login via Oauth2.0
 
 # Setup and run
 
@@ -91,7 +100,7 @@ Then you should see the instructions on the site
 2. create a variable REACT_APP_GOOGLE_CLIENT_ID=<your-google-client-id>
 3. in case you don't know, an online search should tell you more about 'how to add Gogole login to your app'
 
-> **_NOTE:_** 
+> **_NOTE:_**
 > 1. if you don't add your AWS credentials, the app will fail at startup
 > 2. if you are on a mac, change server port in application.yml to <anything-else-than-5000>
 > 3. also change the proxy in package.json to http://localhost:<your-new-no>
@@ -115,7 +124,7 @@ git branch feature/your-awesome-feature
 git checkout feature/your-awesome-feature
 ```
 3. Build your awesome feature, commit as much as you like
-4. Squash your commits (if you haven't done this before, please ask me and I am happy to help) 
+4. Squash your commits (if you haven't done this before, please ask me and I am happy to help)
 5. Push all your changes and create a PR
 
 If you you would like to know more about how to the git feature based workflow, you can read [git feature branch workflow].
