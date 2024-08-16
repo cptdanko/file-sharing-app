@@ -38,14 +38,6 @@ public class StorageServiceImpl {
     private AWSConfig awsConfig;
 
     /**
-     * @param createBucketRequest
-     * @return
-     */
-    public ServiceResponse createBucket(CreateBucketRequest createBucketRequest) {
-        return s3Repository.createBucket(createBucketRequest);
-    }
-
-    /**
      * 1. Get the filename along with userid
      * 2. Save all that info in the Document class
      * 3. Save the Document in the DocumentRepositoryImpl
@@ -57,7 +49,7 @@ public class StorageServiceImpl {
             ServiceResponse serviceResponse = getFilesUploadedByUser(username);
             @SuppressWarnings("unchecked")
             List<String> files = (List<String>) serviceResponse.getData();
-            log.info(String.format("Fetching files by username [ %d ]", files.size()));
+            log.info("Fetching files by username [ {} ]", files.size());
             log.info("No of files {}", files.size());
             if (files.size() >= awsConfig.getUploadLimit()) {
                 log.info("Max upload limit reached");
@@ -145,7 +137,7 @@ public class StorageServiceImpl {
 
     public ServiceResponse downloadFile(String userId, String filename) throws IOException {
         String fullpath = userId + "/" + filename;
-        log.info(String.format("Checking if file [ %s ] exists?", fullpath));
+        log.info("Checking if file [ {} ] exists?", fullpath);
         if (!s3Repository.fileExists(fullpath)) {
             return ServiceResponse.builder()
                     .data(null)

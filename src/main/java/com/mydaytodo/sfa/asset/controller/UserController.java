@@ -3,10 +3,8 @@ package com.mydaytodo.sfa.asset.controller;
 import com.mydaytodo.sfa.asset.error.Validator;
 import com.mydaytodo.sfa.asset.model.*;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
-import com.mydaytodo.sfa.asset.service.JwtService;
 import com.mydaytodo.sfa.asset.service.UserServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +20,8 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
-
     @Autowired
     private FileServiceImpl fileService;
-
-    @Autowired
-    private JwtService jwtService;
 
     @GetMapping("/{userId}")
     public ResponseEntity<ServiceResponse> getUser(@PathVariable("userId") String userId) {
