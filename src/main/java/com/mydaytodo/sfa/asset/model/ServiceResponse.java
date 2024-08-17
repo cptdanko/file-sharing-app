@@ -11,4 +11,5 @@ public class ServiceResponse {
     private Integer status;
     private Object data;
     private String message = "";
+    private boolean isError = false;
 }

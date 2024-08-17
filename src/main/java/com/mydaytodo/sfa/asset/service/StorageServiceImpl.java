@@ -1,7 +1,6 @@
 package com.mydaytodo.sfa.asset.service;
 
 import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.FileType;
@@ -44,11 +43,20 @@ public class StorageServiceImpl {
      * 4. Move on to uploading the actual file to S3 via S3Repository
      */
     public ServiceResponse uploadFile(MultipartFile file, String username) throws IOException, Exception {
-        // perform some validation on how many files does the user already have
+        // perform validation on how many files does the user already have
         try {
             ServiceResponse serviceResponse = getFilesUploadedByUser(username);
             @SuppressWarnings("unchecked")
             List<String> files = (List<String>) serviceResponse.getData();
+            assert files != null;
+            int exists = files.stream().filter(f -> f.equalsIgnoreCase(file.getOriginalFilename())).toList().size();
+            if(exists > 0) {
+                // file already exists
+                return ServiceResponse.builder()
+                        .status(HttpStatus.CONFLICT.value())
+                        .message("You have already added this file")
+                        .build();
+            }
             log.info("Fetching files by username [ {} ]", files.size());
             log.info("No of files {}", files.size());
             if (files.size() >= awsConfig.getUploadLimit()) {
@@ -71,11 +79,11 @@ public class StorageServiceImpl {
         String extension = StringManipService.getExtension(file.getOriginalFilename());
         log.info("Got the file extension as {}", extension);
         FileType fileType = FileType.getFileTypeFromExtension(extension);
+        assert fileType != null;
         request.setAssetType(fileType.getType());
         request.setUserId(username);
-        log.info(String.format("About to save document metadata [ %s ]", request.toString()));
+        log.info("About to save document metadata [ {} ]", request.toString());
         ServiceResponse metadataUploadResp = this.fileService.saveDocumentMetadata(request);
-        log.info(String.format("Saved the metadata"));
         if (metadataUploadResp.getStatus() > 299) {
             return ServiceResponse.builder()
                     .message("Something went wrong, please try again later")

@@ -39,7 +39,10 @@ export const UserAuth = () => {
             "pictureLink": data.picture,
             "name": data.name
         };
+        // a little redundant that we have names set in a few
+        // objects, so need to refactor later
         cookies.user.username = data.email;
+        cookies.user.name = data.name;
         setProfileImage(data.picture);
         setCookie("user", JSON.stringify(cookies.user), "/");
         const backendPost = "/api/auth/login/google";
@@ -76,14 +79,17 @@ export const UserAuth = () => {
               "password": password  
             })
         });
-        if (resp.status > 299) {
+        const data = await resp.json();
+        if (data.isError) {
             setLoginError(true);
         } else {
             setUserLoggedIn(true);
-            const token = await resp.text();
+            const token = data.access_token;
+            const name = data.name;
             const userObj = {
+                name,
                 username,
-                token,
+                token
             };
             setProfileImage("");
             setCookie("user", JSON.stringify(userObj), "/");
@@ -121,6 +127,7 @@ export const UserAuth = () => {
                 autoComplete="email"
                 autoFocus
                 name="email"
+                type="email"
                 label="email"
                 onChange={(e) => setUsername(e.target.value)}>
             </TextField>
@@ -176,7 +183,7 @@ export const UserAuth = () => {
                     flexDirection: "column",
                     alignItems: "center"
                 }} id="avatar" gap={1} p={1}>
-                    <Tooltip title={username}>
+                    <Tooltip title={cookies.user.name}>
                         <Avatar src={profileImage} 
                             alt={username} 
                             sx={{ width: 64, height: 64 }}/>

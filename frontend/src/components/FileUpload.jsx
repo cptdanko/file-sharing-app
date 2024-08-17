@@ -5,7 +5,8 @@ import { AlertDialog } from "../dialogs/AlertDialog";
 
 
 
-export const FileUpload = () => {
+export const FileUpload = (props) => {
+    const { setFileUploaded } = props;
     const [file, setFile] = useState("");
     const [cookies, setCookie, removeCookie] = useCookies(['user']);
     const [username, setUsername] = useState("");
@@ -13,10 +14,12 @@ export const FileUpload = () => {
     const [alertHeader, setAlertHeader] = useState("");
     const [alertOpen, setAlertOpen] = useState(false);
     const [uploadBtnText, setUploadBtnText] = useState("Upload File");
+    const [uploadDisabled, setUploadDisabled] = useState(false);
     // const [file]
 
     useEffect(() => {
         setUsername(cookies.user && cookies.user.username);
+        
     });
 
     const onFileSelect = (event) => {
@@ -28,6 +31,7 @@ export const FileUpload = () => {
         let frm = document.getElementById("uploadDocument");
         const formData = new FormData(frm);
         formData["file"] = file;
+        setUploadDisabled(true);
         fetch(`/api/file/upload`, {
             method: "POST",
             headers: {
@@ -43,11 +47,14 @@ export const FileUpload = () => {
                     setAlertMessage(data.message);
                     setAlertOpen(true);
                 }
-                setUploadBtnText("Upload File")
+                setUploadBtnText("Upload File");
+                setUploadDisabled(false);
+                setFileUploaded(true);
             })
             .catch(err => {
                 console.error("Error uploading file ", err);
                 setUploadBtnText("Upload File");
+                setUploadDisabled(false);
             });
     }
     const handleAlertClose = () => {
@@ -81,6 +88,7 @@ export const FileUpload = () => {
                                 <Button sx={{ marginTop: 1 }}
                                     size="small"
                                     variant="contained"
+                                    disabled={uploadDisabled}
                                     type="submit">
                                     {uploadBtnText} </Button>
                             </>
@@ -89,7 +97,7 @@ export const FileUpload = () => {
                                 size="small"
                                 tabIndex={-1}
                                 variant="contained"
-                                disabled
+                                disabled={uploadDisabled}
                                 type="submit">
                                 {uploadBtnText} </Button>
                         }

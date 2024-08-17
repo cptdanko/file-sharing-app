@@ -54,6 +54,7 @@ public class UserServiceImpl {
         try {
             user = userRepository.getUserByUsername(username);
             if (user.isPresent()) {
+                log.info("User with username {} found", user.get().getName());
                 return ServiceResponse.builder()
                         .data(user)
                         .status(HttpStatus.OK.value())
@@ -65,10 +66,11 @@ public class UserServiceImpl {
                         .status(HttpStatus.NOT_FOUND.value())
                         .build();
             }
-        } catch (Exception e) {
+        } catch (UnsupportedOperationException e) {
             return ServiceResponse.builder()
                     .message(e.getMessage())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .isError(true)
                     .build();
         }
     }
