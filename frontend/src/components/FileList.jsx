@@ -160,7 +160,10 @@ export const FileList = (props) => {
                         marginBottom: 5
                     }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                            <Button variant="contained" onClick={hideFiles} sx={{ marginBottom: 2 }}>
+                            <Button variant="contained" 
+                            onClick={hideFiles} 
+                            sx={{ marginBottom: 2 }}
+                            data-test="hideFiles">
                                 Hide
                             </Button>
                             <Typography component={'span'} >
@@ -213,7 +216,12 @@ export const FileList = (props) => {
                             </Box>
                         ) : (
                             <Box gap={2}>
-                                <Button variant="contained" size="small" onClick={filesUploaded}>
+                                <Button 
+                                data-test="showFiles"
+                                variant="contained" 
+                                size="small" 
+                                onClick={filesUploaded}
+                                disabled={cookies.user == null}>
                                     Show
                                 </Button>
                             </Box>

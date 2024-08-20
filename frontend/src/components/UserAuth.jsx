@@ -152,6 +152,8 @@ export const UserAuth = () => {
                         size="small"
                         variant="contained"
                         type="submit"
+                        name="login"
+                        data-test="login"
                         onClick={login}> Login </Button>
                 </Box>
                 <Box>
@@ -190,6 +192,7 @@ export const UserAuth = () => {
                     </Tooltip>
                     <Button size="small"
                         variant="contained"
+                        data-test="logout"
                         onClick={logout}>
                         Logout
                     </Button>
