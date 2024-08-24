@@ -93,13 +93,12 @@ public class FileStorageController {
     @GetMapping("/{fileId}/download")
     public ResponseEntity<Resource> getFileData(@RequestParam("userId") String userId,
                                                 @PathVariable("fileId") String fileId) throws IOException {
-        log.info("In the download file request");
         log.info("Downloading files for {} with name {}", userId, fileId);
         ServiceResponse response = storageService.downloadFile(userId, fileId);
         ByteArrayResource byteArrayResource = new ByteArrayResource((byte[]) response.getData());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachmemnt; filename=\"" + fileId + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileId + "\"")
                 .contentLength(byteArrayResource.contentLength())
                 .body(byteArrayResource);
     }

@@ -163,9 +163,9 @@ public class UserServiceImpl {
      */
     public ServiceResponse updateUser(String userId, CreateUserRequest createUserRequest) {
         try {
-            log.info(String.format("CreateUserRequest body received [ %s ]", createUserRequest.toString()));
+            log.info("CreateUserRequest body received [ {} ]", createUserRequest.toString());
             FileUser assetUser = CreateUserRequest.convertRequest(createUserRequest);
-            log.info(String.format("Got the file user obj [ %s ]", assetUser.toString()));
+            log.info("Got the file user obj [ {} ]", assetUser.toString());
             userRepository.updateUser(userId, assetUser);
             return ServiceResponse.builder()
                     .data(assetUser)
@@ -194,7 +194,7 @@ public class UserServiceImpl {
         String filepath = from + "/" + filename;
         log.info("{} about to share file {} with {}", from, filepath, to);
         addFIlenameToFilesUploadedByUser(to, filepath);
-        return new ServiceResponse().builder()
+        return ServiceResponse.builder()
                 .data(new Object()).status(HttpStatus.OK.value())
                 .message("Successful")
                 .build();
@@ -206,11 +206,9 @@ public class UserServiceImpl {
      * @throws Exception
      */
     public void addFIlenameToFilesUploadedByUser(String username, String filename) throws Exception {
-        log.info("About to add the filename to files uploaded");
         Optional<FileUser> optionalUser = userRepository.getUserByUsername(username);
         FileUser user = optionalUser.get();
         log.info("Got user by name [ {} ]", user);
-        log.info("About to get files uploaded");
         List<String> fileList = user.getFilesUploaded();
         if (fileList == null) {
             fileList = new ArrayList<>();

@@ -36,13 +36,11 @@ public class UserAuthServiceImpl implements UserDetailsService {
 
     }
     public void addUser(FileUser assetUser) {
-        log.info("About to create a user with name [ {} ]", assetUser.getUsername());
         log.info("User object = [ {} ]", assetUser.toString());
         UserDetails userDetails = User.withUsername(assetUser.getUsername())
                         .password(assetUser.getPassword())
                                 .roles("ADMIN", "USER")
                                         .build();
-        log.info("Added user {} to InMemoryStore", assetUser.getUsername());
         UserAuthServiceImpl.instance.getInMemoryUserDetailsManager().createUser(userDetails);
     }
 
@@ -52,19 +50,15 @@ public class UserAuthServiceImpl implements UserDetailsService {
         if(repository.getUserByUsername(username).isEmpty()) {
             throw new UsernameNotFoundException(String.format("User with name %s not found", username));
         }
-        log.info("User exists, so getting it now");
         log.info("Got the optional {}", repository.getUserByUsername(username).isPresent());
         FileUser user = repository.getUserByUsername(username).get();
         log.info("Got the user {}", user.getUsername());
-        log.info("Printing out user, {}", user.toString());
         UserDetails details;
-
         if (user.getIsSocialLoginGoogle() != null && user.getIsSocialLoginGoogle()) {
             details = new User(user.getUsername(), "", new ArrayList<>());
         } else {
             details = new User(user.getUsername(), user.getPassword(), new ArrayList<>());
         }
-        log.info("Successfully initialised {} user details object", details.toString());
         return details;
     }
 }
