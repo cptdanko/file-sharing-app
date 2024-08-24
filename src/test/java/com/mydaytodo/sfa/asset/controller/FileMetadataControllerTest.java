@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class AssetControllerTest {
+public class FileMetadataControllerTest {
 
     private MockMvc  mockMvc;
     @Mock
@@ -37,7 +37,7 @@ public class AssetControllerTest {
     private FileMetadataController assetController;
 
     private File file = new File();
-    private ServiceResponse serviceResponse = new ServiceResponse();
+    private final ServiceResponse serviceResponse = new ServiceResponse();
     JacksonTester<File> documentJacksonTester;
     private final String BASE_URL = "/api/asset/";
     private final String MOCK_ASSET_ID = "AST_1234";
@@ -80,7 +80,6 @@ public class AssetControllerTest {
     }
     @Test
     void testDeleteAsset() throws Exception {
-
         when(documentService.deleteAsset(any())).thenReturn(ServiceResponse
                 .builder()
                 .status(HttpStatus.NO_CONTENT.value()).build());

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Builder
 @ToString
+@NoArgsConstructor
 public class CreateUserRequest {
 
     private String name;
