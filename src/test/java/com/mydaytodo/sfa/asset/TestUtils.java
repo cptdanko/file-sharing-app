@@ -20,4 +20,9 @@ public class TestUtils {
             // 201
             .status(HttpStatus.NO_CONTENT.value())
             .build();
+
+    public final static ServiceResponse forbiddenResponse = ServiceResponse.builder()
+            // 201
+            .status(HttpStatus.FORBIDDEN.value())
+            .build();
 }

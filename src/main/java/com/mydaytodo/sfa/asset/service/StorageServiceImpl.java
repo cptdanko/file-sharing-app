@@ -42,7 +42,7 @@ public class StorageServiceImpl {
      * 3. Save the Document in the DocumentRepositoryImpl
      * 4. Move on to uploading the actual file to S3 via S3Repository
      */
-    public ServiceResponse uploadFile(MultipartFile file, String username) throws IOException, Exception {
+    public ServiceResponse uploadFile(MultipartFile file, String username) throws Exception {
         // perform validation on how many files does the user already have
         try {
             ServiceResponse serviceResponse = getFilesUploadedByUser(username);
@@ -58,7 +58,6 @@ public class StorageServiceImpl {
                         .build();
             }
             log.info("Fetching files by username [ {} ]", files.size());
-            log.info("No of files {}", files.size());
             if (files.size() >= awsConfig.getUploadLimit()) {
                 log.info("Max upload limit reached");
                 return ServiceResponse.builder()
@@ -74,17 +73,8 @@ public class StorageServiceImpl {
                     .build();
         }
 
-        FileMetadataUploadRequest request = new FileMetadataUploadRequest();
-        request.setName(file.getOriginalFilename());
-        String extension = StringManipService.getExtension(file.getOriginalFilename());
-        log.info("Got the file extension as {}", extension);
-        FileType fileType = FileType.getFileTypeFromExtension(extension);
-        assert fileType != null;
-        request.setAssetType(fileType.getType());
-        request.setUserId(username);
-        log.info("About to save document metadata [ {} ]", request.toString());
-        ServiceResponse metadataUploadResp = this.fileService.saveDocumentMetadata(request);
-        if (metadataUploadResp.getStatus() > 299) {
+        ServiceResponse metadataUploadResp = saveFileMetadata(file.getOriginalFilename(), username);
+        if (metadataUploadResp.getStatus() != HttpStatus.CREATED.value()) {
             return ServiceResponse.builder()
                     .message("Something went wrong, please try again later")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -94,11 +84,22 @@ public class StorageServiceImpl {
         log.info(filename);
         File convertedMultiPFile = convertMultipartFile(file);
         ServiceResponse response = s3Repository.putS3Object(convertedMultiPFile, filename);
-        userServiceImpl.addFIlenameToFilesUploadedByUser(username, filename);
         convertedMultiPFile.deleteOnExit();
+        userServiceImpl.addFIlenameToFilesUploadedByUser(username, filename);
         return response;
     }
-
+    public ServiceResponse saveFileMetadata(String originalFilename, String username) {
+        FileMetadataUploadRequest request = new FileMetadataUploadRequest();
+        request.setName(originalFilename);
+        String extension = StringManipService.getExtension(originalFilename);
+        log.info("Got the file extension as {}", extension);
+        FileType fileType = FileType.getFileTypeFromExtension(extension);
+        assert fileType != null;
+        request.setAssetType(fileType.getType());
+        request.setUserId(username);
+        log.info("About to save document metadata [ {} ]", request.toString());
+        return fileService.saveDocumentMetadata(request);
+    }
     /**
      * Method to show all files uploaded by user
      *
@@ -106,9 +107,9 @@ public class StorageServiceImpl {
      * @return
      */
     public ServiceResponse getFilesUploadedByUser(String userId) {
+        // add some validation here e.g. a check for whether or not user exists?
         List<String> objectsSavedByUser = s3Repository.filesByUser(userId);
-        log.info("Files found");
-        log.info(String.valueOf(objectsSavedByUser.size()));
+        log.info("No. of files found [ {} ]", objectsSavedByUser.size());
         return ServiceResponse
                 .builder()
                 .data(objectsSavedByUser)
@@ -163,7 +164,7 @@ public class StorageServiceImpl {
      * @return
      * @throws IOException
      */
-    private File convertMultipartFile(MultipartFile multipartFile) throws IOException {
+    public File convertMultipartFile(MultipartFile multipartFile) throws IOException {
         // File convFile = new File(multipartFile.getOriginalFilename());
         File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + multipartFile.getOriginalFilename());
         multipartFile.transferTo(convFile);

@@ -58,7 +58,9 @@ public class SocialControllerTest {
         when(mailService.sendEmail(any())).thenReturn(TestUtils.noContentResponse);
         mockMvc.perform(post(BASE_URL + "/sendMail")
                 .contentType(MediaType.APPLICATION_JSON)
-                        .content(emailRequestJacksonTester.write(EmailRequest.builder().build()).getJson()))
+                        .content(emailRequestJacksonTester.write(EmailRequest.builder()
+                                .to("bhuman@mydaytodo.com")
+                                .build()).getJson()))
                 .andExpect(status().isNoContent());
     }
     @Test

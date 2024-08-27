@@ -107,17 +107,16 @@ public class S3Repository {
      */
     public List<String> filesByUser(String userId) throws SdkClientException, AmazonServiceException {
         List<String> filenames = new ArrayList<>();
-        String bucketName = awsConfig.getS3UploadBucketName();
         ObjectListing objects = awsConfig.s3Client().listObjects(awsConfig.getS3UploadBucketName(), userId + "/");
         List<S3ObjectSummary> summaries = objects.getObjectSummaries();
-        log.info(String.format("Printing files by user -> [ %s ]", userId));
+        log.info("Printing files by user -> [ {} ]", userId);
         log.info("-----------------------------------");
         for (S3ObjectSummary summary : summaries) {
             String filename = summary.getKey().substring(summary.getKey().indexOf("/") + 1);
-            log.info(String.format("file [ %s ] uploaded of size [ %d ] bytes", filename, summary.getSize()));
+            log.info("file [ {} ] uploaded of size [ {} ] bytes", filename, summary.getSize());
             filenames.add(filename);
         }
-        log.info("-----------------------------------");
+        log.info("||||||||||||||||||||||||||||||||||||");
         return filenames;
     }
 
