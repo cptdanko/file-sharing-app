@@ -19,7 +19,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ServiceResponse> handleJwtExpiryException(JwtException jwtException, WebRequest request) {
         log.info("Handling an expired JWT exception");
         ServiceResponse resp = ServiceResponse.builder()
-                .data(String.format("JWT token expired!!!!!!!!!! need to login again"))
+                .data("JWT token expired!!!!!!!!!! need to login again")
                 .message(jwtException.getMessage())
                 .status(HttpStatus.FORBIDDEN.value())
                 .build();
@@ -35,5 +35,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.FORBIDDEN.value())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+    @ExceptionHandler(EmailAddressException.class)
+    public ResponseEntity<ServiceResponse> handleEmailMismatchException(EmailAddressException exception, WebRequest webRequest) {
+        log.info("Email address validator error thrown");
+        ServiceResponse response = ServiceResponse.builder()
+                .data(null)
+                .message("Please check your to, cc or bcc email addresses")
+                .status(HttpStatus.FORBIDDEN.value())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

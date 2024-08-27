@@ -1,15 +1,13 @@
 package com.mydaytodo.sfa.asset.model;
 
 import com.amazonaws.util.StringUtils;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FileMetadataUploadRequest {
 
     private String name;

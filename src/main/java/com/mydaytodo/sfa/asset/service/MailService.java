@@ -55,8 +55,11 @@ public class MailService {
             mimeMailMessage.setFrom("bhuman@mydaytodo.com");
             mimeMailMessage.setSubject(emailRequest.getSubject());
             addRecipients(Message.RecipientType.TO, new String[]{emailRequest.getTo()}, mimeMailMessage);
-            addRecipients(Message.RecipientType.CC, emailRequest.getCc(), mimeMailMessage);
-            addRecipients(Message.RecipientType.BCC, emailRequest.getBcc(), mimeMailMessage);
+            if(emailRequest.getCc() != null)
+                addRecipients(Message.RecipientType.CC, emailRequest.getCc(), mimeMailMessage);
+            if(emailRequest.getBcc() != null)
+                addRecipients(Message.RecipientType.BCC, emailRequest.getBcc(), mimeMailMessage);
+
             javaMailSender.send(mimeMailMessage);
             return ServiceResponse.builder()
                     .data(builder.toString())
@@ -77,7 +80,7 @@ public class MailService {
         }
     }
 
-    private void addRecipients(Message.RecipientType recipientType, String[] addresses, MimeMessage message) throws MessagingException {
+    public void addRecipients(Message.RecipientType recipientType, String[] addresses, MimeMessage message) throws MessagingException, AssertionError {
         assert addresses.length > 0;
         InternetAddress[] internetAddresses = new InternetAddress[addresses.length];
         int idx = 0;

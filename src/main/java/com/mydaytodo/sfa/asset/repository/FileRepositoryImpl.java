@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -40,7 +39,7 @@ public class FileRepositoryImpl {
     public File getDocument(String id) {
         try {
             return mapper.load(File.class, id);
-        } catch (Exception e) {
+        } catch (Exception e) { // change this to unsupported exception
             log.error(e.getMessage());
         }
         return null;

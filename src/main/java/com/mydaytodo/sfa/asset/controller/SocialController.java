@@ -1,5 +1,6 @@
 package com.mydaytodo.sfa.asset.controller;
 
+import com.mydaytodo.sfa.asset.error.Validator;
 import com.mydaytodo.sfa.asset.model.EmailRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
@@ -34,6 +35,8 @@ public class SocialController {
             ServiceResponse response = fileService.validateFileType(emailRequest.getFilesToAttach());
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
         }
+        Validator.validateEmailRequest(emailRequest);
+
         ServiceResponse serviceResponse = mailService.sendEmail(emailRequest);
         return new ResponseEntity<>(serviceResponse, HttpStatus.valueOf(serviceResponse.getStatus()));
     }
