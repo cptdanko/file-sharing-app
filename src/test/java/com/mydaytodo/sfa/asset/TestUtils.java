@@ -25,4 +25,8 @@ public class TestUtils {
             // 201
             .status(HttpStatus.FORBIDDEN.value())
             .build();
+    public final static ServiceResponse internalServerResponse = ServiceResponse.builder()
+            // 201
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .build();
 }

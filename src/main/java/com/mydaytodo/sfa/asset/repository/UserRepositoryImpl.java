@@ -35,13 +35,12 @@ public class UserRepositoryImpl {
         dynamoDB = AWSConfig.amazonDynamoDB();
         mapper = new DynamoDBMapper(dynamoDB);
         log.info("In the init DB method of UserRepositoryImpl");
-        initLoadUsers();
+        // initLoadUsers();
     }
 
     public Optional<FileUser> getUserByUsername(String username) throws UnsupportedOperationException {
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":username", new AttributeValue().withS(username));
-        log.info("In get user by username {}", username);
         DynamoDBQueryExpression<FileUser> queryExp = new DynamoDBQueryExpression<FileUser>()
                 .withIndexName("username-index")
                 .withKeyConditionExpression("username= :username")
