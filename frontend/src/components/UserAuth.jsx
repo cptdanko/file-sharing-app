@@ -54,7 +54,7 @@ export const UserAuth = () => {
             body: JSON.stringify(cookies.user.google)
         });
         const beData = await bePost.json();
-        cookies.user.token = beData.accessToken;
+        cookies.user.token = beData.data.accessToken;
         
         setCookie("user", JSON.stringify(cookies.user), "/");
     }
@@ -84,7 +84,7 @@ export const UserAuth = () => {
             setLoginError(true);
         } else {
             setUserLoggedIn(true);
-            const token = data.access_token;
+            const token = data.data.access_token;
             const name = data.name;
             const userObj = {
                 name,

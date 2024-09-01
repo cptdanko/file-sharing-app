@@ -1,15 +1,17 @@
 package com.mydaytodo.sfa.asset.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 public class AuthRequest {
+    @NotNull @NotBlank
     private String username;
+    @NotNull @NotBlank
     private String password;
 }
