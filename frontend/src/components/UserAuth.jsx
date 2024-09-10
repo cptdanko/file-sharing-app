@@ -1,15 +1,17 @@
 import { Box, Button, TextField, Typography, Container, Avatar, Tooltip, Alert } from "@mui/material";
 import { useEffect, useState } from "react";
+import DocumentsImg from '../documents.jpg';
 import { CookiesProvider, useCookies } from "react-cookie";
 import { RegistrationForm } from "../RegistrationForm";
 import { useGoogleLogin } from "@react-oauth/google";
 import { googleLogout } from '@react-oauth/google';
 import GoogleIcon from '@mui/icons-material/Google';
 
-export const UserAuth = () => {
+export const UserAuth = (props) => {
+    const { userLoggedIn, setUserLoggedIn } = props;
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [userLoggedIn, setUserLoggedIn] = useState(false);
+    // const [userLoggedIn, setUserLoggedIn] = useState(false);
     const [loginError, setLoginError] = useState(false);
     const [cookies, setCookie, removeCookie] = useCookies(['user']);
     const [showRegForm, setShowRegForm] = useState(false);
@@ -19,12 +21,12 @@ export const UserAuth = () => {
         cookies.user
             && setUserLoggedIn(true)
             && setUsername(cookies.user.username);
-        
-        if(cookies.user && cookies.user.google && cookies.user.google.pictureLink) {
+
+        if (cookies.user && cookies.user.google && cookies.user.google.pictureLink) {
             setProfileImage(cookies.user.google.pictureLink);
-        }   
+        }
     });
-    
+
     const fetchUserGoogleProfile = async (token) => {
         const url = `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`;
         const user = cookies.user ?? {};
@@ -55,7 +57,7 @@ export const UserAuth = () => {
         });
         const beData = await bePost.json();
         cookies.user.token = beData.data.accessToken;
-        
+
         setCookie("user", JSON.stringify(cookies.user), "/");
     }
     const glogin = useGoogleLogin({
@@ -75,8 +77,8 @@ export const UserAuth = () => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              "username": username,
-              "password": password  
+                "username": username,
+                "password": password
             })
         });
         const data = await resp.json();
@@ -102,6 +104,7 @@ export const UserAuth = () => {
         removeCookie("user");
         setUserLoggedIn(false);
         googleLogout();
+        window.location.reload();
     }
     const submit = (e) => {
         e.preventDefault();
@@ -121,7 +124,6 @@ export const UserAuth = () => {
                 flexDirection: "column",
                 alignItems: "center"
             }}>
-            <Typography component="h1" variant="h5">Sign in</Typography>
             <TextField
                 margin="normal" required id="email"
                 autoComplete="email"
@@ -165,20 +167,19 @@ export const UserAuth = () => {
                 </Box>
             </Box>
             <Box p={1} m={1}>
-                <Box m={1}><Button variant="contained" 
-                onClick={glogin}
-                startIcon={<GoogleIcon />}> Google Login</Button> </Box>
+                <Box m={1}><Button variant="contained"
+                    onClick={glogin}
+                    startIcon={<GoogleIcon />}> Google Login</Button> </Box>
             </Box>
         </Box>
     }
     return (
         <Container sx={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             justifyContent: "center",
             alignItems: "center"
         }}>
-            
             {userLoggedIn ?
                 <Box sx={{
                     display: "flex",
@@ -186,9 +187,9 @@ export const UserAuth = () => {
                     alignItems: "center"
                 }} id="avatar" gap={1} p={1}>
                     <Tooltip title={cookies.user.name}>
-                        <Avatar src={profileImage} 
-                            alt={username} 
-                            sx={{ width: 64, height: 64 }}/>
+                        <Avatar src={profileImage}
+                            alt={username}
+                            sx={{ width: 64, height: 64 }} />
                     </Tooltip>
                     <Button size="small"
                         variant="contained"
@@ -199,7 +200,12 @@ export const UserAuth = () => {
                 </Box> : <></>
             }
             {!userLoggedIn ?
-                showSigninSignupForm()
+                <Container>
+                    <Box sx={{ borderRadius: 2, marginTop: 1 }}>
+                        <img className="RoundedImage" src={DocumentsImg} width="300" height="300" />
+                    </Box>
+                    {showSigninSignupForm()}
+                </Container>
                 : <></>}
 
         </Container>
