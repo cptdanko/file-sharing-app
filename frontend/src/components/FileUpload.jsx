@@ -19,7 +19,7 @@ export const FileUpload = (props) => {
 
     useEffect(() => {
         setUsername(cookies.user && cookies.user.username);
-        
+
     });
 
     const onFileSelect = (event) => {
@@ -63,55 +63,54 @@ export const FileUpload = (props) => {
         setAlertOpen(false);
     }
     return (
-        <Container>
-            <Box>
-                <Typography variant="h5">File Upload</Typography>
-                <form onSubmit={uploadFile} id="uploadDocument" style={{
+        <Container component='div'>
+            <Typography sx={{ marginBottom: 2 }} variant="h5">File Upload</Typography>
+            <form onSubmit={uploadFile} id="uploadDocument" style={{
+                display: 'flex',
+                justifyContent: "flex-start",
+                alignContent: "center",
+                flexDirection: "column",
+                marginTop: 4
+            }}>
+                <Box sx={{
                     display: 'flex',
-                    justifyContent: "center",
-                    alignContent:"center",
-                    flexDirection: "column",
-                    marginTop: 4
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                 }}>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        width: "50%"
-                    }}>
-                        {cookies.user ?
-                            <>
-                                <input type="file" name="file" onChange={onFileSelect} />
-                                <input type="hidden" value={username} name="username" />
-                                <Button sx={{ marginTop: 1 }}
-                                    size="small"
-                                    variant="contained"
-                                    disabled={uploadDisabled}
-                                    type="submit">
-                                    {uploadBtnText} </Button>
-                            </>
-                            :
-                            <Button
+                    {cookies.user ?
+                        <>
+                            <input type="file" name="file" onChange={onFileSelect} />
+                            <input type="hidden" value={username} name="username" />
+                            <Button sx={{ marginTop: 1 }}
                                 size="small"
-                                tabIndex={-1}
                                 variant="contained"
                                 disabled={uploadDisabled}
                                 type="submit">
                                 {uploadBtnText} </Button>
-                        }
-                    </Box>
-                    <Box sx={{marginTop: 2, opacity: 0.5, 
-                    width: "80%", 
+                        </>
+                        :
+                        <Button
+                            size="small"
+                            tabIndex={-1}
+                            variant="contained"
+                            disabled={uploadDisabled}
+                            type="submit">
+                            {uploadBtnText} </Button>
+                    }
+                </Box>
+                <Box sx={{
+                    marginTop: 2, opacity: 0.5,
                     marginLeft: "auto",
-                    marginRight: "auto"}}>
-                        <Alert variant="outlined" severity="info">
-                            Only [".pdf", ".doc", ".docx", ".txt", ".md", ".json"] file types are supported so far
-                        </Alert>
-                    </Box>
-                </form>
-            </Box>
+                    marginRight: "auto"
+                }}>
+                    <Alert variant="outlined" severity="info">
+                        Only [".pdf", ".doc", ".docx", ".txt", ".md", ".json"] file types are supported so far
+                    </Alert>
+                </Box>
+            </form>
+
             <AlertDialog open={alertOpen}
                 handleClose={handleAlertClose}
                 title={alertHeader}
