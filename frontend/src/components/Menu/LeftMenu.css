@@ -1,0 +1,18 @@
+.Button-box {
+    display: flex;
+    flex-direction: column;
+  }
+  .Button-box .Button {
+    margin: 10px;
+    padding: 8px;
+  }
+  
+  .Links {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-left: 10px;
+    padding: 8px;
+  }
+  

@@ -1,7 +1,37 @@
 .App {
+  font-family: sans-serif;
   text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.App-overview {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
+.Side-menu {
+  background-color: #12131a;
+  color: aliceblue;
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+}
+
+.Home-page {
+  background-color: #f6f6f6;
+  min-width: 75%;
+  display: flex;
+  flex-direction: row;
+}
+
+.Details-side-menu {
+  min-width: 300px;
+  position: absolute;
+  right: 0;
+  background-color: #ffffff;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

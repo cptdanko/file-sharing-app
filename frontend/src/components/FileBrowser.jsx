@@ -155,10 +155,6 @@ export const FileBrowser = () => {
                             onClick={() => openDialog(file)}> Share </Button>
                     </Box>
                 </TableCell>
-                <TableCell align="right">
-                    12/12/2012 11:00AM
-                </TableCell>
-
             </TableRow>
         });
         return listItems;
@@ -172,9 +168,8 @@ export const FileBrowser = () => {
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
-                        <TableRow>
-                            <TableCell>Filename</TableCell>
-                            <TableCell align="right">Date uploaded</TableCell>
+                        <TableRow sx={{ backgroundColor: 'aliceblue' }}>
+                            <TableCell><b><u>Filename</u></b></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -182,7 +177,6 @@ export const FileBrowser = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-
             <Dialog
                 open={dialogOpen}
                 onClose={closeDialog}

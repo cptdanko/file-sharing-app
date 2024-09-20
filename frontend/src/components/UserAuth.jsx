@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography, Container, Avatar, Tooltip, Alert } from "@mui/material";
 import { useEffect, useState } from "react";
-import DocumentsImg from '../documents.jpg';
+import DocumentsImg from '../home_page_img.jpg';
 import { CookiesProvider, useCookies } from "react-cookie";
 import { RegistrationForm } from "../RegistrationForm";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -174,14 +174,15 @@ export const UserAuth = (props) => {
         </Box>
     }
     return (
-        <Container sx={{
+        <Container component={'div'} sx={{
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center"
         }}>
             {userLoggedIn ?
-                <Box sx={{
+                <Box component={'div'} 
+                sx={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center"
@@ -200,9 +201,9 @@ export const UserAuth = (props) => {
                 </Box> : <></>
             }
             {!userLoggedIn ?
-                <Container>
+                <Container component={'div'}>
                     <Box sx={{ borderRadius: 2, marginTop: 1 }}>
-                        <img className="RoundedImage" src={DocumentsImg} width="300" height="300" />
+                        <img src= "#" width='300' height='300' />
                     </Box>
                     {showSigninSignupForm()}
                 </Container>
