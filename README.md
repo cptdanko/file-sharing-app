@@ -13,6 +13,7 @@ How-To tutorials have also been shared on the My Day To-Do blog, they are,
 2. [How to Catch ExpiredJwtException in Spring OncePerRequestFilter]
 3. [File share app - social file share feature]
 4. [How to build a Spring Boot API with reactjs frontend]
+5. [How to add JWT security to Java Spring Boot API] 
 
 ## Features
 
@@ -150,6 +151,7 @@ If you like what I am doing, you can [buy me a coffee].
 
 Until next time, live long and prosper!
 
+[How to add JWT security to Java Spring Boot API]: https://mydaytodo.com/jwt-java-spring-boot/
 
 [How to Catch ExpiredJwtException in Spring OncePerRequestFilter]: https://mydaytodo.com/how-to-catch-expiredjwtexception-in-spring-onceperrequestfilter/
 
