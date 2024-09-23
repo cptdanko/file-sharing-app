@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.WeakKeyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -76,7 +77,7 @@ public class JwtService {
                 .getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         Date expirationDate = extractExpiration(token);
         log.info("The date {} is", expirationDate.toString());
         return expirationDate.before(new Date());
