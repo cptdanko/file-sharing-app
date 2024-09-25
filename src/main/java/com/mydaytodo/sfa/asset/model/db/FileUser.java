@@ -1,4 +1,4 @@
-package com.mydaytodo.sfa.asset.model;
+package com.mydaytodo.sfa.asset.model.db;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;

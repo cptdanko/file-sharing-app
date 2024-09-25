@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "62d1c437-2489-41e2-b5ce-c73e36efb7f5",
-		"name": "AssetSharing",
+		"name": "FileSharing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "595931"
 	},
@@ -16,13 +16,13 @@
 							"type": "basic",
 							"basic": [
 								{
-									"key": "password",
-									"value": "1234",
+									"key": "username",
+									"value": "qin@gmail.com",
 									"type": "string"
 								},
 								{
-									"key": "username",
-									"value": "qin",
+									"key": "password",
+									"value": "temp",
 									"type": "string"
 								}
 							]
@@ -39,7 +39,75 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Healthcheck",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostname}}/healthcheck",
+									"host": [
+										"{{hostname}}"
+									],
+									"path": [
+										"healthcheck"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/plain;charset=UTF-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "16"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 16 Sep 2024 23:24:55 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "great success!!!"
+						}
+					]
 				},
 				{
 					"name": "Ping",
@@ -56,7 +124,75 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Ping",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostname}}/ping",
+									"host": [
+										"{{hostname}}"
+									],
+									"path": [
+										"ping"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/plain;charset=UTF-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "4"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 16 Sep 2024 23:25:38 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "ping"
+						}
+					]
 				}
 			]
 		},
@@ -101,6 +237,16 @@
 				{
 					"name": "Get User Assets",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyMTI2NDk2NywiZXhwIjoxNzIxMzExMjAwfQ.5l-OsbRmJlAvbKeqnsSeVCVk3XT98FAK_kaiEsDec0Y",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -121,6 +267,16 @@
 				{
 					"name": "Get Assets By Type",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyMTI2NDk2NywiZXhwIjoxNzIxMzExMjAwfQ.5l-OsbRmJlAvbKeqnsSeVCVk3XT98FAK_kaiEsDec0Y",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -222,16 +378,11 @@
 					"name": "Get User",
 					"request": {
 						"auth": {
-							"type": "basic",
-							"basic": [
+							"type": "bearer",
+							"bearer": [
 								{
-									"key": "username",
-									"value": "bsoni@gmail.com",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "temp",
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNjUyOTA4MiwiZXhwIjoxNzI2NTgxNjAwfQ.vNoj-FZWbMU3G6bufD3157QfLTqFIGhpQYpc2P0jKL0",
 									"type": "string"
 								}
 							]
@@ -256,16 +407,11 @@
 					"name": "Get By Username",
 					"request": {
 						"auth": {
-							"type": "basic",
-							"basic": [
+							"type": "bearer",
+							"bearer": [
 								{
-									"key": "password",
-									"value": "temp",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "bsoni@gmail.com",
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNjc5OTU2MSwiZXhwIjoxNzI2ODQwODAwfQ.wSSNDbf97ZqeHLA6knYkWGfXsxK2ctkAjgE7_rHEwQg",
 									"type": "string"
 								}
 							]
@@ -273,7 +419,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostname}}/api/user/username?username=cdanks",
+							"raw": "{{hostname}}/api/user/username?username=kelnaca@gmail.com",
 							"host": [
 								"{{hostname}}"
 							],
@@ -285,27 +431,341 @@
 							"query": [
 								{
 									"key": "username",
-									"value": "cdanks"
+									"value": "kelnaca@gmail.com"
 								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get By Username",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostname}}/api/user/username?username=kelnaca@gmail.com",
+									"host": [
+										"{{hostname}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"username"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "kelnaca@gmail.com"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 16 Sep 2024 23:26:54 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"data\": {\n        \"name\": \"Kelnaca\",\n        \"userid\": \"USR_1721202187523\",\n        \"username\": \"kelnaca@gmail.com\",\n        \"password\": \"$2a$10$MJRTybxZnjteAFeR.hSG9O6bbJzmNIOfR2B8TLFxljS4R3ISSkL4q\",\n        \"dateJoined\": \"2024-07-17T07:43:07.715+00:00\",\n        \"lastLogin\": \"2024-07-17T07:43:07.715+00:00\",\n        \"isSocialLoginGoogle\": null,\n        \"filesUploaded\": [\n            \"kelnaca@gmail.com/README.md\",\n            \"kelnaca@gmail.com/BhumanSoniResume.docx\",\n            \"kelnaca@gmail.com/README(2).md\",\n            \"kelnaca@gmail.com/Bhuman Good Charachter letter.docx.pdf\",\n            \"kelnaca@gmail.com/Rating Table.docx\",\n            \"kelnaca@gmail.com/AssetSharing.postman_collection.json\"\n        ]\n    },\n    \"message\": \"User found\",\n    \"error\": false\n}"
+						}
+					]
+				},
+				{
+					"name": "Exception",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/api/user/exception",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"exception"
 							]
 						}
 					},
 					"response": []
 				},
 				{
+					"name": "Files visible",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNjUyOTA4MiwiZXhwIjoxNzI2NTgxNjAwfQ.vNoj-FZWbMU3G6bufD3157QfLTqFIGhpQYpc2P0jKL0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostname}}/api/user/files?username=kelnaca@gmail.com",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"files"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "kelnaca@gmail.com"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Files visible",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostname}}/api/user/files?username=kelnaca@gmail.com",
+									"host": [
+										"{{hostname}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"files"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "kelnaca@gmail.com"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 16 Sep 2024 23:27:45 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"data\": [\n        \"kelnaca@gmail.com/README.md\",\n        \"kelnaca@gmail.com/BhumanSoniResume.docx\",\n        \"kelnaca@gmail.com/README(2).md\",\n        \"kelnaca@gmail.com/Bhuman Good Charachter letter.docx.pdf\",\n        \"kelnaca@gmail.com/Rating Table.docx\",\n        \"kelnaca@gmail.com/AssetSharing.postman_collection.json\"\n    ],\n    \"message\": \"User found\",\n    \"error\": false\n}"
+						}
+					]
+				},
+				{
 					"name": "Add User",
 					"request": {
 						"auth": {
-							"type": "basic",
-							"basic": [
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"admin\",\n    \"name\": \"Li Mu Bai\",\n    \"username\": \"limu@gmail.com\",\n    \"password\": \"temp\",\n    \"filesUploaded\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/user/create",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"role\": \"admin\",\n    \"name\": \"Li Mu Bai\",\n    \"username\": \"limu@gmail.com\",\n    \"password\": \"temp\",\n    \"filesUploaded\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostname}}/api/user/create",
+									"host": [
+										"{{hostname}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"create"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
 								{
-									"key": "password",
-									"value": "password",
-									"type": "string"
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
 								},
 								{
-									"key": "username",
-									"value": "bhuman",
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 16 Sep 2024 23:28:15 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 201,\n    \"data\": {\n        \"name\": \"Li Mu Bai\",\n        \"userid\": \"USR_1726529294954\",\n        \"username\": \"limu@gmail.com\",\n        \"password\": \"$2a$10$tYe7PlaCwSSGRJjndFzMJuCT8t.10/FYwc1FdC.NuuwW5cSIvVVz6\",\n        \"dateJoined\": \"2024-09-16T23:28:15.085+00:00\",\n        \"lastLogin\": \"2024-09-16T23:28:15.085+00:00\",\n        \"isSocialLoginGoogle\": false,\n        \"filesUploaded\": []\n    },\n    \"message\": \"\",\n    \"error\": false\n}"
+						}
+					]
+				},
+				{
+					"name": "Send mail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNjUyOTA4MiwiZXhwIjoxNzI2NTgxNjAwfQ.vNoj-FZWbMU3G6bufD3157QfLTqFIGhpQYpc2P0jKL0",
 									"type": "string"
 								}
 							]
@@ -314,7 +774,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"role\": \"admin\",\n    \"name\": \"connie\",\n    \"username\": \"bsoni@gmail.com\",\n    \"password\": \"temp\",\n    \"department\": \"CTO\",\n    \"assetsUploaded\": [\n        \"doc1\",\n        \"doc2\"\n    ]\n}",
+							"raw": "{\n    \"to\": \"bhumansoni@hotmail.com\",\n    \"cc\": [],\n    \"bcc\": [],\n    \"subject\": \"Hello world\",\n    \"body\": \"<h1>Dear bhuman,</h1> <p> We hope you are having a great day and have a good night! <h3> Cheers, <br/> MDT team</h3></p>\",\n    \"filesToAttach\": [\"darth@gmail.com/BhumanSoniResumeUpdate.pdf\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -322,14 +782,57 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostname}}/api/user/",
+							"raw": "{{hostname}}/api/user/sendMail",
 							"host": [
 								"{{hostname}}"
 							],
 							"path": [
 								"api",
 								"user",
-								""
+								"sendMail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Share File",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "h.sugar@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "temp",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filename\": \"RentalEnquiry.txt\",\n    \"fromUsername\": \"h.sugar@gmail.com\",\n    \"toUsername\": \"qin@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/user/share",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"share"
 							]
 						}
 					},
@@ -338,11 +841,26 @@
 				{
 					"name": "Update User",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "h.sugar@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "temp",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"role\": \"NOT_ADMIN\",\n    \"name\": \"qin shi huang\",\n    \"username\": \"cptdanko\",\n    \"password\": \"1234\",\n    \"department\": \"CFO\",\n    \"assetsUploaded\": [\n        \"doc1\",\n        \"doc2\",\n        \"doc3\",\n        \"doc4\",\n        \"doc5\"\n    ]\n}",
+							"raw": "{\n    \"name\": \"H.S\",\n    \"username\": \"h.sugar@gmail.com\",\n    \"password\": \"temp\",\n    \"department\": \"CTO\",\n    \"filesUploaded\": [\n        \"doc1\",\n        \"doc2\",\n        \"doc3\",\n        \"doc4\",\n        \"doc5\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -350,14 +868,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostname}}/api/user/USR_1697285742714",
+							"raw": "{{hostname}}/api/user/USR_1711305062303",
 							"host": [
 								"{{hostname}}"
 							],
 							"path": [
 								"api",
 								"user",
-								"USR_1697285742714"
+								"USR_1711305062303"
 							]
 						}
 					},
@@ -402,6 +920,16 @@
 						"disabledSystemHeaders": {}
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxaW5AZ21haWwuY29tIiwiaWF0IjoxNzIxODYyMTI2LCJleHAiOjE3MjE5MTYwMDB9.bLCBUh0C98TGasGreV0bKL6-Myu5oorFM25m92kHbEg",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -410,11 +938,11 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/Users/bhumansoni/workspace/java/learn/redis/pom.xml"
+									"src": "/home/cptdanko/Downloads/BhumanSoniResume.docx"
 								},
 								{
-									"key": "userId",
-									"value": "USR_1697285742714",
+									"key": "username",
+									"value": "qin@gmail.com",
 									"type": "text"
 								}
 							]
@@ -439,6 +967,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyMTI2NDk2NywiZXhwIjoxNzIxMzExMjAwfQ.5l-OsbRmJlAvbKeqnsSeVCVk3XT98FAK_kaiEsDec0Y",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -470,6 +1008,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyMjYwMTczNCwiZXhwIjoxNzIyNjQzMjAwfQ.XVw_VHWev9nH_1BZkE7C8JfWV3xqsUBBJ8WgnJkYtFU",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -482,7 +1030,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostname}}/api/file/list?userId=USR_1697285742714",
+							"raw": "{{hostname}}/api/file/list?userId=qshuang@gmail.com",
 							"host": [
 								"{{hostname}}"
 							],
@@ -494,7 +1042,7 @@
 							"query": [
 								{
 									"key": "userId",
-									"value": "USR_1697285742714"
+									"value": "qshuang@gmail.com"
 								}
 							]
 						}
@@ -542,6 +1090,21 @@
 				{
 					"name": "Delete file",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "darth@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "temp",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -554,21 +1117,290 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostname}}/api/file/asdadas.xml/delete?userId=USR_1697285742714",
+							"raw": "{{hostname}}/api/file/delete/webcapture.jpeg?userId=darth@gmail.com",
 							"host": [
 								"{{hostname}}"
 							],
 							"path": [
 								"api",
 								"file",
-								"asdadas.xml",
-								"delete"
+								"delete",
+								"webcapture.jpeg"
 							],
 							"query": [
 								{
 									"key": "userId",
-									"value": "USR_1697285742714"
+									"value": "darth@gmail.com"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"kelnaca@gmail.com\",\n    \"password\": \"temp\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/auth/login",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hello",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"kelnaca@gmail.com\",\n    \"password\": \"temp\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/user/login",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Schedule",
+			"item": [
+				{
+					"name": "Create schedule",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNzQ4NjMyNCwiZXhwIjoxNzI3NTMyMDAwfQ.SySQP_r_f7ytpIrWc5OfTNHnBGujfjSZEVZcDDq4uCs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"senderEmail\": \"kelnaca@gmail.com\",\n    \"senderName\": \"Kelnaca\",\n    \"receivers\": [\"bhuman.soni@gmail.com\", \"bhuman@mydaytodo.com\"],\n    \"timeWindow\": \"10-12\",\n    \"isRecurring\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/schedule/",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"schedule",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update schedule",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNzQ4NjMyNCwiZXhwIjoxNzI3NTMyMDAwfQ.SySQP_r_f7ytpIrWc5OfTNHnBGujfjSZEVZcDDq4uCs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"senderUsername\": \"kelnaca@gmail.com\",\n    \"senderName\": \"Kelnaca\",\n    \"receivers\": [\"bhuman.soni@gmail.com\", \"bhuman@mydaytodo.com\"],\n    \"timeWindow\": \"8-9\",\n    \"isRecurring\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/schedule/SCH_1727332309159",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"schedule",
+								"SCH_1727332309159"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete schedule",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNzQ4NjMyNCwiZXhwIjoxNzI3NTMyMDAwfQ.SySQP_r_f7ytpIrWc5OfTNHnBGujfjSZEVZcDDq4uCs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"senderUsername\": \"kelnaca@gmail.com\",\n    \"senderName\": \"Kelnaca\",\n    \"receivers\": [\"bhuman.soni@gmail.com\", \"bhuman@mydaytodo.com\"],\n    \"timeWindow\": \"9-11\",\n    \"isRecurring\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/schedule/SCH_1727487860422",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"schedule",
+								"SCH_1727487860422"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Schedule by user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNzQ4NjMyNCwiZXhwIjoxNzI3NTMyMDAwfQ.SySQP_r_f7ytpIrWc5OfTNHnBGujfjSZEVZcDDq4uCs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"senderUsername\": \"kelnaca@gmail.com\",\n    \"senderName\": \"Kelnaca\",\n    \"receivers\": [\"bhuman.soni@gmail.com\", \"bhuman@mydaytodo.com\"],\n    \"timeWindow\": \"9-11\",\n    \"isRecurring\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/schedule/by/kelnaca@gmail.com",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"schedule",
+								"by",
+								"kelnaca@gmail.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Schedule by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWxuYWNhQGdtYWlsLmNvbSIsImlhdCI6MTcyNzQ4NjMyNCwiZXhwIjoxNzI3NTMyMDAwfQ.SySQP_r_f7ytpIrWc5OfTNHnBGujfjSZEVZcDDq4uCs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"senderUsername\": \"kelnaca@gmail.com\",\n    \"senderName\": \"Kelnaca\",\n    \"receivers\": [\"bhuman.soni@gmail.com\", \"bhuman@mydaytodo.com\"],\n    \"timeWindow\": \"9-11\",\n    \"isRecurring\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostname}}/api/schedule/SCH_1727487854294",
+							"host": [
+								"{{hostname}}"
+							],
+							"path": [
+								"api",
+								"schedule",
+								"SCH_1727487854294"
 							]
 						}
 					},

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 @ConfigurationProperties(prefix = "aws")
-@EnableDynamoDBRepositories(basePackages = "com.mydaytodo.web.backend.repository")
+@EnableDynamoDBRepositories(basePackages = "com.mydaytodo.sfa.asset.repository")
 @Slf4j
 public class AWSConfig {
 

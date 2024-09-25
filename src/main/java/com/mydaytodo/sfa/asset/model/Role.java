@@ -1,5 +1,6 @@
 package com.mydaytodo.sfa.asset.model;
 
+import com.mydaytodo.sfa.asset.model.db.FileUser;
 import lombok.*;
 
 import java.util.List;

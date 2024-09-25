@@ -53,8 +53,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
+            log.info("About to filter request");
             filterChain.doFilter(request, response);
-
+            log.info("------------------- finished filtering response -------------------");
         } catch (ExpiredJwtException expiredJwtException) {
             log.info("In the expired JWT Exception handler");
             response.setContentType("application/json");

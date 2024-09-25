@@ -1,7 +1,7 @@
 package com.mydaytodo.sfa.asset.service;
 
 import com.mydaytodo.sfa.asset.constants.KeyStart;
-import com.mydaytodo.sfa.asset.model.File;
+import com.mydaytodo.sfa.asset.model.db.File;
 import com.mydaytodo.sfa.asset.model.FileType;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;

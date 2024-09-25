@@ -3,7 +3,7 @@ package com.mydaytodo.sfa.asset.service;
 import com.mydaytodo.sfa.asset.constants.KeyStart;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
-import com.mydaytodo.sfa.asset.model.FileUser;
+import com.mydaytodo.sfa.asset.model.db.FileUser;
 import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,7 @@
 package com.mydaytodo.sfa.asset.model;
 
 import com.amazonaws.util.StringUtils;
+import com.mydaytodo.sfa.asset.model.db.File;
 import lombok.*;
 
 @Getter

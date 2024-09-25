@@ -1,6 +1,6 @@
 package com.mydaytodo.sfa.asset.service;
 
-import com.mydaytodo.sfa.asset.model.FileUser;
+import com.mydaytodo.sfa.asset.model.db.FileUser;
 import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
@@ -47,12 +47,10 @@ public class UserAuthServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("In load by username {}", username);
-        if(repository.getUserByUsername(username).isEmpty()) {
-            throw new UsernameNotFoundException(String.format("User with name %s not found", username));
-        }
-        log.info("Got the optional {}", repository.getUserByUsername(username).isPresent());
-        FileUser user = repository.getUserByUsername(username).get();
-        log.info("Got the user {}", user.getUsername());
+        FileUser user = repository.getUserByUsername(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(String.format("User with name %s not found", username)));
+        log.info("Got the user {}", user.toString());
         UserDetails details;
         if (user.getIsSocialLoginGoogle() != null && user.getIsSocialLoginGoogle()) {
             details = new User(user.getUsername(), "", new ArrayList<>());

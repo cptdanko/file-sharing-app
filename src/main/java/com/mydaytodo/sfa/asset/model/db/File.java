@@ -1,8 +1,9 @@
-package com.mydaytodo.sfa.asset.model;
+package com.mydaytodo.sfa.asset.model.db;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import lombok.*;
 
 @Getter
