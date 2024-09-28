@@ -10,7 +10,7 @@ import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
-import com.mydaytodo.sfa.asset.model.FileUser;
+import com.mydaytodo.sfa.asset.model.db.FileUser;
 import com.mydaytodo.sfa.asset.service.UserAuthServiceImpl;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +76,7 @@ public class UserRepositoryImpl {
      */
     public Map.Entry<String, FileUser> saveUser(CreateUserRequest createUserRequest) {
         log.info("In the save user method");
+        // move all the logic till '---------' to the service layer
         FileUser user = CreateUserRequest.convertRequest(createUserRequest);
         user.setDateJoined(new Date());
         user.setLastLogin(new Date());
@@ -92,7 +93,7 @@ public class UserRepositoryImpl {
             log.error(uoe.getMessage());
             return new AbstractMap.SimpleEntry<>(uoe.getMessage(), user);
         } catch (Exception e) {
-            log.info("Exception occured: {}", e.getMessage());
+            log.info("Exception occurred: {}", e.getMessage());
             return new AbstractMap.SimpleEntry<>(e.getMessage(), user);
         }
         log.info("Request with name {} transformed", createUserRequest.getName());

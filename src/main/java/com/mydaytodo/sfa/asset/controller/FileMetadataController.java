@@ -1,6 +1,6 @@
 package com.mydaytodo.sfa.asset.controller;
 
-import com.mydaytodo.sfa.asset.model.File;
+import com.mydaytodo.sfa.asset.model.db.File;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;

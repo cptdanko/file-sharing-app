@@ -2,7 +2,7 @@ package com.mydaytodo.sfa.asset.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mydaytodo.sfa.asset.model.File;
+import com.mydaytodo.sfa.asset.model.db.File;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
 import lombok.extern.slf4j.Slf4j;

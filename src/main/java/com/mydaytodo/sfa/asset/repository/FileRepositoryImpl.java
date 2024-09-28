@@ -8,7 +8,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.mydaytodo.sfa.asset.config.AWSConfig;
-import com.mydaytodo.sfa.asset.model.File;
+import com.mydaytodo.sfa.asset.model.db.File;
 import com.mydaytodo.sfa.asset.model.FileType;
 import com.mydaytodo.sfa.asset.model.FileMetadataUploadRequest;
 import jakarta.annotation.PostConstruct;

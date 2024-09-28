@@ -1,6 +1,7 @@
 package com.mydaytodo.sfa.asset.service;
 
 import com.mydaytodo.sfa.asset.model.*;
+import com.mydaytodo.sfa.asset.model.db.FileUser;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

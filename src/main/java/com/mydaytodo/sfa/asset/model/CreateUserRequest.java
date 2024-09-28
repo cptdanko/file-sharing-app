@@ -1,6 +1,7 @@
 package com.mydaytodo.sfa.asset.model;
 
 import com.amazonaws.util.StringUtils;
+import com.mydaytodo.sfa.asset.model.db.FileUser;
 import lombok.*;
 
 import java.util.Date;
@@ -18,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 public class CreateUserRequest {
 
     private String name;
-
     private String userId = "";
     private String username;
     private Date dateJoined = null;

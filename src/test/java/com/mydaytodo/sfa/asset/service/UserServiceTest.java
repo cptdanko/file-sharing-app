@@ -4,13 +4,13 @@ package com.mydaytodo.sfa.asset.service;
 import java.util.*;
 
 import com.mydaytodo.sfa.asset.model.CreateUserRequest;
+import com.mydaytodo.sfa.asset.model.db.FileUser;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import com.mydaytodo.sfa.asset.model.FileUser;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.repository.UserRepositoryImpl;
 
@@ -32,11 +32,11 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserServiceImpl userServiceImpl;
-    private List<String> files = new ArrayList<>();
+    private final List<String> files = new ArrayList<>();
     private final String TEST_USER_ID = "USR_123";
     private final String MOCK_USERNAME = "bhuman@mydaytodo.com";
 
-    private CreateUserRequest createUserRequest = CreateUserRequest.builder()
+    private final CreateUserRequest createUserRequest = CreateUserRequest.builder()
             .username(MOCK_USERNAME)
             .filesUploaded(new ArrayList<>())
             .isSocialLoginGoogle(false)
@@ -57,7 +57,7 @@ public class UserServiceTest {
     public void testGetUser_success() throws Exception {
         when(userRepositoryImpl.getUser(any())).thenReturn(mockUser);
         ServiceResponse response = userServiceImpl.getUser(TEST_USER_ID);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
         assertEquals(((FileUser) response.getData()).getUsername(), mockUser.getUsername());
     }
 
@@ -65,21 +65,21 @@ public class UserServiceTest {
     public void testGetUser_notFound() throws Exception {
         when(userRepositoryImpl.getUser(any())).thenReturn(null);
         ServiceResponse response = userServiceImpl.getUser(TEST_USER_ID);
-        assertEquals(response.getStatus(), HttpStatus.SC_NOT_FOUND);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatus());
         assertNull(response.getData());
     }
     @Test
     public void testGetByUsername_success() throws Exception {
         when(userRepositoryImpl.getUserByUsername(any())).thenReturn(Optional.of(mockUser));
         ServiceResponse response = userServiceImpl.getByUsername(MOCK_USERNAME);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
     @Test
     public void testGetByUsername_notFound() throws Exception {
         when(userRepositoryImpl.getUserByUsername(any())).thenReturn(Optional.empty());
         ServiceResponse response = userServiceImpl.getByUsername(MOCK_USERNAME);
-        assertEquals(response.getStatus(), HttpStatus.SC_NOT_FOUND);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatus());
         assertNull(response.getData());
     }
 
@@ -87,14 +87,14 @@ public class UserServiceTest {
     public void testGetFilesAccessible_success() throws Exception {
         when(userRepositoryImpl.getUserByUsername(any())).thenReturn(Optional.of(mockUser));
         ServiceResponse response = userServiceImpl.getFilesAccessibleToUser(MOCK_USERNAME);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
-        assertEquals(response.getData().getClass(), ArrayList.class);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertEquals(ArrayList.class, response.getData().getClass());
     }
     @Test
     public void testGetFilesAccessible_fail() throws Exception {
         when(userRepositoryImpl.getUserByUsername(any())).thenReturn(Optional.empty());
         ServiceResponse response = userServiceImpl.getFilesAccessibleToUser(MOCK_USERNAME);
-        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
     }
     @Test
     public void testSaveUser_success() {
@@ -107,7 +107,7 @@ public class UserServiceTest {
     public void testSaveUser_fail_userexists() {
         when(userRepositoryImpl.getUserByUsername(any())).thenReturn(Optional.ofNullable(mockUser));
         ServiceResponse response = userServiceImpl.saveUser(createUserRequest);
-        assertEquals(response.getStatus(), HttpStatus.SC_CONFLICT);
+        assertEquals(HttpStatus.SC_CONFLICT, response.getStatus());
     }
     @Test
     public void testSaveUser_fail_nopassword() {
@@ -116,7 +116,7 @@ public class UserServiceTest {
         when(userRepositoryImpl.saveUser(any())).thenReturn(new AbstractMap.SimpleEntry<>(null, mockUser));
         createUserRequest.setPassword(null);
         ServiceResponse response = userServiceImpl.saveUser(createUserRequest);
-        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
         assertTrue(response.getMessage().contains("password cannot be null"));
     }
 
@@ -124,7 +124,7 @@ public class UserServiceTest {
     public void testUpdateUser_success() {
         doNothing().when(userRepositoryImpl).updateUser(any(), any());
         ServiceResponse response = userServiceImpl.updateUser(TEST_USER_ID, createUserRequest);
-        assertEquals(response.getStatus(), HttpStatus.SC_NO_CONTENT);
+        assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatus());
         verify(userRepositoryImpl, times(1)).updateUser(any(), any());
     }
     @Test
