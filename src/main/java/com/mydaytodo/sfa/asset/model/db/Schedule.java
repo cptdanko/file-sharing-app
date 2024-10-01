@@ -34,4 +34,10 @@ public class Schedule {
 
     @DynamoDBAttribute(attributeName = "is_recurring")
     private boolean isRecurring;
+
+    @DynamoDBAttribute(attributeName = "filename")
+    private String filename;
+
+    @DynamoDBAttribute(attributeName = "is_sent")
+    private Boolean isSent;
 }
