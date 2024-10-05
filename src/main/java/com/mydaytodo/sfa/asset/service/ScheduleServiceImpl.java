@@ -4,7 +4,6 @@ import com.mydaytodo.sfa.asset.constants.KeyStart;
 import com.mydaytodo.sfa.asset.error.EntityWithIdNotFoundException;
 import com.mydaytodo.sfa.asset.error.ScheduleValidator;
 import com.mydaytodo.sfa.asset.model.CreateScheduleRequest;
-import com.mydaytodo.sfa.asset.model.CreateUserRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.model.db.Schedule;
 import com.mydaytodo.sfa.asset.repository.ScheduleRepository;
@@ -30,6 +29,7 @@ public class ScheduleServiceImpl {
         // create the schedule - store it in the database
         // trigger the schedule
         Schedule schedule = CreateScheduleRequest.convert(createScheduleRequest);
+        schedule.setIsSent(false);
         schedule.setId(KeyStart.SCHEDULE_KEY + System.currentTimeMillis());
         log.info("About to save the schedule [ {} ]", schedule.toString());
         Schedule dbSchedule = scheduleRepository.save(schedule);

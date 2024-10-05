@@ -112,5 +112,4 @@ public class FileStorageController {
     public ResponseEntity<ServiceResponse> replaceUploadedFile(@PathVariable("fileId") String fileId) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-@Data
 @Service
 @Slf4j
 @Tag(name ="User Auth Service", description = "Implements UserDetailsService from Spring security")
@@ -28,12 +27,15 @@ public class UserAuthServiceImpl implements UserDetailsService {
      * Temporary usage of InMemoryUserDetailsManager, to be replaced with
      * a database (DynamoDB) backed user service.
      */
-    private InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
+    private final InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
     public static final UserAuthServiceImpl instance = new UserAuthServiceImpl();
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private UserAuthServiceImpl() {
 
+    }
+    private InMemoryUserDetailsManager getInMemoryUserDetailsManager() {
+        return inMemoryUserDetailsManager;
     }
     public void addUser(FileUser assetUser) {
         log.info("User object = [ {} ]", assetUser.toString());

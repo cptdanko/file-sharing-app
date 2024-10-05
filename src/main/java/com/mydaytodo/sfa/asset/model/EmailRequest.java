@@ -12,6 +12,9 @@ import java.util.List;
 @Builder
 public class EmailRequest {
     @Email
+    private String from;
+
+    @Email
     private String to;
     @Email
     private String[] cc;
