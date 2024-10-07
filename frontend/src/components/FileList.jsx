@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { API_FILE_PATH } from "../Constants";
 import { AlertDialog } from "../dialogs/AlertDialog";
+import { DateTimeRange } from "./DateRangeSelection";
 
 export const FileList = (props) => {
     const {fileUploadDone, setFileUploadDone} = props;
@@ -267,7 +268,9 @@ export const FileList = (props) => {
                         type="email"
                         id="shareEmailId"
                     />
-
+                    <Divider m={2} orientation="vertical" flexItem />
+                    
+                    <DateTimeRange fileId ="FILE_123" />
                 </DialogContent>
 
                 <DialogActions>
