@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.RoundedImage {
+  border-radius: 12px !important;
+}

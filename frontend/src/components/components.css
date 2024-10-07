@@ -1,0 +1,15 @@
+.Center-text {
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+.Date-time {
+    display: flex;
+    justify-content: space-evenly;
+}
+.Flex-column-layout {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
