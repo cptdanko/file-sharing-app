@@ -9,9 +9,9 @@ stores data in AWS services. Aspects of this repository serve as code
 samples for other developers who want to build an app like this. A series of blogposts i.e.
 How-To tutorials have also been shared on the My Day To-Do blog, they are,
 
-1. [Upload to AWS S3 bucket from Java Spring Boot app]
-2. [How to Catch ExpiredJwtException in Spring OncePerRequestFilter]
-3. [File share app - social file share feature]
+1. [Cron expression must consist of 6 fields instead of 5]
+2. [Upload to AWS S3 bucket from Java Spring Boot app]
+3. [How to Catch ExpiredJwtException in Spring OncePerRequestFilter]
 4. [How to build a Spring Boot API with reactjs frontend]
 5. [How to add JWT security to Java Spring Boot API] 
 
@@ -135,6 +135,7 @@ If you you would like to know more about how to the git feature based workflow, 
 
 Have a read of some of the tutorials with code samples on my blog,
 
+- [How to build a blog engine with spring boot and react]
 - [Call Rest API with Spring WebClient]
 - [Jokes API with Spring RestTemplate]
 - [AWS DynamoDB how to] (NodeJS/Express & Typescript)
@@ -150,6 +151,10 @@ tutorials and "how-to" articles with detailed code samples.
 If you like what I am doing, you can [buy me a coffee].
 
 Until next time, live long and prosper!
+
+[How to build a blog engine with spring boot and react]: https://mydaytodo.com/build-blog-engine-with-react-spring-boot-1/
+
+[Cron expression must consist of 6 fields instead of 5]: https://mydaytodo.com/cron-expression-must-consist-of-6-fields-found-5-in-45/
 
 [How to add JWT security to Java Spring Boot API]: https://mydaytodo.com/jwt-java-spring-boot/
 
