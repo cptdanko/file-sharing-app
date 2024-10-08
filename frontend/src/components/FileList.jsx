@@ -1,16 +1,20 @@
 import { Alert, Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material"
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { API_FILE_PATH } from "../Constants";
 import { AlertDialog } from "../dialogs/AlertDialog";
 import { DateTimeRange } from "./DateRangeSelection";
+import "./components.css";
+
+export const ScheduleContext = createContext();
 
 export const FileList = (props) => {
-    const {fileUploadDone, setFileUploadDone} = props;
+    const { fileUploadDone, setFileUploadDone } = props;
 
     const [cookies, setCookie, removeCookie] = useCookies(['user']);
     const [userFiles, setUserFiles] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
     const [fileToShare, setFileToShare] = useState("");
     const [showFiles, setShowFiles] = useState(false);
     const [alertOpen, setAlertOpen] = useState(false);
@@ -19,9 +23,10 @@ export const FileList = (props) => {
     const [alertMessage, setAlertMessage] = useState("");
     const [shareBtnTxt, setShareBtnTxt] = useState("Share");
     const [shareBtnDisabled, setShareBtnDisabled] = useState(false);
+    const scheduleContext = useContext(ScheduleContext);
 
     useEffect(() => {
-        if(fileUploadDone) {
+        if (fileUploadDone) {
             filesUploaded();
             setFileUploadDone(false);
         }
@@ -76,6 +81,23 @@ export const FileList = (props) => {
         setFileToShare(file);
         setDialogOpen(true);
     }
+    const openScheduleDialog = (file) => {
+        setFileToShare(file);
+        setScheduleDialogOpen(true);
+    }
+    const scheduleDialogClose = (e) => {
+        console.log("In the clopse schedule dialog");
+        setScheduleDialogOpen(false);
+        console.log(scheduleContext);
+    }
+    const saveScheduleInDB = (e) => {
+        console.log("In the clopse schedule dialog");
+        setScheduleDialogOpen(false);
+        console.log("About to print the schedule obj");
+        console.log(scheduleContext);
+        console.log(ScheduleContext.Provider);
+        console.log(ScheduleContext.Consumer);
+    }
     const closeDialog = () => {
         setDialogOpen(false);
     }
@@ -116,6 +138,9 @@ export const FileList = (props) => {
             setShareBtnTxt("Share");
         });
     }
+    const setSchedule = (e) => {
+
+    }
     const hideFiles = () => {
         setShowFiles(false);
     }
@@ -143,146 +168,163 @@ export const FileList = (props) => {
     }
 
     return (
-        <Container sx={{
-            marginLeft: "auto",
-            marginRight: "auto"
-        }}>
-            <Box>
-                {cookies.user && showFiles && userFiles != null && userFiles.length > 0 ? (
-                    <Box p={2} gap={2} sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        overflow: "scroll",
-                        boxShadow: "3px 1px 5px 5px grey",
-                        borderRadius: 8,
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        marginBottom: 5
-                    }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                            <Button variant="contained" 
-                            onClick={hideFiles} 
-                            sx={{ marginBottom: 2 }}
-                            data-test="hideFiles">
-                                Hide
-                            </Button>
-                            <Typography component={'span'} >
-                                Files Uploaded by <Chip label={cookies.user.name ?? cookies.user.username}></Chip>
-                            </Typography>
-                        </Box>
-                        <Divider orientation="horizontal" flexItem />
-                        {userFiles.map((file) => (
-                            <Box key={file} sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                flexDirection: "column",
-                            }}>
-                                <Box>
-                                    <Typography component={'span'} variant="body"><b>{file}</b>
-                                    </Typography>
-                                </Box>
-                                <Box>
-                                    <Button size="small"
-                                        onClick={() => downloadFile(file)}> Download </Button>
-                                    <Button size="small"
-                                        onClick={() => deleteFile(file)}> Delete </Button>
-                                    <Button size="small"
-                                        onClick={() => openDialog(file)}> Share </Button>
-                                </Box>
-                            </Box>
-
-                        ))}
-                    </Box>
-                ) : (
-                    <Box gap={2} sx={{ marginBottom: 5 }}>
-                        {userFiles !== null && userFiles.length === 0 ? (
-                            <Box p={2} gap={2} sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                overflow: "scroll",
-                                boxShadow: "3px 1px 5px 5px grey",
-                                borderRadius: 8,
-                                marginLeft: "auto",
-                                marginRight: "auto",
-                                marginBottom: 5
-                            }}>
-                                <Typography component={'span'} > No Files Uploaded by
-                                    <Chip label={cookies.user.username}></Chip>
+        <ScheduleContext.Provider value={{ schedule: {} }}>
+            <Container sx={{
+                marginLeft: "auto",
+                marginRight: "auto"
+            }}>
+                <Box>
+                    {cookies.user && showFiles && userFiles != null && userFiles.length > 0 ? (
+                        <Box p={2} gap={2} sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            overflow: "scroll",
+                            boxShadow: "3px 1px 5px 5px grey",
+                            borderRadius: 8,
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                            marginBottom: 5
+                        }}>
+                            <Box className="Flex-column-layout">
+                                <Button variant="contained"
+                                    onClick={hideFiles}
+                                    sx={{ marginBottom: 2 }}
+                                    data-test="hideFiles">
+                                    Hide
+                                </Button>
+                                <Typography component={'span'} >
+                                    Files Uploaded by <Chip label={cookies.user.name ?? cookies.user.username}></Chip>
                                 </Typography>
-                                <Button variant="contained" size="small" onClick={filesUploaded}>
-                                    Show
-                                </Button>
                             </Box>
-                        ) : (
-                            <Box gap={2}>
-                                <Button 
-                                data-test="showFiles"
-                                variant="contained" 
-                                size="small" 
-                                onClick={filesUploaded}
-                                disabled={cookies.user == null}>
-                                    Show
-                                </Button>
-                            </Box>
-                        )}
-                    </Box>
-                )}
-            </Box>
+                            <Divider orientation="horizontal" flexItem />
+                            {userFiles.map((file) => (
+                                <Box key={file} className="Flex-column">
+                                    <Box>
+                                        <Typography component={'span'} variant="body"><b>{file}</b>
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Button size="small"
+                                            onClick={() => downloadFile(file)}> Download </Button>
+                                        <Button size="small"
+                                            onClick={() => deleteFile(file)}> Delete </Button>
+                                        <Button size="small"
+                                            onClick={() => openDialog(file)}> Share </Button>
+                                        
+                                        <Button size="small"
+                                            onClick={() => openScheduleDialog(file)}> Schedule </Button>
+                                    </Box>
+                                </Box>
 
-            <AlertDialog open={alertOpen}
-                handleClose={handleAlertClose}
-                title={alertHeader}
-                content={alertMessage} />
+                            ))}
+                        </Box>
+                    ) : (
+                        <Box gap={2} sx={{ marginBottom: 5 }}>
+                            {userFiles !== null && userFiles.length === 0 ? (
+                                <Box p={2} gap={2} sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    overflow: "scroll",
+                                    boxShadow: "3px 1px 5px 5px grey",
+                                    borderRadius: 8,
+                                    marginLeft: "auto",
+                                    marginRight: "auto",
+                                    marginBottom: 5
+                                }}>
+                                    <Typography component={'span'} > No Files Uploaded by
+                                        <Chip label={cookies.user.username}></Chip>
+                                    </Typography>
+                                    <Button variant="contained" size="small" onClick={filesUploaded}>
+                                        Show
+                                    </Button>
+                                </Box>
+                            ) : (
+                                <Box gap={2}>
+                                    <Button
+                                        data-test="showFiles"
+                                        variant="contained"
+                                        size="small"
+                                        onClick={filesUploaded}
+                                        disabled={cookies.user == null}>
+                                        Show
+                                    </Button>
+                                </Box>
+                            )}
+                        </Box>
+                    )}
+                </Box>
 
-            <AlertDialog open={notLoginErr}
-                handleClose={handleLoginAlertClose}
-                title="Not Logged in"
-                content="You need to login first before using this" />
+                <AlertDialog open={alertOpen}
+                    handleClose={handleAlertClose}
+                    title={alertHeader}
+                    content={alertMessage} />
+
+                <AlertDialog open={notLoginErr}
+                    handleClose={handleLoginAlertClose}
+                    title="Not Logged in"
+                    content="You need to login first before using this" />
 
 
-            <Dialog
-                open={dialogOpen}
-                onClose={closeDialog}
+                <Dialog
+                    open={dialogOpen}
+                    onClose={closeDialog}
+                    PaperProps={{
+                        component: 'form',
+                        onSubmit: shareFile
+                    }}>
+                    <DialogTitle> Share File</DialogTitle>
+                    <DialogContent className="Flex-column-layout">
+                        <Alert variant="outlined" severity="info">
+                            Only 1 email address supported
+                        </Alert>
+                        <TextField autoFocus
+                            fullWidth
+                            required
+                            margin="dense"
+                            label="Email address to share with"
+                            placeholder="Enter that person's email address"
+                            type="email"
+                            id="shareEmailId"
+                        />
+                    </DialogContent>
+
+                    <DialogActions>
+                        <Button variant="contained"
+                            size="small"
+                            onClick={closeDialog}>Close</Button>
+                        <Button variant="contained"
+                            disabled={shareBtnDisabled}
+                            size="small"
+                            type="submit">{shareBtnTxt}</Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={scheduleDialogOpen}
+                onClose={scheduleDialogClose}
                 PaperProps={{
                     component: 'form',
-                    onSubmit: shareFile
+                    onSubmit: saveScheduleInDB
                 }}>
-                <DialogTitle> Share File</DialogTitle>
-                <DialogContent sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <Alert variant="outlined" severity="info">
-                        Only 1 email address supported
-                    </Alert>
-                    <TextField autoFocus
-                        fullWidth
-                        required
-                        margin="dense"
-                        label="Email address to share with"
-                        placeholder="Enter that person's email address"
-                        type="email"
-                        id="shareEmailId"
-                    />
-                    <Divider m={2} orientation="vertical" flexItem />
-                    
-                    <DateTimeRange fileId ="FILE_123" />
-                </DialogContent>
-
-                <DialogActions>
-                    <Button variant="contained"
+                    <DialogTitle> Schedule </DialogTitle>
+                    <DialogContent>
+                        <DateTimeRange fileId={fileToShare} />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button variant="contained"
                         size="small"
-                        onClick={closeDialog}>Close</Button>
-                    <Button variant="contained"
-                        disabled={shareBtnDisabled}
-                        size="small" 
-                        type="submit">{shareBtnTxt}</Button>
-                </DialogActions>
-            </Dialog>
-        </Container >
+                        onClick={scheduleDialogClose}>
+                            Close
+                        </Button>
+                        <Button 
+                        size="small"
+                        variant="contained"
+                        type="submit">
+                            Set schedule
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </Container >
+        </ScheduleContext.Provider>
     )
 }

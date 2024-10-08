@@ -1,41 +1,99 @@
-import { Box, Container, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { Alert, Box, Button, Container, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { useContext, useState } from "react";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import "./components.css";
+import { ScheduleContext } from "./FileList";
+import dayjs from "dayjs";
 
 export const DateTimeRange = (props) => {
     const { fileId } = props;
+    const [emailToSendTo, setEmailToSendTo] = useState("");
+    const [selDate, setSelDate] = useState(null);
     const [from, setFrom] = useState(0);
-    const [to, setTo] = useState(1); 
+    const [to, setTo] = useState(0);
+    const [toRange, setToRange] = useState([]);
     const hourRange = [...Array(24).keys()];
-    const handleChange = (e) => {
-        const v = e.target.value;
-        console.log(v);
+    const scheduleContext = useContext(ScheduleContext);
+    
+    function getLatestDate() {
+        return dayjs(selDate.$d).format('DD/MM/YYYY');
     }
+    const handleFromChange = (e) => {
+        const v = e.target.value;
+        setFrom(v);
+        let range = new Array();
+        const startPos = (v == 23) ? 0 : v + 1;
+        for (let i = startPos; i < 24; i += 1) {
+            range.push(i);
+        }
+        setToRange(range);
+        scheduleContext.schedule.from = from;
+        scheduleContext.schedule.date = getLatestDate();
+    }
+    const handleToChange = (e) => {
+        setTo(e.target.value);
+        scheduleContext.schedule.to = e.target.value;
+        scheduleContext.schedule.date = getLatestDate();
+        scheduleContext.schedule.fileName = fileId;
+    }
+
+
     return (
-        <Container style={{ display:'flex', flexDirection:'column', marginTop: 8 }}>
-            <Box style={{marginTop: 8, marginBottom: 8}}>
-                <Typography>Select date time range</Typography>
+        <Container style={{ display: 'flex', flexDirection: 'column', marginTop: 8, padding: 0 }}>
+            <Box className="Center-text">
+                <Alert variant="outlined" severity="info">
+                    Date & time when you want to share it
+                </Alert>
             </Box>
             <Box>
-                <DatePicker />
+                <TextField autoFocus
+                    fullWidth
+                    required
+                    value={emailToSendTo}
+                    onChange={(e) => setEmailToSendTo(e.target.value)}
+                    margin="dense"
+                    label="Email address to send it to"
+                    placeholder="Enter the receiver's email address"
+                    type="email"
+                    id="scheduleShareEmailId"
+                />
             </Box>
-            <Box style={{marginTop: 8}} >
-                <span> Time range </span>
-                <select id="to">
-                    {hourRange.map((option, idx) => (
-                        <option key={"to_"+idx} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-                - 
-                <select id="from">
-                    {hourRange.map((option, idx) => (
-                        <option key={"from_"+idx} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
+            <Box className="Date-time Center-text">
+                <Box>
+                    <DatePicker
+                        label="Scheduled Date"
+                        value={selDate}
+                        onChange={newVal => setSelDate(newVal)}
+                        format="DD/MM/YYYY" />
+                </Box>
+                <Box>
+                    <span style={{ marginLeft: 2 }}>&nbsp;Between &nbsp;</span>
+                    <Select labelId="from"
+                        id="from_time"
+                        value={from}
+                        label="From"
+                        onChange={handleFromChange}>
+                        {hourRange.map((option, idx) => (
+                            <MenuItem key={"from_" + idx} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </Select>
+
+                    -
+                    <Select labelId="to"
+                        id="to_time"
+                        value={to}
+                        label="To"
+                        onChange={handleToChange}>
+                        {toRange.map((option, idx) => (
+                            <MenuItem key={"to_" + idx} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    <span>&nbsp; hrs</span>
+                </Box>
             </Box>
         </Container>
     );
