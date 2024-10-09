@@ -18,6 +18,7 @@ function App() {
 
   return (
     <CookiesProvider>
+      
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <div className="App" style={{
           margin: 2,

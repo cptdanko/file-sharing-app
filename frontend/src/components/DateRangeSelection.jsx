@@ -2,8 +2,8 @@ import { Alert, Box, Button, Container, MenuItem, Select, TextField, Typography 
 import { useContext, useState } from "react";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import "./components.css";
-import { ScheduleContext } from "./FileList";
 import dayjs from "dayjs";
+import { ScheduleContext } from "./ScheduleContext";
 
 export const DateTimeRange = (props) => {
     const { fileId } = props;
@@ -13,7 +13,7 @@ export const DateTimeRange = (props) => {
     const [to, setTo] = useState(0);
     const [toRange, setToRange] = useState([]);
     const hourRange = [...Array(24).keys()];
-    const scheduleContext = useContext(ScheduleContext);
+    const { schedule, setSchedule } = useContext(ScheduleContext);
     
     function getLatestDate() {
         return dayjs(selDate.$d).format('DD/MM/YYYY');
@@ -21,20 +21,23 @@ export const DateTimeRange = (props) => {
     const handleFromChange = (e) => {
         const v = e.target.value;
         setFrom(v);
+        schedule.from = v;
         let range = new Array();
         const startPos = (v == 23) ? 0 : v + 1;
         for (let i = startPos; i < 24; i += 1) {
             range.push(i);
         }
         setToRange(range);
-        scheduleContext.schedule.from = from;
-        scheduleContext.schedule.date = getLatestDate();
+        schedule.date = getLatestDate();
+        setSchedule(schedule);
     }
     const handleToChange = (e) => {
         setTo(e.target.value);
-        scheduleContext.schedule.to = e.target.value;
-        scheduleContext.schedule.date = getLatestDate();
-        scheduleContext.schedule.fileName = fileId;
+        schedule.to = e.target.value;
+        schedule.date = getLatestDate();
+        schedule.fileName = fileId;
+        schedule.receiver = emailToSendTo;
+        setSchedule(schedule);
     }
 
 

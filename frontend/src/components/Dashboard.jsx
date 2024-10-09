@@ -11,6 +11,7 @@ import { FileUpload } from './FileUpload';
 import { Divider } from '@mui/material';
 import { FileList } from './FileList';
 import { FileBrowser } from './FileBrowser';
+import { ScheduleProvider } from './ScheduleContext';
 
 
 export const Dashboard = () => {
@@ -49,8 +50,9 @@ export const Dashboard = () => {
             <FileUpload setFileUploaded={setFileUploadDone} />
 
             <Divider sx={{ margin: 2 }} flexItem orientation="horizontal"></Divider>
-
-            <FileList fileUploadDone={fileUploadDone} setFileUploadDone={setFileUploadDone}  />
+            <ScheduleProvider>
+              <FileList fileUploadDone={fileUploadDone} setFileUploadDone={setFileUploadDone}  />
+            </ScheduleProvider>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
             <FileBrowser />
