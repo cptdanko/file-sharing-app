@@ -1,5 +1,6 @@
 package com.mydaytodo.sfa.asset.jobs;
 
+import com.amazonaws.util.DateUtils;
 import com.mydaytodo.sfa.asset.model.EmailRequest;
 import com.mydaytodo.sfa.asset.model.db.Schedule;
 import com.mydaytodo.sfa.asset.repository.ScheduleRepository;
@@ -39,7 +40,8 @@ public class EmailSchedulerJob {
     public void sendScheduledEmails() {
         List<Schedule> toBeSent = new ArrayList<>();
         String currentRange = DateTimeService.getTimeWindow();
-        log.info("About to get schedules for current hour {} ", currentRange);
+        log.info("About to get schedules for current hour {} , {}", currentRange, new Date().toString());
+
         scheduleRepository.findAll().forEach(schedule -> {
             if(schedule.getTimeWindow().equalsIgnoreCase(currentRange)
             && !schedule.getIsSent()) {

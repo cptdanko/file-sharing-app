@@ -1,15 +1,20 @@
 import { Alert, Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material"
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { API_FILE_PATH } from "../Constants";
 import { AlertDialog } from "../dialogs/AlertDialog";
+import { DateTimeRange } from "./DateRangeSelection";
+import "./components.css";
+import { ScheduleContext } from "./ScheduleContext";
 
 export const FileList = (props) => {
-    const {fileUploadDone, setFileUploadDone} = props;
+    const { fileUploadDone, setFileUploadDone } = props;
+    const { schedule } = useContext(ScheduleContext);
 
     const [cookies, setCookie, removeCookie] = useCookies(['user']);
     const [userFiles, setUserFiles] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
     const [fileToShare, setFileToShare] = useState("");
     const [showFiles, setShowFiles] = useState(false);
     const [alertOpen, setAlertOpen] = useState(false);
@@ -18,9 +23,10 @@ export const FileList = (props) => {
     const [alertMessage, setAlertMessage] = useState("");
     const [shareBtnTxt, setShareBtnTxt] = useState("Share");
     const [shareBtnDisabled, setShareBtnDisabled] = useState(false);
+    const scheduleContext = useContext(ScheduleContext);
 
     useEffect(() => {
-        if(fileUploadDone) {
+        if (fileUploadDone) {
             filesUploaded();
             setFileUploadDone(false);
         }
@@ -75,6 +81,41 @@ export const FileList = (props) => {
         setFileToShare(file);
         setDialogOpen(true);
     }
+
+    const openScheduleDialog = (file) => {
+        setFileToShare(file);
+        setScheduleDialogOpen(true);
+    }
+
+    const scheduleDialogClose = (e) => {
+        console.log("In the clopse schedule dialog");
+        setScheduleDialogOpen(false);
+        const timeWindow = `${scheduleContext.schedule.from}-${scheduleContext.schedule.to}`;
+        
+        const postObj = {
+            "timeWindow": timeWindow,
+            "receivers": [scheduleContext.schedule.receiver],
+            "sendersEmail": cookies.user.username,
+            "sendersName": cookies.user.google ? cookies.user.google.name: cookies.user.name,
+            "isRecurring": false
+        };
+        const url = '/api/schedule/';
+        fetch(url, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${cookies.user.token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postObj)
+        }).then(resp => {
+            console.log(resp);
+        });
+    }
+
+    const saveScheduleInDB = (e) => {
+        setScheduleDialogOpen(false);
+    }
+
     const closeDialog = () => {
         setDialogOpen(false);
     }
@@ -115,6 +156,9 @@ export const FileList = (props) => {
             setShareBtnTxt("Share");
         });
     }
+    const setSchedule = (e) => {
+
+    }
     const hideFiles = () => {
         setShowFiles(false);
     }
@@ -123,7 +167,7 @@ export const FileList = (props) => {
         console.log(`Url to download file is ${url}`);
         fetch(url, {
             headers: {
-                Authorization: `Bearer ${cookies.user.token}`,
+                Authorization: `Bearer ${cookies.user.token}`
             },
         })
             .then(resp => resp.blob())
@@ -159,11 +203,11 @@ export const FileList = (props) => {
                         marginRight: "auto",
                         marginBottom: 5
                     }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                            <Button variant="contained" 
-                            onClick={hideFiles} 
-                            sx={{ marginBottom: 2 }}
-                            data-test="hideFiles">
+                        <Box className="Flex-column-layout">
+                            <Button variant="contained"
+                                onClick={hideFiles}
+                                sx={{ marginBottom: 2 }}
+                                data-test="hideFiles">
                                 Hide
                             </Button>
                             <Typography component={'span'} >
@@ -172,11 +216,7 @@ export const FileList = (props) => {
                         </Box>
                         <Divider orientation="horizontal" flexItem />
                         {userFiles.map((file) => (
-                            <Box key={file} sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                flexDirection: "column",
-                            }}>
+                            <Box key={file} className="Flex-column">
                                 <Box>
                                     <Typography component={'span'} variant="body"><b>{file}</b>
                                     </Typography>
@@ -188,6 +228,9 @@ export const FileList = (props) => {
                                         onClick={() => deleteFile(file)}> Delete </Button>
                                     <Button size="small"
                                         onClick={() => openDialog(file)}> Share </Button>
+
+                                    <Button size="small"
+                                        onClick={() => openScheduleDialog(file)}> Schedule </Button>
                                 </Box>
                             </Box>
 
@@ -216,12 +259,12 @@ export const FileList = (props) => {
                             </Box>
                         ) : (
                             <Box gap={2}>
-                                <Button 
-                                data-test="showFiles"
-                                variant="contained" 
-                                size="small" 
-                                onClick={filesUploaded}
-                                disabled={cookies.user == null}>
+                                <Button
+                                    data-test="showFiles"
+                                    variant="contained"
+                                    size="small"
+                                    onClick={filesUploaded}
+                                    disabled={cookies.user == null}>
                                     Show
                                 </Button>
                             </Box>
@@ -249,12 +292,7 @@ export const FileList = (props) => {
                     onSubmit: shareFile
                 }}>
                 <DialogTitle> Share File</DialogTitle>
-                <DialogContent sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
+                <DialogContent className="Flex-column-layout">
                     <Alert variant="outlined" severity="info">
                         Only 1 email address supported
                     </Alert>
@@ -267,7 +305,6 @@ export const FileList = (props) => {
                         type="email"
                         id="shareEmailId"
                     />
-
                 </DialogContent>
 
                 <DialogActions>
@@ -276,8 +313,32 @@ export const FileList = (props) => {
                         onClick={closeDialog}>Close</Button>
                     <Button variant="contained"
                         disabled={shareBtnDisabled}
-                        size="small" 
+                        size="small"
                         type="submit">{shareBtnTxt}</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={scheduleDialogOpen}
+                onClose={scheduleDialogClose}
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: scheduleDialogClose
+                }}>
+                <DialogTitle> Schedule </DialogTitle>
+                <DialogContent>
+                    <DateTimeRange fileId={fileToShare} />
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained"
+                        size="small"
+                        onClick={scheduleDialogClose}>
+                        Close
+                    </Button>
+                    <Button
+                        size="small"
+                        variant="contained"
+                        type="submit">
+                        Set schedule
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Container >
