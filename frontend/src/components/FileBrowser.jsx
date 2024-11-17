@@ -155,9 +155,7 @@ export const FileBrowser = () => {
                             onClick={() => openDialog(file)}> Share </Button>
                     </Box>
                 </TableCell>
-                <TableCell align="right">
-                    12/12/2012 11:00AM
-                </TableCell>
+                
 
             </TableRow>
         });
@@ -174,7 +172,6 @@ export const FileBrowser = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell>Filename</TableCell>
-                            <TableCell align="right">Date uploaded</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

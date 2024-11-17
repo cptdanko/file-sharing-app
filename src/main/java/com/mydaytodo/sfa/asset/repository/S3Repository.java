@@ -24,9 +24,9 @@ public class S3Repository {
     private AWSConfig awsConfig;
 
     public boolean fileExists(String filename) {
-        log.info(String.format("Checking if [ %s ] file exists", filename));
+        log.info("Checking if [ {} ] file exists", filename);
         boolean fileExists = awsConfig.s3Client().doesObjectExist(awsConfig.getS3UploadBucketName(), filename);
-        log.info(String.format("File exists? -> [  %s ]", fileExists));
+        log.info("File exists? -> [  {} ]", fileExists);
         return fileExists;
     }
 
@@ -70,7 +70,7 @@ public class S3Repository {
         try {
             AmazonS3Waiters s3waiters = client.waiters();
 
-            log.info("About to send request for name " + createBucketRequest.getBucketName() + " and region " + createBucketRequest.getRegion());
+            log.info("About to send request for name {} and region {}", createBucketRequest.getBucketName(), createBucketRequest.getRegion());
             Bucket bucket = client.createBucket(createBucketRequest.getBucketName(), createBucketRequest.getRegion());
             HeadBucketRequest requestWait = new HeadBucketRequest(createBucketRequest.getBucketName());
             log.info("Successfully created the bucket");

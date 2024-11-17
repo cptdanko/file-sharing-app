@@ -3,6 +3,7 @@ package com.mydaytodo.sfa.asset.service;
 import com.mydaytodo.sfa.asset.constants.KeyStart;
 import com.mydaytodo.sfa.asset.error.EntityWithIdNotFoundException;
 import com.mydaytodo.sfa.asset.error.ScheduleValidator;
+import com.mydaytodo.sfa.asset.jobs.EmailSchedulerJob;
 import com.mydaytodo.sfa.asset.model.CreateScheduleRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.model.db.Schedule;
@@ -23,6 +24,9 @@ public class ScheduleServiceImpl {
     @Autowired
     private ScheduleRepository scheduleRepository;
 
+    @Autowired
+    private EmailSchedulerJob emailSchedulerJob;
+
     public ServiceResponse createSchedule(CreateScheduleRequest createScheduleRequest) {
         // validate the schedule
         ScheduleValidator.validateSchedule(createScheduleRequest);
@@ -34,6 +38,7 @@ public class ScheduleServiceImpl {
         log.info("About to save the schedule [ {} ]", schedule.toString());
         Schedule dbSchedule = scheduleRepository.save(schedule);
         log.info("Successfully created the schedule");
+        emailSchedulerJob.scheduleSendMail(schedule);
         // create or start the schedule
         return ServiceResponse.builder()
                 .status(HttpStatus.CREATED.value())

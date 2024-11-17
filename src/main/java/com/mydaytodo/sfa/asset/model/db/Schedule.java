@@ -3,9 +3,11 @@ package com.mydaytodo.sfa.asset.model.db;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -29,9 +31,6 @@ public class Schedule {
     @DynamoDBAttribute(attributeName = "receivers")
     private List<String> receivers;
 
-    @DynamoDBAttribute(attributeName = "time_window")
-    private String timeWindow;
-
     @DynamoDBAttribute(attributeName = "is_recurring")
     private boolean isRecurring;
 
@@ -40,4 +39,8 @@ public class Schedule {
 
     @DynamoDBAttribute(attributeName = "is_sent")
     private Boolean isSent;
+
+    @DynamoDBAttribute(attributeName = "send_date")
+    private Date sendDate;
+
 }

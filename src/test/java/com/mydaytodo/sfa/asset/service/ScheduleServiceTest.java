@@ -50,7 +50,7 @@ public class ScheduleServiceTest {
             .isRecurring(false)
             .senderName("Bhuman Soni")
             .senderEmail("bhuman@mydaytodo.com")
-            .timeWindow("12-13")
+            // .timeWindow("12-13")
             .receivers(new ArrayList<>() {{ add("bhuman@mydaytodo.com"); add("bhuman.soni@gmail.com"); }})
             .build();
 
@@ -67,7 +67,7 @@ public class ScheduleServiceTest {
     @Test
     void testCreateSchedule_fail_noTime() {
         Assertions.assertThrows(InvalidScheduleException.class, () -> {
-            createScheduleRequest.setTimeWindow("");
+            // createScheduleRequest.setTimeWindow("");
             scheduleService.createSchedule(createScheduleRequest);
         });
     }
@@ -81,7 +81,7 @@ public class ScheduleServiceTest {
     @Test
     void testCreateSchedule_fail_invalidTimeFormat() {
         Assertions.assertThrows(InvalidScheduleException.class, () -> {
-            createScheduleRequest.setTimeWindow("14:18");
+            // createScheduleRequest.setTimeWindow("14:18");
             scheduleService.createSchedule(createScheduleRequest);
         });
     }

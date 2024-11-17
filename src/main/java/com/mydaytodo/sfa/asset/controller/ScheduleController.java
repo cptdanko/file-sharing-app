@@ -3,7 +3,6 @@ package com.mydaytodo.sfa.asset.controller;
 import com.mydaytodo.sfa.asset.error.Validator;
 import com.mydaytodo.sfa.asset.model.CreateScheduleRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
-import com.mydaytodo.sfa.asset.model.db.Schedule;
 import com.mydaytodo.sfa.asset.service.ScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

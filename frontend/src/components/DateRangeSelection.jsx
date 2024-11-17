@@ -1,12 +1,12 @@
 import { Alert, Box, Button, Container, MenuItem, Select, TextField, Typography } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import "./components.css";
 import dayjs from "dayjs";
 import { ScheduleContext } from "./ScheduleContext";
 
 export const DateTimeRange = (props) => {
-    const { fileId } = props;
+    const { fileId, savedSchedule } = props;
     const [emailToSendTo, setEmailToSendTo] = useState("");
     const [selDate, setSelDate] = useState(null);
     const [from, setFrom] = useState(0);
@@ -16,6 +16,18 @@ export const DateTimeRange = (props) => {
     const { schedule, setSchedule } = useContext(ScheduleContext);
     const [dateSelected, setDateSelected] = useState(false);
     
+    useEffect(() => {
+        console.log(`In useEffect with ${JSON.stringify(savedSchedule)}`);
+        if(savedSchedule) {
+            const timeSplit = savedSchedule.timeWindow.split("-");
+            console.log(timeSplit);
+            setFrom(JSON.parse(timeSplit[0]));
+            setTo(JSON.parse(timeSplit[1]));
+            // TODO: remove the hard coded index element grab
+            setEmailToSendTo(savedSchedule.receivers[0]);
+        }
+
+    });
     function getLatestDate() {
         return dayjs(selDate.$d).format('DD/MM/YYYY');
     }
@@ -36,7 +48,7 @@ export const DateTimeRange = (props) => {
         setTo(e.target.value);
         schedule.to = e.target.value;
         schedule.date = getLatestDate();
-        schedule.fileName = fileId;
+        schedule.filename = fileId;
         schedule.receiver = emailToSendTo;
         setSchedule(schedule);
     }

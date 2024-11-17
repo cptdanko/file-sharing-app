@@ -7,6 +7,7 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,14 @@ public class MailService {
     }
 
     public ServiceResponse sendEmail(EmailRequest emailRequest) {
-
+        log.info("In the sendEmail function");
         MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
         StringBuilder builder = new StringBuilder();
         builder.append(emailRequest.getBody());
         try {
             // if the email request contains any attachments, then send it
             for (String filename : emailRequest.getFilesToAttach()) {
+                log.info("Filename is {}", filename);
                 MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMailMessage, true);
                 byte[] fileData = s3Repository.getDataForFile(filename);
                 String name = filename.substring(filename.indexOf("/") + 1);

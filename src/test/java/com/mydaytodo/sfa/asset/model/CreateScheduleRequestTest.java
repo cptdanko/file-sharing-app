@@ -15,7 +15,7 @@ public class CreateScheduleRequestTest {
             .senderName(name)
             .senderEmail(username)
             .receivers(new ArrayList<>(){{add("bhuman@mydaytodo.com");}})
-            .timeWindow("9-11")
+            //.timeWindow("9-11")
             .build();
 
     @Test
@@ -32,11 +32,11 @@ public class CreateScheduleRequestTest {
         String modTimeWin = "16-18";
         String modSenderMail = "admin@mydaytodo.com";
         sampleRequest.setSenderName(modSenderName);
-        sampleRequest.setTimeWindow(modTimeWin);
+        // sampleRequest.setTimeWindow(modTimeWin);
         sampleRequest.setSenderEmail(modSenderMail);
         CreateScheduleRequest.updateValues(schedule, sampleRequest);
         Assertions.assertEquals(modSenderName, schedule.getSender());
         Assertions.assertEquals(modSenderMail, schedule.getUsername());
-        Assertions.assertEquals(modTimeWin, schedule.getTimeWindow());
+        // Assertions.assertEquals(modTimeWin, schedule.getTimeWindow());
     }
 }
