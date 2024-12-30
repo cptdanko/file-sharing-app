@@ -37,11 +37,25 @@ public class EmailSchedulerJob {
         shareFileTask.setSchedule(schedule);
         shareFileTask.setMailService(mailService);
         log.info("About to schedule it");
-        // Calendar cal = Calendar.getInstance();
-        // cal.add(Calendar.SECOND, 10);
-        // log.info("Set time is {}", cal.getTime().toInstant().toString());
-        threadPoolTaskScheduler.schedule(shareFileTask, schedule.getSendDate().toInstant());
-        // threadPoolTaskScheduler.schedule(shareFileTask, cal.getTime().toInstant());
+        if (isDateToday(schedule.getSendDate())) {
+            // if the date is today, then send
+            log.info("the send date is for today");
+            // email in the next 15 seconds
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.SECOND, 15);
+            threadPoolTaskScheduler.schedule(shareFileTask, cal.getTime().toInstant());
+        } else {
+            threadPoolTaskScheduler.schedule(shareFileTask, schedule.getSendDate().toInstant());
+        }
+    }
+    private boolean isDateToday(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        Calendar input = Calendar.getInstance();
+        input.setTime(date);
+        if (calendar.get(Calendar.DAY_OF_MONTH) == input.get(Calendar.DAY_OF_MONTH)) {
+            return true;
+        }
+        return false;
     }
     /**
      * Get all the schedules that haven't been sent

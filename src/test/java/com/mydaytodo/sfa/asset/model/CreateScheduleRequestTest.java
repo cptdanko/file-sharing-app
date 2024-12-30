@@ -5,17 +5,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CreateScheduleRequestTest {
     private final String username = "cptdanko@mydaytodo.com";
     private final String name = "Bhuman Soni";
 
-    private CreateScheduleRequest sampleRequest = CreateScheduleRequest.builder()
+    private final CreateScheduleRequest sampleRequest = CreateScheduleRequest.builder()
             .isRecurring(false)
             .senderName(name)
             .senderEmail(username)
             .receivers(new ArrayList<>(){{add("bhuman@mydaytodo.com");}})
-            //.timeWindow("9-11")
+            .sendDate(new Date())
             .build();
 
     @Test
@@ -29,14 +30,14 @@ public class CreateScheduleRequestTest {
     public void testUpdateValues() {
         Schedule schedule = CreateScheduleRequest.convert(sampleRequest);
         String modSenderName = "Captain Danko";
-        String modTimeWin = "16-18";
+        Date modSendDate = new Date();
         String modSenderMail = "admin@mydaytodo.com";
         sampleRequest.setSenderName(modSenderName);
-        // sampleRequest.setTimeWindow(modTimeWin);
+        sampleRequest.setSendDate(modSendDate);
         sampleRequest.setSenderEmail(modSenderMail);
         CreateScheduleRequest.updateValues(schedule, sampleRequest);
         Assertions.assertEquals(modSenderName, schedule.getSender());
         Assertions.assertEquals(modSenderMail, schedule.getUsername());
-        // Assertions.assertEquals(modTimeWin, schedule.getTimeWindow());
+        Assertions.assertEquals(modSendDate, schedule.getSendDate());
     }
 }

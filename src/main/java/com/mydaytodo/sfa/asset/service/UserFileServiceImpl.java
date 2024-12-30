@@ -25,10 +25,14 @@ public class UserFileServiceImpl {
 
     public ServiceResponse getUserFileSchedules(String username) {
         // add some validations
-
         List<String> userUploadedFiles = s3Repository.filesByUser(username);
         List<Schedule> schedules = scheduleRepository.getScheduleByUser(username);
+        log.info("The number of schedules by user {}", schedules.size());
+        schedules.forEach(schedule -> {
+            log.info(schedule.getFilename());
+        });
         List<FileWithSchedule> userFileList = new ArrayList<>();
+
         userUploadedFiles.forEach(file -> {
             FileWithSchedule uf = FileWithSchedule.builder()
                     .filename(file)

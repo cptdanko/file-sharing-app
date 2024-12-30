@@ -88,6 +88,9 @@ export const FileList = (props) => {
 
     const openScheduleDialog = (file) => {
         setSelSchedule(file.schedule);
+        if (file.schedule && file.schedule.id) {
+            scheduleContext.schedule.id = file.schedule.id;
+        }
         setFileToShare(file.filename);
         setScheduleDialogOpen(true);
     }
@@ -95,19 +98,28 @@ export const FileList = (props) => {
     const scheduleDialogClose = (e) => {
         console.log("In the clopse schedule dialog");
         setScheduleDialogOpen(false);
-        const timeWindow = `${scheduleContext.schedule.from}-${scheduleContext.schedule.to}`;
+
+        const sendDate = scheduleContext.schedule.date.year() +
+        '-' + (scheduleContext.schedule.date.month()+1) + 
+        '-' + scheduleContext.schedule.date.date();
+        console.log(sendDate);
         
         const postObj = {
-            "timeWindow": timeWindow,
-            "receivers": [scheduleContext.schedule.receiver],
+            "sendDate": sendDate,
+            "receivers": [scheduleContext.schedule.to],
             "senderEmail": cookies.user.username,
             "senderName": cookies.user.google ? cookies.user.google.name: cookies.user.name,
             "isRecurring": false,
             "filename": fileToShare
         };
-        const url = '/api/schedule/';
+        let url = '/api/schedule/';
+        let method = "POST";
+        if (scheduleContext.schedule.id) {
+            url = '/api/schedule/'+scheduleContext.schedule.id;
+            method = "PUT"
+        }
         fetch(url, {
-            method: "POST",
+            method: method,
             headers: {
                 Authorization: `Bearer ${cookies.user.token}`,
                 "Content-Type": "application/json",

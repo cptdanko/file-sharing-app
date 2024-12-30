@@ -25,35 +25,19 @@ public class ShareFileTask implements Runnable {
         String emailSubject = String.format("%s has shared %s with you", schedule.getUsername(), schedule.getFilename());
         log.info("Executing share file task");
         schedule.getReceivers().forEach(receiver -> {
-            log.info("Sending it to user {}", receiver);
-            CompletableFuture.runAsync(() -> {
-                log.info("in the runAsync");
-                EmailRequest request = EmailRequest.builder()
-                        .from(schedule.getUsername())
-                        .to(receiver)
-                        .filesToAttach(new String[]{schedule.getFilename()})
-                        .subject(emailSubject)
-                        .body(message)
-                        .build();
-                log.info("About to send mail");
-                // TODO: refactor - will download file from s3 every time
-                mailService.sendEmail(request);
-            });
+        log.info("Sending it to user {}", receiver);
+            log.info("in the runAsync");
+            String filename = schedule.getUsername() + "/" + schedule.getFilename();
+            EmailRequest request = EmailRequest.builder()
+                    .from(schedule.getUsername())
+                    .to(receiver)
+                    .filesToAttach(new String[]{filename})
+                    .subject(emailSubject)
+                    .body(message)
+                    .build();
+            log.info("About to send mail");
+            // TODO: refactor - will download file from s3 every time
+            mailService.sendEmail(request);
         });
     }
 }
-/*schedule.getReceivers().forEach(receiver -> {
-    log.info("Sending it to user {}", receiver);
-    CompletableFuture.runAsync(() -> {
-        log.info("in the runAsync");
-        EmailRequest request = EmailRequest.builder()
-                .from(schedule.getUsername())
-                .to(receiver)
-                .filesToAttach(new String[]{schedule.getFilename()})
-                .subject(emailSubject)
-                .body(message)
-                .build();
-        log.info("About to send mail");
-        mailService.sendEmail(request);
-    });
-});*/

@@ -18,11 +18,11 @@ public class CreateScheduleRequest {
     private String id;
     private String senderName;
     private String senderEmail;
-    private List<String> receivers; //email address of those receiving
+    private List<String> receivers; // email address of those receiving
     private boolean isRecurring = false;
     private String filename;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private Date sendDate;
 
 
