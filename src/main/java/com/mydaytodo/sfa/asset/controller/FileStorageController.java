@@ -4,15 +4,13 @@ import com.mydaytodo.sfa.asset.error.Validator;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.service.FileServiceImpl;
 import com.mydaytodo.sfa.asset.service.StorageServiceImpl;
+import com.mydaytodo.sfa.asset.service.UserFileServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +27,9 @@ public class FileStorageController {
 
     @Autowired
     private FileServiceImpl fileService;
+
+    @Autowired
+    private UserFileServiceImpl userFileService;
 
     /**
      * Possible 400 errors could be
@@ -56,6 +57,7 @@ public class FileStorageController {
     }
 
     /**
+     * TODO: move this method to the UserController
      * @param userId
      * @return
      */
@@ -64,9 +66,16 @@ public class FileStorageController {
         log.info("Request to list files for [ {} ]", userId);
         Validator.validateUsernameAndToken(userId);
         ServiceResponse response = storageService.getFilesUploadedByUser(userId);
-        log.info(response.getMessage());
         log.info(response.getStatus().toString());
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+    @GetMapping("/by")
+    public ResponseEntity<ServiceResponse> listFilesWithSchedulesByUser(@RequestParam("username") String username) {
+        log.info("in the method to get files uploaded by user with schedules");
+        Validator.validateUsernameAndToken(username);
+        ServiceResponse response = userFileService.getUserFileSchedules(username);
+        log.info("Received the response from UserFileService of status, {}", response.getStatus());
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }
 
     /**

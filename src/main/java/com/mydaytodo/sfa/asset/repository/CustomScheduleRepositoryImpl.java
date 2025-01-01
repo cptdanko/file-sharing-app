@@ -11,17 +11,17 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.mydaytodo.sfa.asset.config.AWSConfig;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Phaser;
 
 @Slf4j
 @Component
 public class CustomScheduleRepositoryImpl implements CustomScheduleRepository<Schedule, String> {
     @Autowired
-    private com.mydaytodo.sfa.asset.config.AWSConfig AWSConfig;
+    private AWSConfig AWSConfig;
     private DynamoDBMapper mapper = null;
     private AmazonDynamoDB dynamoDB = null;
 
@@ -56,7 +56,7 @@ public class CustomScheduleRepositoryImpl implements CustomScheduleRepository<Sc
         request.setTableName("Schedule");
         updateValues.put("is_sent", new AttributeValueUpdate().withValue(
                 new AttributeValue().withBOOL(isSent)));
-        //updateValues.put("user_id", new AttributeValue().withS(scheduleId));
+        // updateValues.put("user_id", new AttributeValue().withS(scheduleId));
         request.setAttributeUpdates(updateValues);
         dynamoDB.updateItem(request);
     }

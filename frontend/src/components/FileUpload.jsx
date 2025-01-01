@@ -19,7 +19,6 @@ export const FileUpload = (props) => {
 
     useEffect(() => {
         setUsername(cookies.user && cookies.user.username);
-
     });
 
     const onFileSelect = (event) => {

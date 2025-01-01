@@ -47,7 +47,7 @@ public class ScheduleControllerTest {
             .isRecurring(false)
             .senderName("bhuman")
             .senderEmail("bhuman@mydaytodo.com")
-            .timeWindow("12-13")
+            // .timeWindow("12-13")
             .receivers(new ArrayList<>() {{ add("bhuman@mydaytodo.com"); add("bhuman.soni@gmail.com"); }})
             .build();
 

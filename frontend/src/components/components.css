@@ -5,6 +5,7 @@
 }
 .Date-time {
     display: flex;
+    flex-direction: column;
     justify-content: space-evenly;
 }
 .Flex-column-layout {

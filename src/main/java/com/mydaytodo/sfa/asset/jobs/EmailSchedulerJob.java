@@ -11,13 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -29,6 +27,36 @@ public class EmailSchedulerJob {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
+    public void scheduleSendMail(Schedule schedule) {
+        log.info("Received a request to set schedule -> {}", schedule.toString());
+        ShareFileTask shareFileTask = new ShareFileTask();
+        shareFileTask.setSchedule(schedule);
+        shareFileTask.setMailService(mailService);
+        log.info("About to schedule it");
+        if (isDateToday(schedule.getSendDate())) {
+            // if the date is today, then send
+            log.info("the send date is for today");
+            // email in the next 15 seconds
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.SECOND, 15);
+            threadPoolTaskScheduler.schedule(shareFileTask, cal.getTime().toInstant());
+        } else {
+            threadPoolTaskScheduler.schedule(shareFileTask, schedule.getSendDate().toInstant());
+        }
+    }
+    private boolean isDateToday(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        Calendar input = Calendar.getInstance();
+        input.setTime(date);
+        if (calendar.get(Calendar.DAY_OF_MONTH) == input.get(Calendar.DAY_OF_MONTH)) {
+            return true;
+        }
+        return false;
+    }
     /**
      * Get all the schedules that haven't been sent
      * isolate those that fall in the current timeframe
@@ -36,15 +64,14 @@ public class EmailSchedulerJob {
      * to send these emails
      */
     @Async
-    @Scheduled(cron = "* */45 * * * *")
+    // @Scheduled(cron = "* 0/45 * * * *")
     public void sendScheduledEmails() {
         List<Schedule> toBeSent = new ArrayList<>();
         String currentRange = DateTimeService.getTimeWindow();
         log.info("About to get schedules for current hour {} , {}", currentRange, new Date().toString());
 
         scheduleRepository.findAll().forEach(schedule -> {
-            if(schedule.getTimeWindow().equalsIgnoreCase(currentRange)
-            && !schedule.getIsSent()) {
+            if(!schedule.getIsSent()) {
                 toBeSent.add(schedule);
             }
         });

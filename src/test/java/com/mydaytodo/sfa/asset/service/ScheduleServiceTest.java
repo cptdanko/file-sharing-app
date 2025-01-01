@@ -1,41 +1,39 @@
 package com.mydaytodo.sfa.asset.service;
 
-import com.mydaytodo.sfa.asset.TestUtils;
 import com.mydaytodo.sfa.asset.error.EntityWithIdNotFoundException;
 import com.mydaytodo.sfa.asset.error.InvalidScheduleException;
 import com.mydaytodo.sfa.asset.error.ScheduleValidator;
-import com.mydaytodo.sfa.asset.error.Validator;
+import com.mydaytodo.sfa.asset.jobs.EmailSchedulerJob;
 import com.mydaytodo.sfa.asset.model.CreateScheduleRequest;
 import com.mydaytodo.sfa.asset.model.ServiceResponse;
 import com.mydaytodo.sfa.asset.model.db.Schedule;
 import com.mydaytodo.sfa.asset.repository.ScheduleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
 public class ScheduleServiceTest {
     @Mock
     private ScheduleRepository scheduleRepository;
+
+    @Mock
+    private EmailSchedulerJob emailSchedulerJob;
 
     @InjectMocks
     private ScheduleServiceImpl scheduleService;
@@ -50,7 +48,7 @@ public class ScheduleServiceTest {
             .isRecurring(false)
             .senderName("Bhuman Soni")
             .senderEmail("bhuman@mydaytodo.com")
-            .timeWindow("12-13")
+            .sendDate(new Date())
             .receivers(new ArrayList<>() {{ add("bhuman@mydaytodo.com"); add("bhuman.soni@gmail.com"); }})
             .build();
 
@@ -67,7 +65,7 @@ public class ScheduleServiceTest {
     @Test
     void testCreateSchedule_fail_noTime() {
         Assertions.assertThrows(InvalidScheduleException.class, () -> {
-            createScheduleRequest.setTimeWindow("");
+            createScheduleRequest.setSendDate(null);
             scheduleService.createSchedule(createScheduleRequest);
         });
     }
@@ -81,7 +79,7 @@ public class ScheduleServiceTest {
     @Test
     void testCreateSchedule_fail_invalidTimeFormat() {
         Assertions.assertThrows(InvalidScheduleException.class, () -> {
-            createScheduleRequest.setTimeWindow("14:18");
+            createScheduleRequest.setSendDate(null);
             scheduleService.createSchedule(createScheduleRequest);
         });
     }

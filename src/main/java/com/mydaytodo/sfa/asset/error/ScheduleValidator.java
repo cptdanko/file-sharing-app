@@ -10,13 +10,13 @@ public class ScheduleValidator {
         if (createScheduleRequest.getReceivers().isEmpty()) {
             throw new InvalidScheduleException("Please supply email address to send this too");
         }
-        if(createScheduleRequest.getTimeWindow().isEmpty()) {
+        if(createScheduleRequest.getSendDate() == null) {
             throw new InvalidScheduleException("Please supply a valid time window");
         }
-        String regex = "\\d+-\\d+";
+        /* String regex = "\\d+-\\d+";
         Pattern pattern = Pattern.compile(regex);
         if(!pattern.matcher(createScheduleRequest.getTimeWindow()).matches()) {
             throw new InvalidScheduleException("Please supply a valid time window");
-        }
+        }*/
     }
 }
