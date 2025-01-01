@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import "./components.css";
 import { ScheduleContext } from "./ScheduleContext";
+import dayjs from "dayjs";
 
 export const DateTimeRange = (props) => {
     const { fileId, savedSchedule } = props;
@@ -12,14 +13,14 @@ export const DateTimeRange = (props) => {
     const { schedule, setSchedule } = useContext(ScheduleContext);
     
     useEffect(() => {
-        console.log(`In useEffect with ${JSON.stringify(savedSchedule)}`);
         if(savedSchedule) {
-            // const timeSplit = savedSchedule.timeWindow.split("-");
-            // console.log(timeSplit);
-            // TODO: remove the hard coded index element grab
+            // TODO: alter it to suit schedule send email
             setEmailToSendTo(savedSchedule.receivers[0]);
+            schedule.to = savedSchedule.receivers[0];
+            const dateStr = savedSchedule.sendDate.split('T')[0];
+            
+            setSelDate(dayjs(dateStr));
         }
-
     });
 
     return (
@@ -51,6 +52,7 @@ export const DateTimeRange = (props) => {
                         setSelDate(newVal);
                         schedule.date = newVal;
                     }}
+                    minDate={dayjs(new Date())}
                     format="YYYY-MM-DD" />
             </Box>
         </Container>

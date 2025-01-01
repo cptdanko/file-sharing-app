@@ -94,7 +94,9 @@ export const FileList = (props) => {
         setFileToShare(file.filename);
         setScheduleDialogOpen(true);
     }
-
+    const cancelAndCloseScheduleDialog = (e) => {
+        setScheduleDialogOpen(false);
+    }
     const scheduleDialogClose = (e) => {
         console.log("In the clopse schedule dialog");
         setScheduleDialogOpen(false);
@@ -130,6 +132,9 @@ export const FileList = (props) => {
         });
     }
 
+    const getSendDateStr = (date) => {
+        return date.split('T')[0];
+    }
     const saveScheduleInDB = (e) => {
         setScheduleDialogOpen(false);
     }
@@ -173,9 +178,6 @@ export const FileList = (props) => {
             setShareBtnDisabled(false);
             setShareBtnTxt("Share");
         });
-    }
-    const setSchedule = (e) => {
-
     }
     const hideFiles = () => {
         setShowFiles(false);
@@ -238,6 +240,10 @@ export const FileList = (props) => {
                                 <Box>
                                     <Typography component={'span'} variant="body"><b>{file.filename}</b>
                                     </Typography>
+                                    
+                                    {file.schedule ? 
+                                    <p>Schedule: {getSendDateStr(file.schedule.sendDate)}</p>
+                                    : <></> }
                                 </Box>
                                 <Box>
                                     <Button size="small"
@@ -348,8 +354,8 @@ export const FileList = (props) => {
                 <DialogActions>
                     <Button variant="contained"
                         size="small"
-                        onClick={scheduleDialogClose}>
-                        Close
+                        onClick={cancelAndCloseScheduleDialog}>
+                        Cancel
                     </Button>
                     <Button
                         size="small"

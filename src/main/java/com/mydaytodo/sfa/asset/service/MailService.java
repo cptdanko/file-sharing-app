@@ -54,7 +54,7 @@ public class MailService {
                 messageHelper.addAttachment(name, fileDataResource);
                 messageHelper.setText(builder.toString(), true);
             }
-            mimeMailMessage.setFrom("bhuman@mydaytodo.com");
+            mimeMailMessage.setFrom("admin@mydaytodo.document-sharing.com");
             mimeMailMessage.setSubject(emailRequest.getSubject());
             addRecipients(Message.RecipientType.TO, new String[]{emailRequest.getTo()}, mimeMailMessage);
             if(emailRequest.getCc() != null)
@@ -63,6 +63,7 @@ public class MailService {
                 addRecipients(Message.RecipientType.BCC, emailRequest.getBcc(), mimeMailMessage);
 
             javaMailSender.send(mimeMailMessage);
+            log.info("Sent email");
             return ServiceResponse.builder()
                     .data(builder.toString())
                     .status(HttpStatus.SC_NO_CONTENT)
