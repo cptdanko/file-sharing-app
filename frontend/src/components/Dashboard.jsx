@@ -55,14 +55,16 @@ export const Dashboard = () => {
             </ScheduleProvider>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-            <FileBrowser />
-
+            <ScheduleProvider>
+              <FileBrowser />
+            </ScheduleProvider>
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
             <Box sx={{marginTop: 2}}>
               Schedule coming soon....
             </Box>
         </TabPanel>
+        
         </Box>
     );
 }
