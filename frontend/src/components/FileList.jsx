@@ -6,6 +6,7 @@ import { AlertDialog } from "../dialogs/AlertDialog";
 import { DateTimeRange } from "./DateRangeSelection";
 import "./components.css";
 import { ScheduleContext } from "./ScheduleContext";
+import { getSendDateStr } from "../util";
 
 export const FileList = (props) => {
     const { fileUploadDone, setFileUploadDone } = props;
@@ -65,7 +66,6 @@ export const FileList = (props) => {
                 setShowFiles(true);
             }
             setUserFiles(data.data);
-            console.log(data.data);
             setShowFiles(true);
         })
     }
@@ -98,13 +98,11 @@ export const FileList = (props) => {
         setScheduleDialogOpen(false);
     }
     const scheduleDialogClose = (e) => {
-        console.log("In the clopse schedule dialog");
         setScheduleDialogOpen(false);
 
         const sendDate = scheduleContext.schedule.date.year() +
         '-' + (scheduleContext.schedule.date.month()+1) + 
         '-' + scheduleContext.schedule.date.date();
-        console.log(sendDate);
         
         const postObj = {
             "sendDate": sendDate,
@@ -132,9 +130,6 @@ export const FileList = (props) => {
         });
     }
 
-    const getSendDateStr = (date) => {
-        return date.split('T')[0];
-    }
     const saveScheduleInDB = (e) => {
         setScheduleDialogOpen(false);
     }
@@ -184,7 +179,6 @@ export const FileList = (props) => {
     }
     const downloadFile = (file) => {
         const url = `/api/file/${file}/download?userId=${cookies.user.username}`;
-        console.log(`Url to download file is ${url}`);
         fetch(url, {
             headers: {
                 Authorization: `Bearer ${cookies.user.token}`
@@ -242,7 +236,12 @@ export const FileList = (props) => {
                                     </Typography>
                                     
                                     {file.schedule ? 
-                                    <p>Schedule: {getSendDateStr(file.schedule.sendDate)}</p>
+                                    <div>
+                                        <p style={{display: 'flex', flexDirection: 'column'}}>
+                                            <span>Schedule: {getSendDateStr(file.schedule.sendDate)}</span>
+                                            <span>To: {file.schedule.receivers[0]}</span>
+                                        </p>
+                                    </div>
                                     : <></> }
                                 </Box>
                                 <Box>
@@ -341,6 +340,7 @@ export const FileList = (props) => {
                         type="submit">{shareBtnTxt}</Button>
                 </DialogActions>
             </Dialog>
+
             <Dialog open={scheduleDialogOpen}
                 onClose={scheduleDialogClose}
                 PaperProps={{

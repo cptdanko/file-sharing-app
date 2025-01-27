@@ -1,5 +1,5 @@
 import "./App.css";
-import { CookiesProvider, useCookies } from "react-cookie";
+import { CookiesProvider } from "react-cookie";
 import { UserAuth } from "./components/UserAuth";
 import { Typography, Divider, Container } from "@mui/material";
 import { useState } from "react";
@@ -9,12 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function App() {
 
-  const [fileUploadDone, setFileUploadDone] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
-
-  const toggleState = () => {
-    setUserLoggedIn(!userLoggedIn);
-  }
 
   return (
     <CookiesProvider>
@@ -33,6 +28,7 @@ function App() {
           <Typography component="h3" variant="h3">
             Document Sharing App
           </Typography>
+          
           <Divider />
 
           {userLoggedIn ?

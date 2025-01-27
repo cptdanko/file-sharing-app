@@ -1,4 +1,7 @@
-import { Alert, Box, Button, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, TextField } from "@mui/material";
+import { Alert, Box, 
+    Button, Container, Dialog, 
+    DialogActions, DialogContent, DialogTitle, 
+    LinearProgress, TextField } from "@mui/material";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,26 +9,29 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { API_FILE_PATH } from "../Constants";
+import { ScheduleContext } from "./ScheduleContext";
+import { DateTimeRange } from "./DateRangeSelection";
+import { getSendDateStr } from "../util";
 
 export const FileBrowser = () => {
-    const [cookies, setCookie, removeCookie] = useCookies(['user']);
+    const [cookies] = useCookies(['user']);
     const [userFiles, setUserFiles] = useState([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [fileToShare, setFileToShare] = useState("");
     const [shareBtnTxt, setShareBtnTxt] = useState("Share");
     const [shareBtnDisabled, setShareBtnDisabled] = useState(false);
     const [filesLoading, setFilesLoading] = useState(true);
+    const scheduleContext = useContext(ScheduleContext);
+    const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+    const [selSchedule, setSelSchedule] = useState({});
 
-    const [alertHeader, setAlertHeader] = useState("");
-    const [alertMessage, setAlertMessage] = useState("");
-    const [alertOpen, setAlertOpen] = useState(false);
-    const [showFiles, setShowFiles] = useState(false);
-
-
-    const data = ["file1.docx", "File2.pdf"];
+    const [setAlertHeader] = useState("");
+    const [setAlertMessage] = useState("");
+    const [setAlertOpen] = useState(false);
+    const [setShowFiles] = useState(false);
 
     useEffect(() => {
         filesUploaded();
@@ -33,7 +39,7 @@ export const FileBrowser = () => {
 
     async function deleteFile(filename) {
         const urlStr = `${API_FILE_PATH}/delete/${filename}?userId=${cookies.user.username}`;
-        const resp = await fetch(urlStr, {
+        await fetch(urlStr, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${cookies.user.token}`,
@@ -105,8 +111,6 @@ export const FileBrowser = () => {
             setShareBtnDisabled(false);
             setShareBtnTxt("Share");
         }).catch(e => {
-            console.log(`Error occured ${e}`);
-            console.log(JSON.stringify(e));
             setDialogOpen(false);
             setShareBtnDisabled(false);
             setShareBtnTxt("Share");
@@ -115,9 +119,40 @@ export const FileBrowser = () => {
     const hideFiles = () => {
         setShowFiles(false);
     }
+    const scheduleDialogClose = (e) => {
+        setScheduleDialogOpen(false);
+
+        const sendDate = scheduleContext.schedule.date.year() +
+        '-' + (scheduleContext.schedule.date.month()+1) + 
+        '-' + scheduleContext.schedule.date.date();
+        
+        const postObj = {
+            "sendDate": sendDate,
+            "receivers": [scheduleContext.schedule.to],
+            "senderEmail": cookies.user.username,
+            "senderName": cookies.user.google ? cookies.user.google.name: cookies.user.name,
+            "isRecurring": false,
+            "filename": fileToShare
+        };
+        let url = '/api/schedule/';
+        let method = "POST";
+        if (scheduleContext.schedule.id) {
+            url = '/api/schedule/'+scheduleContext.schedule.id;
+            method = "PUT"
+        }
+        fetch(url, {
+            method: method,
+            headers: {
+                Authorization: `Bearer ${cookies.user.token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postObj)
+        }).then(resp => {
+            console.log(resp);
+        });
+    }
     const downloadFile = (file) => {
         const url = `/api/file/${file}/download?userId=${cookies.user.username}`;
-        console.log(`Url to download file is ${url}`);
         fetch(url, {
             headers: {
                 Authorization: `Bearer ${cookies.user.token}`,
@@ -125,7 +160,6 @@ export const FileBrowser = () => {
         })
             .then(resp => resp.blob())
             .then(blob => {
-                console.log(JSON.stringify(blob));
                 const url2 = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url2;
@@ -138,6 +172,15 @@ export const FileBrowser = () => {
             });
     }
 
+    const openScheduleDialog = (file) => {
+        setSelSchedule(file.schedule);
+        if (file.schedule && file.schedule.id) {
+            scheduleContext.schedule.id = file.schedule.id;
+        }
+        setFileToShare(file.filename);
+        setScheduleDialogOpen(true);
+    }
+
     const renderList = () => {
         const listItems = userFiles.map(file => {
             return <TableRow
@@ -146,6 +189,10 @@ export const FileBrowser = () => {
             >
                 <TableCell component="th" scope="row">
                     {file}
+                    <br />
+                    {file.schedule ? 
+                    <p>Schedule: {getSendDateStr(file.schedule.sendDate)}</p>
+                    : <></> }
                     <Box>
                         <Button size="small"
                             onClick={() => downloadFile(file)}> Download </Button>
@@ -153,6 +200,9 @@ export const FileBrowser = () => {
                             onClick={() => deleteFile(file)}> Delete </Button>
                         <Button size="small"
                             onClick={() => openDialog(file)}> Share </Button>
+                        <Button size="small"
+                            onClick={() => openScheduleDialog(file)}> Schedule </Button>
+
                     </Box>
                 </TableCell>
                 
@@ -160,6 +210,10 @@ export const FileBrowser = () => {
             </TableRow>
         });
         return listItems;
+    }
+
+    const cancelAndCloseScheduleDialog = (e) => {
+        setScheduleDialogOpen(false);
     }
     return (
         <Container>
@@ -217,6 +271,31 @@ export const FileBrowser = () => {
                         disabled={shareBtnDisabled}
                         size="small"
                         type="submit">{shareBtnTxt}</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={scheduleDialogOpen}
+                onClose={scheduleDialogClose}
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: scheduleDialogClose
+                }}>
+                <DialogTitle> Schedule </DialogTitle>
+                <DialogContent>
+                    <DateTimeRange fileId={fileToShare} savedSchedule={selSchedule} />
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained"
+                        size="small"
+                        onClick={cancelAndCloseScheduleDialog}>
+                        Cancel
+                    </Button>
+                    <Button
+                        size="small"
+                        variant="contained"
+                        type="submit">
+                        Set schedule
+                    </Button>
                 </DialogActions>
             </Dialog>
 

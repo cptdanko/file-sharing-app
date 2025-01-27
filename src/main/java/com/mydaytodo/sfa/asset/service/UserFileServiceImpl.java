@@ -27,7 +27,6 @@ public class UserFileServiceImpl {
         // add some validations
         List<String> userUploadedFiles = s3Repository.filesByUser(username);
         List<Schedule> schedules = scheduleRepository.getScheduleByUser(username);
-        log.info("The number of schedules by user {}", schedules.size());
         schedules.forEach(schedule -> {
             log.info(schedule.getFilename());
         });
@@ -37,13 +36,11 @@ public class UserFileServiceImpl {
             FileWithSchedule uf = FileWithSchedule.builder()
                     .filename(file)
                     .build();
-            log.info("Got the list of files size, {}",userUploadedFiles.size());
             schedules.stream()
                     .filter(schedule -> schedule.getFilename() != null
                             && schedule.getFilename().equalsIgnoreCase(file))
                     .findFirst()
                     .ifPresent(uf::setSchedule);
-            log.info("After adding the file schedule, {}", uf.getSchedule());
             userFileList.add(uf);
         });
         return ServiceResponse.builder()
