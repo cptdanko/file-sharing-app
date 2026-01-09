@@ -28,6 +28,10 @@ public class SocialController {
     @Autowired
     private MailService mailService;
 
+    /**
+     * @param emailRequest
+     * @return
+     */
     @PostMapping(value = "/sendMail")
     public ResponseEntity<ServiceResponse> sendMail(@RequestBody EmailRequest emailRequest) {
         log.info(emailRequest.toString());
