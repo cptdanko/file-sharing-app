@@ -1,0 +1,44 @@
+name: Multi-Agent Pipeline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Backend Agent
+        uses: github/copilot/agent@v1
+        with:
+          agent: backend-agent
+          task: "Implement the new feature described in issue #123"
+
+  unit_tests:
+    runs-on: ubuntu-latest
+    needs: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Unit Test Agent
+        uses: github/copilot/agent@v1
+        with:
+          agent: unit-test-agent
+          task: "Write and run unit tests for the backend changes"
+
+  code_review:
+    runs-on: ubuntu-latest
+    needs: unit_tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Code Review Agent
+        uses: github/copilot/agent@v1
+        with:
+          agent: code-review-agent
+          task: "Review all changes produced by the backend and test agents"
